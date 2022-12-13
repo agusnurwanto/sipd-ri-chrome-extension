@@ -9,7 +9,8 @@ Semoga bermanfaat
 - https://t.me/sipd_chrome_extension
 
 ### Fitur:
-- ...
+- Menampilkan checkbox tampil password di halaman login
+- Melakukan interval request ke server untuk menjaga session login
 
 ### Video tutorial
 - ...
