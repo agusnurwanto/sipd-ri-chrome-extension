@@ -1,0 +1,6 @@
+var config = {
+	sipd_url : "https://sipd-ri.kemendagri.go.id/", // alamat aplikasi siks
+	id_daerah : "xxx", // id daerah di sipd-ri.kemendagri.go.id
+	url_server_lokal : "https://xxxxx.com/wp-admin/admin-ajax.php", // url server lokal
+	api_key : "xxxxxxxx", // api key server lokal
+};

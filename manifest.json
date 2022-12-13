@@ -1,0 +1,55 @@
+{
+	"manifest_version": 3,
+	"name": "SIPD RI tools",
+	"description": "Chrome extension untuk mengoptimalkan aplikasi sipd-ri.kemendagri.go.id",
+	"version": "1.0.0",
+	"icons": {
+		"16": "img/logo-small.png",
+		"48": "img/logo-small.png",
+		"128": "img/logo-small.png"
+	},
+	"background": {
+		"service_worker": "background_all.js"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://sipd-ri.kemendagri.go.id/*"
+			],
+			"css": [
+				"css/content.css",
+				"css/select2.min.css"
+			],
+			"js": [
+				"config.js",
+				"js/jquery.min.js",
+				"js/select2.min.js",
+				"js/content/content_scripts.js",
+				"js/content/functions.js",
+				"js/content/app.js"
+			],
+			"run_at": "document_end"
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"resources": [
+				"/config.js",
+				"/content_message.js",
+				"/js/*",
+				"/img/*",
+				"/excel/*"
+			],
+			"matches": [
+				"https://sipd-ri.kemendagri.go.id/*"
+			]
+		}
+	],
+	"host_permissions": ["<all_urls>"],
+	"permissions": [
+		"webRequest",
+		"activeTab",
+		"storage",
+		"tabs"
+	]
+}

@@ -1,0 +1,130 @@
+#wrap-loading {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: 9999999;
+    background: #00000073;
+    top: 0;
+}
+.lds-hourglass {
+    position: fixed;
+    width: 64px;
+    height: 64px;
+    top: 50vh;
+    left: 50%;
+    z-index: 99999;
+    margin-left: -32px;
+}
+.lds-hourglass:after {
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    margin: 6px;
+    box-sizing: border-box;
+    border: 26px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-hourglass 1.2s infinite;
+}
+@keyframes    lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}
+
+@media  print {
+    .hide-print {
+        display: none;
+    }
+}
+
+table { page-break-inside:auto }
+div   { page-break-inside:avoid; }
+tr    { page-break-inside:avoid; page-break-after:auto }
+thead { display:table-header-group }
+tfoot { display:table-footer-group }
+.cetak{
+    font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    padding:0;
+    margin:0;
+    font-size:13px;
+}
+.m-t-20{
+    margin-top:20px;
+}
+.bawah{
+    border-bottom:1px solid #000;        
+}
+.kiri{
+    border-left:1px solid #000;        
+}
+.kanan{        
+    border-right:1px solid #000;
+}
+.atas{        
+    border-top:1px solid #000;
+}
+.text_tengah{
+    text-align: center;
+}
+.text_kiri{
+    text-align: left;
+}
+.text_kanan{
+    text-align: right;
+}
+.text_blok{
+    font-weight: bold;
+}        
+.text_15{
+    font-size: 15px;
+}
+.text_20{
+    font-size: 20px;
+}
+.logoprinter{
+    position:absolute;
+    top:150px;
+    right:600px;
+}
+thead{
+    display:table-header-group;
+}
+.setbreakafter{
+    page-break-after: always;
+}
+.setbreakbefore{
+    page-break-before: always;
+}
+#persen-loading{
+    text-align: center;
+    position: fixed;
+    height: 64px;
+    top: 50vh;
+    left: 50%;
+    z-index: 99999;
+    margin-top: -90px;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
+    width: 100vw;
+    margin-left: -50vw;
+}
+.border-table-sce{
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+.border-table-sce td, .border-table-sce th{
+    border: 1px solid #000;
+    padding: 5px 10px;
+}
