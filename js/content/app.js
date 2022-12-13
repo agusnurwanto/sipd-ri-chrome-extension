@@ -1,18 +1,4 @@
-if(typeof _token == 'undefined'){
-	_token = false;
-	for(var i in localStorage){ 
-	    var item = localStorage.getItem(i);
-	    if(item){
-	        item = JSON.parse(item);
-	        item = JSON.parse(item.authReducer);
-	        _token = 'Bearer '+item.token;
-	    }
-	}
-	console.log('_token', _token);
-}
-
-// untuk menjaga session
-intervalSession();
+_interval = false;
 
 var loading = ''
 	+'<div id="wrap-loading">'
@@ -22,4 +8,27 @@ var loading = ''
 if(jQuery('#wrap-loading').length == 0){
 	jQuery('body').prepend(loading);
 }
-var current_url = window.location.href;
+
+let previousUrl = "";
+const observer = new MutationObserver(() => {
+  	if (window.location.href !== previousUrl) {
+	    console.log(`URL changed from ${previousUrl} to ${window.location.href}`);
+	    previousUrl = window.location.href;
+	    cekUrl(previousUrl);
+  	}
+});
+
+observer.observe(document, { subtree: true, childList: true });
+
+function cekUrl(current_url){
+	getToken();
+	
+	// untuk menjaga session
+	clearInterval(_interval);
+	intervalSession();
+
+	if(current_url.indexOf('/auth/login') != -1){
+		var lihat_pass = '<label style="margin-top: 15px;"><input type="checkbox" onclick="lihat_password(this)"> Lihat Password</label>';
+		jQuery('input[name="password"]').after(lihat_pass);
+	}
+}

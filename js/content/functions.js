@@ -49,7 +49,9 @@ function capitalizeFirstLetter(string) {
 
 function relayAjax(options, retries=20, delay=5000, timeout=1800000){
 	options.timeout = timeout;
-	options.cache = false;
+	if(!options.cache){
+		options.cache = false;
+	}
 	if(options.length){
 		var start = options.url.split('start=');
 		if(start.length >= 2){
@@ -107,21 +109,78 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
 }
 
 function intervalSession(no){
-	if(!_token){
+	if(!_token.user_id){
 		return;
 	}else{
 		if(!no){
 			no = 0;
 		}
+		var time = new Date();
+		time = Math.ceil(time.getTime()/1000);
+		var key = {
+			"sidx":en(_token.user_id),
+			"sidl":en(_token.level_id),
+			"sidd":en(_token.daerah_id),
+			"idd":en(_token.daerah_id)
+		};
+		var apiKey = {
+			"id_daerah":_token.daerah_id,
+			"is_app":1,
+			"secret_key":en(JSON.stringify(key)),
+			"security_key":_token.daerah_id+"|"+_token.tahun+"|"+btoa(time)
+		};
 		relayAjax({
-			url: config.siks_url + '/dashboard',
+			url: config.sipd_url + 'api/master/user/getuserbytoken',
+			cache: true,
+			beforeSend: function (xhr) {
+			    xhr.setRequestHeader("Authorization", "Bearer "+_token.token+'|'+_token.daerah_id+'|'+_token.user_id);
+			    xhr.setRequestHeader("X-API-KEY", en(JSON.stringify(apiKey)));
+			    xhr.setRequestHeader("Accept", 'application/json, text/plain, */*');
+			},
+			xhr: function() {
+		        var xhr = jQuery.ajaxSettings.xhr();
+		        var setRequestHeader = xhr.setRequestHeader;
+		        xhr.setRequestHeader = function(name, value) {
+		            if (name == 'X-Requested-With') return;
+		            setRequestHeader.call(this, name, value);
+		        }
+		        return xhr;
+		    },
 			success: function(html){
 				no++;
-				// console.log('Interval session per 60s ke '+no);
-				setTimeout(function(){
+				console.log('Interval session per 60s ke '+no);
+				_interval = setTimeout(function(){
 					intervalSession(no);
 				}, 60000);
 			}
 		});
 	}
+}
+
+function de(data){
+	return atob(atob(data));
+}
+
+function en(data){
+	return btoa(btoa(data));
+}
+
+function getToken(){
+	_token = false;
+	for(var i in localStorage){ 
+		if(
+			i.indexOf('auth') != -1
+			|| i == 'sipd-konfigurasi'
+		){
+		    var item = localStorage.getItem(i);
+	    	if(!_token){
+	    		_token = {};
+	    	}
+	    	item = JSON.parse(item);
+	    	for(var i in item){
+	        	_token[i] = item[i];
+	    	}
+		}
+	}
+	console.log('_token', _token);
 }
