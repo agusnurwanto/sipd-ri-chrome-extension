@@ -125,6 +125,7 @@ function intervalSession(no){
 		};
 		var apiKey = {
 			"id_daerah":_token.daerah_id,
+			"tahun":_token.tahun,
 			"is_app":1,
 			"secret_key":en(JSON.stringify(key)),
 			"security_key":_token.daerah_id+"|"+_token.tahun+"|"+btoa(time)
@@ -146,12 +147,16 @@ function intervalSession(no){
 		        }
 		        return xhr;
 		    },
-			success: function(html){
-				no++;
-				console.log('Interval session per 60s ke '+no);
-				_interval = setTimeout(function(){
-					intervalSession(no);
-				}, 60000);
+			success: function(ret){
+				if(ret.status_code == 403){
+					console.log('Session user habis!');
+				}else{
+					no++;
+					console.log('Interval session per 60s ke '+no);
+					_interval = setTimeout(function(){
+						intervalSession(no);
+					}, 60000);
+				}
 			}
 		});
 	}
