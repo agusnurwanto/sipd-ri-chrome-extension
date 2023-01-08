@@ -9,6 +9,7 @@ function injectScript(file, node) {
 }
 injectScript( chrome.runtime.getURL('/content_message.js'), 'html');
 injectScript( chrome.runtime.getURL('/config.js'), 'html');
+injectScript( chrome.runtime.getURL('/js/bootstrap.bundle.min.js'), 'html');
 injectScript( chrome.runtime.getURL('/js/content/content_inject.js'), 'html');
 window.data_temp_onmessage = {};
 
@@ -29,9 +30,10 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 		var res = request.data;
 		var _alert = true;
 		var cek_hide_loading = true;
-		if(res.action == 'get_data'){
+		if(res.action == 'get_rpjpd'){
 			_alert = false;
 			cek_hide_loading = false;
+			open_modal_rpjpd(res.data);
 		}
 		if(cek_hide_loading){
 			hide_loading();
