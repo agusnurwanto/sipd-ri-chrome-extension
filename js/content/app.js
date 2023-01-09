@@ -31,6 +31,7 @@ function cekUrl(current_url){
 		var lihat_pass = '<label style="margin-top: 15px;"><input type="checkbox" onclick="lihat_password(this)"> Lihat Password</label>';
 		jQuery('input[name="password"]').after(lihat_pass);
 	}else if(current_url.indexOf('/perencanaan/rpjpd/cascading/visi') != -1){
+		jQuery('#modal-extension').remove();
 		var modal = ''
 			+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 		        +'<div class="modal-dialog" style="max-width: 1500px;" role="document">'
@@ -43,7 +44,7 @@ function cekUrl(current_url){
 		                  	+'<table class="table table-bordered table-hover table-striped" id="table-extension">'
 		                      	+'<thead>'
 		                        	+'<tr>'
-		                          		+'<th class="text-center" style="font-weight: bold;"></th>'
+		                          		+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Visi</th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Misi</th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Sasaran</th>'
@@ -65,6 +66,12 @@ function cekUrl(current_url){
 		jQuery('#proses-extension').on('click', function(){
 			singkronisasi_rpjpd_dari_lokal();
 		});
+	    jQuery('#modal_cek_all').on('click', function(){
+			var cek = jQuery(this).is(':checked');
+			jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
+		});
+		
+		jQuery('#get_rpjpd_lokal').remove();
 		setTimeout(function(){
 			var btn = '<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_rpjpd_lokal">Singkronisasi Data RPJPD dari WP-SIPD</button>';
 			jQuery('.page-title').append(btn);

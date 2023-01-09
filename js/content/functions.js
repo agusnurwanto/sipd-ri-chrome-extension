@@ -108,6 +108,25 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     });
 }
 
+function x_api_key(){
+	var time = new Date();
+	time = Math.ceil(time.getTime()/1000);
+	var key = {
+		"sidx":en(_token.user_id),
+		"sidl":en(_token.level_id),
+		"sidd":en(_token.daerah_id),
+		"idd":en(_token.daerah_id)
+	};
+	var apiKey = {
+		"id_daerah":_token.daerah_id,
+		"tahun":_token.tahun,
+		"is_app":1,
+		"secret_key":en(JSON.stringify(key)),
+		"security_key":_token.daerah_id+"|"+_token.tahun+"|"+btoa(time)
+	};
+	return en(JSON.stringify(apiKey));
+}
+
 function intervalSession(no){
 	if(!_token.user_id){
 		return;
@@ -115,28 +134,48 @@ function intervalSession(no){
 		if(!no){
 			no = 0;
 		}
-		var time = new Date();
-		time = Math.ceil(time.getTime()/1000);
-		var key = {
-			"sidx":en(_token.user_id),
-			"sidl":en(_token.level_id),
-			"sidd":en(_token.daerah_id),
-			"idd":en(_token.daerah_id)
-		};
-		var apiKey = {
-			"id_daerah":_token.daerah_id,
-			"tahun":_token.tahun,
-			"is_app":1,
-			"secret_key":en(JSON.stringify(key)),
-			"security_key":_token.daerah_id+"|"+_token.tahun+"|"+btoa(time)
-		};
+		var apiKey = x_api_key();
+		relayAjax({
+			url: config.sipd_url + 'api/dashboard/dashboard/rekap',
+			cache: true,
+			type: 'post',
+			data: {
+				tahun: _token.tahun,
+				masuk: 'saya'
+			},
+			beforeSend: function (xhr) {
+			    xhr.setRequestHeader("x-api-key", apiKey);
+			},
+			success: function(ret){
+				if(ret.status_code == 403){
+					console.log('Session user habis!');
+				}else{
+					no++;
+					console.log('Interval session per 60s ke '+no);
+					_interval = setTimeout(function(){
+						intervalSession(no);
+					}, 60000);
+				}
+			}
+		});
+	}
+}
+
+function intervalSession_lama(no){
+	if(!_token.user_id){
+		return;
+	}else{
+		if(!no){
+			no = 0;
+		}
+		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url + 'api/master/user/getuserbytoken',
 			cache: true,
 			beforeSend: function (xhr) {
-			    xhr.setRequestHeader("Authorization", "Bearer "+_token.token+'|'+_token.daerah_id+'|'+_token.user_id);
-			    xhr.setRequestHeader("X-API-KEY", en(JSON.stringify(apiKey)));
-			    xhr.setRequestHeader("Accept", 'application/json, text/plain, */*');
+			    xhr.setRequestHeader("authorization", "Bearer "+_token.token+'|'+_token.daerah_id+'|'+_token.user_id);
+			    xhr.setRequestHeader("x-api-key", apiKey);
+			    xhr.setRequestHeader("accept", 'application/json, text/plain, */*');
 			},
 			xhr: function() {
 		        var xhr = jQuery.ajaxSettings.xhr();

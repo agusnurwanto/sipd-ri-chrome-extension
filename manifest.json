@@ -39,6 +39,7 @@
 				"/content_message.js",
 				"/js/*",
 				"/img/*",
+				"/css/*",
 				"/excel/*"
 			],
 			"matches": [

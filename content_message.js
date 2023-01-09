@@ -6,7 +6,7 @@ window.addEventListener('message', function(event) {
 			jQuery('#modal-extension').modal('show');
 			break;
     	case 'hide_modal':
-			jQuery('#modal-extension').modal('show');
+			jQuery('#modal-extension').modal('hide');
 			break;
 	}
 });
