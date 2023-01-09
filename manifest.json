@@ -27,6 +27,7 @@
 				"js/content/content_scripts.js",
 				"js/content/functions.js",
 				"js/content/rpjpd.js",
+				"js/content/rpd.js",
 				"js/content/app.js"
 			],
 			"run_at": "document_end"

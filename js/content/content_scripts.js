@@ -42,6 +42,9 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 		if(res.action == 'get_rpjpd'){
 			_alert = false;
 			open_modal_rpjpd(res.data);
+		}else if(res.action == 'get_rpd'){
+			_alert = false;
+			open_modal_rpd(res.data);
 		}
 		if(cek_hide_loading){
 			hide_loading();
