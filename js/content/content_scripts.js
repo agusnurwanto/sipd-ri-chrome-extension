@@ -18,7 +18,9 @@ injectScript( chrome.runtime.getURL('/config.js'), 'head', 'js');
 injectScript( chrome.runtime.getURL('/js/bootstrap.bundle.min.js'), 'head', 'js');
 injectScript( chrome.runtime.getURL('/js/content/content_inject.js'), 'head', 'js');
 injectScript( chrome.runtime.getURL('/js/jquery.dataTables.min.js'), 'head', 'js');
+injectScript( chrome.runtime.getURL('/js/crypto-js.min.js'), 'head', 'js');
 injectScript( chrome.runtime.getURL('/js/dataTables.bootstrap5.min.js'), 'head', 'js');
+injectScript( chrome.runtime.getURL('/js/content/functions.js'), 'head', 'js');
 injectScript( chrome.runtime.getURL('/css/dataTables.bootstrap5.min.css'), 'head', 'css');
 window.data_temp_onmessage = {};
 

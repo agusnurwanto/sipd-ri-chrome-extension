@@ -21,3 +21,36 @@ function lihat_password(that){
 		jQuery('input[name="password"]').attr('type', 'password');
 	}
 }
+
+function login_sipd(){
+	var user = jQuery('input[name="email"]').val();
+	var pass = jQuery('input[name="password"]').val();
+	jQuery('#wrap-loading').show();
+	relayAjax({
+		url: config.sipd_url + 'api/auth/auth/login',
+		cache: true,
+		type: 'post',
+		data: {
+			username: user,
+			password: pass,
+			id_daerah: config.id_daerah
+		},
+		success: function(ret){
+			console.log(ret);
+			jQuery('#wrap-loading').hide();
+			localStorage.setItem('v8.0.38-authf649fc9a5f55', JSON.stringify(ret));
+			localStorage.setItem('login-detail', JSON.stringify({
+				username: user,
+				password: pass,
+				id_daerah: config.id_daerah
+			}));
+			window.location.href = config.sipd_url;
+		}
+	});
+}
+
+function ganti_tahun(){
+    localStorage.removeItem("sipd-konfigurasi-tahun");
+    localStorage.removeItem("sipd-konfigurasi");
+	window.location.href = config.sipd_url;
+}

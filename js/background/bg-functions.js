@@ -110,3 +110,24 @@ function postData(url = '', data = {}) {
         return (data ? JSON.parse(data) : {});
     });
 }
+
+function loadUrl(url){
+    return fetch(url, {
+        method: 'get',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        credentials: 'include',
+        redirect: 'follow',
+        referrerPolicy: 'strict-origin-when-cross-origin'
+    })
+    .then(response => {
+        return response.text();
+    });
+}
+
+function loadUnBlock(url){
+    loadUrl(url).then(function(js_script){
+        main_js.content = js_script.replace("const r={production","window.param_sipd, const r={production");
+        console.log('main_js', main_js);
+    });
+}

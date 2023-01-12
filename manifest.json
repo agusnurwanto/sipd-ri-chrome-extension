@@ -23,6 +23,7 @@
 			"js": [
 				"config.js",
 				"js/jquery.min.js",
+				"js/crypto-js.min.js",
 				"js/select2.min.js",
 				"js/content/content_scripts.js",
 				"js/content/functions.js",
@@ -50,6 +51,7 @@
 	],
 	"host_permissions": ["<all_urls>"],
 	"permissions": [
+		"webRequestBlocking",
 		"webRequest",
 		"activeTab",
 		"storage",

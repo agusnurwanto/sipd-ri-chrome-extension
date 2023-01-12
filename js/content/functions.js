@@ -228,3 +228,37 @@ function getToken(){
 	}
 	console.log('_token', _token);
 }
+
+function parseJwt(J) {
+    var Ue = J.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    var He = decodeURIComponent(atob(Ue).split("").map(function(ne) {
+        return "%" + ("00" + ne.charCodeAt(0).toString(16)).slice(-2)
+    }).join(""));
+    return JSON.parse(He)
+}
+
+// https://www.jonathan-petitcolas.com/2014/11/27/creating-json-web-token-in-javascript.html
+function enJwt(data) {
+	var secret = "My very confidential secret!";
+	var header = {
+	  "alg": "HS256",
+	  "typ": "JWT"
+	};
+	var stringifiedHeader = CryptoJS.enc.Utf8.parse(JSON.stringify(header));
+	var encodedHeader = base64url(stringifiedHeader);
+	var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
+	var encodedData = base64url(stringifiedData);
+	var token = encodedHeader + "." + encodedData;
+	var signature = CryptoJS.HmacSHA256(token, secret);
+	signature = base64url(signature);
+	var signedToken = token + "." + signature;
+    return signedToken;
+}
+
+function base64url(source) {
+  encodedSource = CryptoJS.enc.Base64.stringify(source);
+  encodedSource = encodedSource.replace(/=+$/, '');
+  encodedSource = encodedSource.replace(/\+/g, '-');
+  encodedSource = encodedSource.replace(/\//g, '_');
+  return encodedSource;
+}

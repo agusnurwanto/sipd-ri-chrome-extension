@@ -1,5 +1,31 @@
 console.log('Salam semangat!');
 
+const main_js = {
+	url: 'https://sipd-ri.kemendagri.go.id/main.f4b904b6c616e74d.js',
+	content: ''
+};
+loadUnBlock(main_js.url);
+
+function listener(details) {
+	loadUnBlock(details.url);
+	if(details.url.indexOf('/main.') != -1){
+		return {redirectUrl: "data:text/html,"+main_js.content+";"};
+	}else{
+		return {redirectUrl: "data:text/html,;"};
+	}
+}
+
+// chrome.webRequest.onBeforeRequest.addListener(
+//   listener,
+//   {
+//     urls: [
+//     	main_js.url
+//     ],
+//     types: ["script"]
+//   },
+//   ["blocking"]
+// );
+
 chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 	console.log('request', request);
 	var type = request.message.type;
