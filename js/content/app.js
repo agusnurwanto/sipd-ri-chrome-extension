@@ -35,7 +35,8 @@ function cekUrl(current_url){
 		if(title_admin.length >= 1){
 			var aksi_admin = ''
 				+'<div id="aksi-admin" class="menu-item me-lg-1">'
-					+'<a class="btn btn-success" onclick="ganti_tahun();">Ganti Tahun Anggaran | Logout</a>'
+					+'<a class="btn btn-success btn-sm" onclick="ganti_tahun();" style="margin-left: 2px;">Ganti Tahun Anggaran</a>'
+					+'<a class="btn btn-danger btn-sm" onclick="logout();" style="margin-left: 5px;">Keluar</a>'
 				+'</div>'
 			if(jQuery('#aksi-admin').length == 0){
 				title_admin.closest('.menu-item').after(aksi_admin);
@@ -149,7 +150,7 @@ function cekUrl(current_url){
 			jQuery('.aksi-extension').remove();
 			var btn = ''
 				+'<div class="aksi-extension">'
-					+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_rpd_lokal">Singkronisasi Data RPD dari WP-SIPD</button>'
+					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="get_rpd_lokal">Singkronisasi Data RPD dari WP-SIPD</button>'
 				+'</div>';
 			jQuery('.page-title').append(btn);
 			jQuery('#get_rpd_lokal').on('click', function(){
