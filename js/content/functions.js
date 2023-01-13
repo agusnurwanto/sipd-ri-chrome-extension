@@ -131,6 +131,8 @@ function intervalSession(no){
 	if(!_token.user_id){
 		return;
 	}else{
+		// dimatikan dulu karena tidak terpakai. seharusnya pakai refresh token
+		return;
 		if(!no){
 			no = 0;
 		}
@@ -261,4 +263,37 @@ function base64url(source) {
   encodedSource = encodedSource.replace(/\+/g, '-');
   encodedSource = encodedSource.replace(/\//g, '_');
   return encodedSource;
+}
+
+function replace_string(text_awal, no_lowercase=false, no_replace=false, recursive=false){
+	if(no_lowercase){
+		var text = jQuery('<textarea />').html(text_awal.trim()).text();
+	}else{
+		var text = jQuery('<textarea />').html(text_awal.toLowerCase().trim()).text();	
+	}
+	if(!no_replace){
+		text = text.replace(/⁰/g, '0');
+		text = text.replace(/⁹/g, '9');
+		text = text.replace(/⁸/g, '8');
+		text = text.replace(/⁷/g, '7');
+		text = text.replace(/⁶/g, '6');
+		text = text.replace(/⁵/g, '5');
+		text = text.replace(/⁴/g, '4');
+		text = text.replace(/³/g, '3');
+		text = text.replace(/²/g, '2');
+		text = text.replace(/¹/g, '1');
+		text = text.replace(/'/g, '`');
+		text = text.replace(/&/g, 'dan');
+		text = text.replace(/Â/g, '');
+		text = text.replace(/â/g, '’');
+		text = text.replace(/€/g, '');
+		text = text.replace(/™/g, '');
+		text = text.replace(/˜/g, '');
+		text = text.replace(/\n/g, ' ');
+	}
+	if(recursive && text_awal.length != text.length){
+		return replace_string(text, no_lowercase, no_replace, recursive);
+	}else{
+		return text.trim();
+	}
 }
