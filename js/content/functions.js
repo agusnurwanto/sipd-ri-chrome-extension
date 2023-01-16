@@ -297,3 +297,11 @@ function replace_string(text_awal, no_lowercase=false, no_replace=false, recursi
 		return text.trim();
 	}
 }
+
+function formData(data){
+	var formDataCustom = new FormData();
+	for(var i in data){
+		formDataCustom.append(i, data[i]);
+	}
+	return formDataCustom;
+}
