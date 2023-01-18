@@ -47,7 +47,11 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 		}else if(res.action == 'get_rpd'){
 			cek_hide_loading = false;
 			_alert = false;
-			open_modal_rpd(res.data);
+			if(typeof continue_get_rpd != 'undefined'){
+				continue_get_rpd(res.data);
+			}else{
+				open_modal_rpd(res.data);
+			}
 		}
 		if(cek_hide_loading){
 			hide_loading();

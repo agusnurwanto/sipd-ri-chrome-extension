@@ -102,6 +102,20 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}else if(current_url.indexOf('/perencanaan/rpd/cascading/') != -1){
+		window.type_data_rpd = 'tujuan';
+		var header_isu = 'Isu Strategi RPJPD';
+		var header_tujuan = 'Tujuan Teks';
+		if(current_url.indexOf('/perencanaan/rpd/cascading/tujuan') != -1){
+			type_data_rpd = 'tujuan';
+		}else if(current_url.indexOf('/perencanaan/rpd/cascading/sasaran') != -1){
+			header_isu = 'Tujuan Teks';
+			header_tujuan = 'Sasaran Teks';
+			type_data_rpd = 'sasaran';
+		}else if(current_url.indexOf('/perencanaan/rpd/cascading/program') != -1){
+			header_isu = 'Sasaran Teks';
+			header_tujuan = 'Program Teks';
+			type_data_rpd = 'program';
+		}
 		var modal = ''
 			+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 		        +'<div class="modal-dialog" style="max-width: 1500px;" role="document">'
@@ -116,8 +130,8 @@ function cekUrl(current_url){
 		                        	+'<tr>'
 		                          		+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Status</th>'
-		                          		+'<th class="text-center" style="font-weight: bold;">Isu Strategi RPJPD</th>'
-		                          		+'<th class="text-center" style="font-weight: bold;">Tujuan Teks</th>'
+		                          		+'<th class="text-center" style="font-weight: bold;">'+header_isu+'</th>'
+		                          		+'<th class="text-center" style="font-weight: bold;">'+header_tujuan+'</th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Indikator Teks</th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Target Awal</th>'
 		                          		+'<th class="text-center" style="font-weight: bold;">Target 1</th>'

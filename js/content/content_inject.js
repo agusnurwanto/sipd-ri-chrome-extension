@@ -5,7 +5,7 @@ jQuery(document).on('show.bs.modal', '.modal-extension', function(event) {
 	        { "bSortable": false, "aTargets": [ 0 ] }, 
 	        { "bSearchable": false, "aTargets": [ 0 ] }
 	    ],
-	    "aaSorting": [],
+	    "order": [[2, 'asc'], [3, 'asc']],
 		lengthMenu: [[5, 20, 100, -1], [5, 20, 100, "All"]]
 	});
 });

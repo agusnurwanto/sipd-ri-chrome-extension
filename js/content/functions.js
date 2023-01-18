@@ -30,7 +30,7 @@ function hide_loading(){
 
 function pesan_loading(pesan, loading=false){
 	if(loading){
-		pesan = 'LOADING...<br>'+pesan;
+		pesan = '<div style="padding: 20px;">LOADING...</div>'+pesan;
 	}
 	jQuery('#persen-loading').html(pesan);
 	console.log(pesan);
@@ -326,4 +326,12 @@ function relayAjaxApiKey(options){
 		options.contentType = false;
 	}
     relayAjax(options);
+}
+
+function objToArray(obj){
+	var arr = [];
+	for(var i in obj){
+		arr.push(obj[i]);
+	}
+	return arr;
 }

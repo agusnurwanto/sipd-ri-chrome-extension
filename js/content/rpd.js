@@ -26,60 +26,178 @@ function get_rpd_lokal(){
 function open_modal_rpd(rpd){
 	console.log('rpd', rpd);
 	window.rpd_all = {};
-	get_tujuan_rpd({tahun: _token.tahun})
-	.then(function(tujuan_sipd){
-		var body = '';
-		rpd.map(function(b, i){
-			var keyword = b.id_isu+'-'+b.id_unik+'-'+b.id_unik_indikator;
-			rpd_all[keyword] = b;
-			var cek_tujuan = '';
-			var cek_exist = '';
-			var no_urut = '';
-			if(b.id_unik_indikator == null){
-				cek_tujuan = '#65ffb8c7';
-				no_urut = '['+b.no_urut+'] ';
-				tujuan_sipd.data.map(function(ts, ii){
-					if(replace_string(ts.tujuan_teks) == replace_string(b.tujuan_teks)){
-						cek_exist = '<b>Existing</b>'
-					}
-				});
-			}else if(b.id_unik_indikator != null){
-				cek_tujuan = '#65cdff5c';
-				tujuan_sipd.data.map(function(ts, ii){
-					if(
-						replace_string(ts.tujuan_teks) == replace_string(b.tujuan_teks)
-						&& replace_string(ts.indikator_teks) == replace_string(b.indikator_teks)
-					){
-						cek_exist = '<b>Existing</b>'
-					}
-				});
-			}
-			for(var bb in b){
-				if(b[bb] == null){
-					b[bb] = '';
+	var body = '';
+	if(type_data_rpd == 'tujuan'){
+		get_tujuan_rpd({tahun: _token.tahun})
+		.then(function(tujuan_sipd){
+			rpd.map(function(b, i){
+				var keyword = b.id_isu+'-'+b.id_unik+'-'+b.id_unik_indikator;
+				rpd_all[keyword] = b;
+				var cek_tujuan = '';
+				var cek_exist = '';
+				var catatan = '';
+				var no_urut = '['+b.no_urut+'] ';
+				if(b.id_unik_indikator == null){
+					cek_tujuan = '#65ffb8c7';
+					catatan = b.catatan_teks_tujuan;
+					tujuan_sipd.data.map(function(ts, ii){
+						if(replace_string(ts.tujuan_teks) == replace_string(b.tujuan_teks)){
+							cek_exist = '<b>Existing</b>'
+						}
+					});
+				}else if(b.id_unik_indikator != null){
+					cek_tujuan = '#65cdff5c';
+					catatan = b.indikator_catatan_teks;
+					tujuan_sipd.data.map(function(ts, ii){
+						if(
+							replace_string(ts.tujuan_teks) == replace_string(b.tujuan_teks)
+							&& replace_string(ts.indikator_teks) == replace_string(b.indikator_teks)
+						){
+							cek_exist = '<b>Existing</b>'
+						}
+					});
 				}
-			}
-			body += ''
-			+'<tr style="background:'+cek_tujuan+'">'
-				+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-				+'<td class="text-center">'+cek_exist+'</td>'
-				+'<td>'+b.isu_teks+'</td>'
-				+'<td>'+no_urut+b.tujuan_teks+'</td>'
-				+'<td>'+b.indikator_teks+'</td>'
-				+'<td class="text-center">'+b.target_awal+'</td>'
-				+'<td class="text-center">'+b.target_1+'</td>'
-				+'<td class="text-center">'+b.target_2+'</td>'
-				+'<td class="text-center">'+b.target_3+'</td>'
-				+'<td class="text-center">'+b.target_4+'</td>'
-				+'<td class="text-center">'+b.target_5+'</td>'
-				+'<td class="text-center">'+b.target_akhir+'</td>'
-				+'<td>'+b.catatan_teks_tujuan+'</td>'
-			+'</tr>';
+				for(var bb in b){
+					if(b[bb] == null){
+						b[bb] = '';
+					}
+				}
+				body += ''
+				+'<tr style="background:'+cek_tujuan+'">'
+					+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+					+'<td class="text-center">'+cek_exist+'</td>'
+					+'<td>'+b.isu_teks+'</td>'
+					+'<td>'+no_urut+b.tujuan_teks+'</td>'
+					+'<td>'+b.indikator_teks+'</td>'
+					+'<td class="text-center">'+b.target_awal+'</td>'
+					+'<td class="text-center">'+b.target_1+'</td>'
+					+'<td class="text-center">'+b.target_2+'</td>'
+					+'<td class="text-center">'+b.target_3+'</td>'
+					+'<td class="text-center">'+b.target_4+'</td>'
+					+'<td class="text-center">'+b.target_5+'</td>'
+					+'<td class="text-center">'+b.target_akhir+'</td>'
+					+'<td>'+catatan+'</td>'
+				+'</tr>';
+			});
+			jQuery('#table-extension tbody').html(body);
+			run_script('show_modal');
+			hide_loading();
 		});
-		jQuery('#table-extension tbody').html(body);
-		run_script('show_modal');
-		hide_loading();
-	});
+	}else if(type_data_rpd == 'sasaran'){
+		get_sasaran_rpd({tahun: _token.tahun})
+		.then(function(sasaran_sipd){
+			rpd.map(function(b, i){
+				if(b.id_unik_indikator == null){
+					var keyword = b.id_isu+'-'+b.id_unik;
+					b.keyword = keyword;
+					for(var bb in b){
+						if(b[bb] == null){
+							b[bb] = '';
+						}
+					}
+					rpd_all[keyword] = b;
+				}
+			});
+			var rpd_all_arr = objToArray(rpd_all);
+			var last = rpd_all_arr.length-1;
+			rpd_all_arr.reduce(function(sequence, nextData){
+	            return sequence.then(function(current_data){
+	        		return new Promise(function(resolve_reduce, reject_reduce){
+	        			pesan_loading('Get sasaran RPD WP-SIPD dari tujuan = '+current_data.tujuan_teks, true);
+						var data = {
+						    message:{
+						        type: "get-url",
+						        content: {
+								    url: config.url_server_lokal,
+								    type: 'post',
+								    data: { 
+										action: 'get_rpd',
+										run: 'continue_get_rpd',
+										table: 'data_rpd_sasaran_lokal',
+										id_unik_tujuan: current_data.id_unik,
+										type: 1,
+										api_key: config.api_key
+									},
+					    			return: true
+								}
+						    }
+						};
+						chrome.runtime.sendMessage(data, function(response) {
+						    console.log('responeMessage', response);
+						});
+						window.continue_get_rpd = function(data_sasaran){
+							data_sasaran.map(function(b, i){
+								var cek_sasaran = '';
+								var cek_exist = '';
+								var catatan = '';
+								var keyword = current_data.keyword+'-'+b.id_unik+'-'+b.id_unik_indikator;
+								b.tujuan = current_data;
+								rpd_all[keyword] = b;
+								var no_urut = '['+b.sasaran_no_urut+'] ';
+
+								if(b.id_unik_indikator == null){
+									cek_sasaran = '#65ffb8c7';
+									catatan = b.sasaran_catatan;
+									sasaran_sipd.data.map(function(ts, ii){
+										if(replace_string(ts.sasaran_teks) == replace_string(b.sasaran_teks)){
+											cek_exist = '<b>Existing</b>';
+										}
+									});
+								}else if(b.id_unik_indikator != null){
+									cek_sasaran = '#65cdff5c';
+									catatan = b.indikator_catatan_teks;
+									sasaran_sipd.data.map(function(ts, ii){
+										if(
+											replace_string(ts.sasaran_teks) == replace_string(b.sasaran_teks)
+											&& replace_string(ts.indikator_teks) == replace_string(b.indikator_teks)
+										){
+											cek_exist = '<b>Existing</b>';
+										}
+									});
+								}
+								for(var bb in b){
+									if(b[bb] == null){
+										b[bb] = '';
+									}
+								}
+								body += ''
+								+'<tr style="background:'+cek_sasaran+'">'
+									+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+									+'<td class="text-center">'+cek_exist+'</td>'
+									+'<td>['+current_data.no_urut+'] '+current_data.tujuan_teks+'</td>'
+									+'<td>'+no_urut+b.sasaran_teks+'</td>'
+									+'<td>'+b.indikator_teks+'</td>'
+									+'<td class="text-center">'+b.target_awal+'</td>'
+									+'<td class="text-center">'+b.target_1+'</td>'
+									+'<td class="text-center">'+b.target_2+'</td>'
+									+'<td class="text-center">'+b.target_3+'</td>'
+									+'<td class="text-center">'+b.target_4+'</td>'
+									+'<td class="text-center">'+b.target_5+'</td>'
+									+'<td class="text-center">'+b.target_akhir+'</td>'
+									+'<td>'+catatan+'</td>'
+								+'</tr>';
+							});
+							resolve_reduce(nextData);
+						};
+					})
+	                .catch(function(e){
+	                    console.log(e);
+	                    return Promise.resolve(nextData);
+	                });
+	            })
+	            .catch(function(e){
+	                console.log(e);
+	                return Promise.resolve(nextData);
+	            });
+	        }, Promise.resolve(rpd_all_arr[last]))
+	        .then(function(){
+	        	delete window.continue_get_rpd;
+				jQuery('#table-extension tbody').html(body);
+				run_script('show_modal');
+				hide_loading();
+	        });
+	     });
+	}
 }
 
 function getJadwalAktifRpd(){
@@ -244,7 +362,9 @@ function singkronisasi_rpd_dari_lokal(){
 		        .then(function(){
 		        	singkron_indikator_tujuan_rpd(data_selected, jadwal, function(){
 						hide_loading();
-						alert('Proses simpan data RPD masih dalam pengembangan!');
+						if(confirm('Berhasil simpan data RPD! Apakah anda mau merefresh halaman ini untuk melihat hasil perubahan terbaru?')){
+							location.href = location.href;
+						}
 		        	});
 		        });
 			});
