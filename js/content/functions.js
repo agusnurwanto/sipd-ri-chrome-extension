@@ -305,3 +305,25 @@ function formData(data){
 	}
 	return formDataCustom;
 }
+
+function relayAjaxApiKey(options){
+	options.beforeSend = function (xhr) {
+	    xhr.setRequestHeader("x-api-key", x_api_key());
+		xhr.setRequestHeader("x-access-token", _token.token);
+	};
+	options.xhr = function() {
+        var xhr = jQuery.ajaxSettings.xhr();
+        var setRequestHeader = xhr.setRequestHeader;
+        xhr.setRequestHeader = function(name, value) {
+            if (name == 'X-Requested-With') return;
+            setRequestHeader.call(this, name, value);
+        }
+        return xhr;
+    };
+    if(options.type == 'post'){
+		options.cache = true;
+		options.processData = false; 
+		options.contentType = false;
+	}
+    relayAjax(options);
+}
