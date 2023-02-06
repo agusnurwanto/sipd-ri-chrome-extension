@@ -173,4 +173,51 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
+	else if(current_url.indexOf('/standar_harga') != -1)
+	{
+		window.type_data_ssh = 'ssh';
+		if(current_url.indexOf('/standar_harga/ssh') != -1){
+			type_data_ssh = 'ssh';
+					
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
+					singkron_ssh_ke_lokal();
+				});
+				jQuery('#get_arsip_ssh').on('click', function(){
+					get_arsip_ssh();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/standar_harga/hspk') != -1){
+			type_data_ssh = 'hspk';
+		}
+		else if(current_url.indexOf('/standar_harga/asb') != -1){
+			type_data_ssh = 'asb';
+		}
+		else if(current_url.indexOf('/standar_harga/sbu') != -1){
+			type_data_ssh = 'sbu';
+				
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_sbu">Arsip '+type_data_ssh+'</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#get_arsip_sbu').on('click', function(){
+					get_arsip_sbu();
+				});
+			}, 1000);
+		}
+		//window.tipe_ssh_global = jQuery('h1').text().split('-')[1].trim();	
+		
+	}
 }
