@@ -1,20 +1,28 @@
-function get_arsip_ssh(opsi){
-	//console.log(opsi, request.message.content);
+function get_arsip_ssh(type_data_ssh){	
 	return new Promise(function(resolve, reduce){
 		var apiKey = x_api_key();
+		var kelompok;
+			if (type_data_ssh =='SSH') {
+				kelompok = 1;
+			}else if (type_data_ssh =='HSPK') {
+				kelompok = 2;
+			}else if (type_data_ssh =='ASB') {
+				kelompok = 3;
+			}else if (type_data_ssh =='SBU') {
+				kelompok = 4;
+			}
 		relayAjax({
 			url: config.sipd_url+'api/master/d_komponen/list',
 			type: 'post',
 			data: {
 				tahun: _token.tahun,
 				id_daerah: _token.daerah_id,
-				kelompok: 1,
-				tipe: 'SSH',
+				kelompok: kelompok,				
+				tipe: type_data_ssh,
 				is_locked: 3,
 			},
-			beforeSend: function (xhr) {
-			    //xhr.setRequestHeader("X-API-KEY", apiKey);
-				xhr.setRequestHeader("x-api-key", x_api_key());
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", apiKey);
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(ret){
@@ -162,13 +170,13 @@ function send_to_lokal(val){
 	console.log('ssh', val);
 	val.map(function(b, i){		
 			var kelompok;
-			if (b.tipe_standar_harga ='SSH') {
+			if (b.tipe_standar_harga == 'SSH') {
 				kelompok = 1;
-			}else if (b.tipe_standar_harga ='HSPK') {
+			}else if (b.tipe_standar_harga == 'HSPK') {
 				kelompok = 2;
-			}else if (b.tipe_standar_harga ='ASB') {
+			}else if (b.tipe_standar_harga == 'ASB') {
 				kelompok = 3;
-			} else {
+			}else if (b.tipe_standar_harga == 'SBU') {
 				kelompok = 4;
 			}
 			data_ssh.ssh[i] = {};
@@ -187,8 +195,7 @@ function send_to_lokal(val){
 			data_ssh.ssh[i].created_user	= b.created_user;
 			data_ssh.ssh[i].created_at	= b.created_at;
 			data_ssh.ssh[i].updated_user	= b.updated_user;
-			data_ssh.ssh[i].updated_at	= b.updated_at;
-			// data_ssh.ssh[i].kelompok	= b.kelompok;
+			data_ssh.ssh[i].updated_at	= b.updated_at;			
 			data_ssh.ssh[i].kelompok	= kelompok;
 			data_ssh.ssh[i].tipe_standar_harga	= b.tipe_standar_harga;
 			data_ssh.ssh[i].ket_teks	= b.ket_teks;
@@ -209,8 +216,7 @@ function send_to_lokal(val){
 			content: {
 				url: config.url_server_lokal,
 				type: 'post',								
-				data: data_ssh,
-				// return: true
+				data: data_ssh,				
 				return: false
 			}
 		}
