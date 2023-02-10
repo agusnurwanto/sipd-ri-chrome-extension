@@ -173,6 +173,43 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
+	// kamus usulan
+	else if(current_url.indexOf('/settings/kamus_usulan') != -1)
+	{
+		window.tipe = 'asmas';
+		if(current_url.indexOf('/settings/kamus_usulan/asmas') != -1){
+			console.log('halaman Kamus Usulan Aspirasi Masyarakat');
+			tipe = 'asmas';
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_kamus_usulan_pokir">Singkron Kamus '+tipe+' ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_kamus_usulan_pokir').on('click', function(){
+					singkron_kamus_usulan_pokir(tipe);
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/settings/kamus_usulan/reses') != -1)
+		{
+			console.log('halaman Kamus Usulan Aspirasi Anggota Dewan (Pokir / Reses)');
+			tipe = 'reses';
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_kamus_usulan_pokir">Singkron Kamus '+tipe+' ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_kamus_usulan_pokir').on('click', function(){
+					singkron_kamus_usulan_pokir(tipe);
+				});
+			}, 1000);
+		}
+	}
+	// standar harga
 	else if(current_url.indexOf('/standar_harga') != -1)
 	{
 		window.type_data_ssh = 'ssh';
@@ -184,7 +221,7 @@ function cekUrl(current_url){
 				var btn = ''
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -203,7 +240,7 @@ function cekUrl(current_url){
 				var btn = ''
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -222,7 +259,7 @@ function cekUrl(current_url){
 				var btn = ''
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -241,7 +278,7 @@ function cekUrl(current_url){
 				var btn = ''
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_sbu">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -252,7 +289,5 @@ function cekUrl(current_url){
 				});
 			}, 1000);
 		}
-		//window.tipe_ssh_global = jQuery('h1').text().split('-')[1].trim();	
-		
 	}
 }
