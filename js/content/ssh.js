@@ -67,7 +67,7 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},			
 			success: function(data){			
-				pesan_loading('Simpan data SSH ke Lokal!');
+				pesan_loading('Simpan data '+type_data_ssh+' ke DB Lokal!');
 				var data_all = [];
 				var data_sementara = [];
 				data.data.data.map(function(b, i){

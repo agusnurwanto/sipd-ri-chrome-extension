@@ -30,6 +30,7 @@
 				"js/content/rpjpd.js",
 				"js/content/rpd.js",
 				"js/content/ssh.js",
+				"js/content/usulan/kamus.js",
 				"js/content/app.js"
 			],
 			"run_at": "document_end"
