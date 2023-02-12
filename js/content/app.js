@@ -209,6 +209,72 @@ function cekUrl(current_url){
 			}, 1000);
 		}
 	}
+	// Data Usulan Asmas
+	else if(current_url.indexOf('/usulan/usulan-aspirasi') != -1)
+	{
+		if(current_url.indexOf('/usulan/usulan-aspirasi/pengajuan') != -1){
+			console.log('halaman Usulan Aspirasi Masyarakat');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_asmas_lokal">Singkron ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_asmas_lokal').on('click', function(){
+					singkron_asmas_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/usulan/usulan-aspirasi/monitor') != -1)
+		{
+			console.log('halaman Usulan Aspirasi Masyarakat');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_asmas_lokal">Singkron ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_asmas_lokal').on('click', function(){
+					singkron_asmas_lokal();
+				});
+			}, 1000);
+		}
+	}		
+	// Data Usulan Pokir
+	else if(current_url.indexOf('/usulan/usulan-pokir') != -1)
+	{		
+		if(current_url.indexOf('/usulan/usulan-pokir/pengajuan') != -1){
+			console.log('halaman Usulan Aspirasi Anggota Dewan (Pokir / Reses)');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_pokir_lokal">Singkron ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_pokir_lokal').on('click', function(){
+					singkron_pokir_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('usulan/usulan-pokir/monitor') != -1)
+		{
+			console.log('halaman Usulan Aspirasi Anggota Dewan (Pokir / Reses)');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_pokir_lokal">Singkron ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_pokir_lokal').on('click', function(){
+					singkron_pokir_lokal();
+				});
+			}, 1000);
+		}
+	}
 	// standar harga
 	else if(current_url.indexOf('/standar_harga') != -1)
 	{
