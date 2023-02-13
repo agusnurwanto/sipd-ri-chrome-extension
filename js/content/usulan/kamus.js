@@ -46,8 +46,10 @@ function singkron_kamus_usulan_pokir(opsi){
 							data_kamus.tahun = current_data.tahun;
 							data_kamus.tipe = tipe;
 
+							var iddaerah = current_data.id_daerah;
 							var idusulan = current_data.id_kamus;
-							get_detail_kamus_pokir(idusulan).then(function(detail){
+							var tahun = current_data.tahun;
+							get_detail_kamus_pokir(iddaerah, idusulan, tahun).then(function(detail){
 								data_kamus.idbidangurusan = detail.idbidangurusan;
 								// data_kamus.idskpd = detail.idskpd;								
 								data_kamus.id_jenis_usul = detail.id_jenis_usul;
@@ -98,14 +100,13 @@ function singkron_kamus_usulan_pokir(opsi){
 	}
 }
 
-function get_detail_kamus_pokir(idusulan){
+function get_detail_kamus_pokir(iddaerah, idusulan, tahun){
     return new Promise(function(resolve, reject){
 		relayAjax({	      	
-			url: config.sipd_url+'api/master/kamus_usulan/view/'+idusulan+'/2024/101',
-			type: 'GET',	      	
-			data: formData,
+			url: config.sipd_url+'api/master/kamus_usulan/view/'+idusulan+'/'+tahun+'/'+iddaerah,
+			type: 'GET',	      				
 			processData: false,
-			contentType: false,
+			contentType : 'application/json',
 	      	success: function(data){
 	      		return resolve(data);
 	      	}
