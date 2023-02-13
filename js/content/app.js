@@ -173,6 +173,28 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
+	// Data Master SKPD
+	else if(current_url.indexOf('/master/skpd') != -1)
+	{
+		console.log('halaman Master SKPD');		
+		setTimeout(function(){
+			jQuery('.aksi-extension').remove();
+			var btn = ''
+				+'<div class="aksi-extension">'						
+					+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_skpd_ke_lokal">Singkron ke DB Lokal</button>'
+					+'<button class="btn btn-md btn-success btn-outline" id="tampil_laporan_renja" style="margin-left: 3px;">'
+						+'Tampilkan Link Print RENJA'
+					+'</button>';
+				+'</div>';
+			jQuery('.page-title').append(btn);
+			jQuery('#singkron_skpd_ke_lokal').on('click', function(){
+				singkron_skpd_ke_lokal();
+			});
+			jQuery('#tampil_laporan_renja').on('click', function(){
+				singkron_skpd_ke_lokal(1);
+			});
+		}, 1000);
+	}
 	// kamus usulan
 	else if(current_url.indexOf('/settings/kamus_usulan') != -1)
 	{

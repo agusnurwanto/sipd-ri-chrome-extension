@@ -30,6 +30,7 @@
 				"js/content/rpjpd.js",
 				"js/content/rpd.js",
 				"js/content/ssh.js",
+				"js/content/master/skpd.js",	
 				"js/content/usulan/kamus.js",				
 				"js/content/usulan/data_asmas.js",
 				"js/content/usulan/data_pokir.js",
