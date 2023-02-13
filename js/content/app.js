@@ -195,6 +195,38 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
+	// Data Master Akun
+	else if(current_url.indexOf('/master/akun') != -1)
+	{
+		console.log('halaman Master Akun Belanja');		
+		setTimeout(function(){
+			jQuery('.aksi-extension').remove();
+			var btn = ''
+				+'<div class="aksi-extension">'						
+					+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_akun_ke_lokal">Singkron ke DB Lokal</button>'					
+				+'</div>';
+			jQuery('.page-title').append(btn);
+			jQuery('#singkron_akun_ke_lokal').on('click', function(){
+				singkron_akun_ke_lokal();
+			});
+		}, 1000);
+	}
+	// Data Master Akun
+	else if(current_url.indexOf('/master/sumber_dana') != -1)
+	{
+		console.log('halaman Master Sumber Dana');		
+		setTimeout(function(){
+			jQuery('.aksi-extension').remove();
+			var btn = ''
+				+'<div class="aksi-extension">'						
+					+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_sumber_dana_lokal">Singkron ke DB Lokal</button>'					
+				+'</div>';
+			jQuery('.page-title').append(btn);
+			jQuery('#singkron_sumber_dana_lokal').on('click', function(){
+				singkron_sumber_dana_lokal();
+			});
+		}, 1000);
+	}
 	// kamus usulan
 	else if(current_url.indexOf('/settings/kamus_usulan') != -1)
 	{
