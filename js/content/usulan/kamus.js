@@ -1,5 +1,5 @@
-function singkron_kamus_usulan_pokir(opsi){
-	console.log('opsi', opsi);
+function singkron_kamus_usulan_pokir(tipe){
+	console.log('tipe', tipe);
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		jQuery('#wrap-loading').show();
 		jQuery('#persen-loading').attr('persen', 0);
@@ -10,14 +10,14 @@ function singkron_kamus_usulan_pokir(opsi){
 			data: {
 				tahun: _token.tahun,
 				id_daerah: _token.daerah_id,										
-				jenis: opsi,				
+				jenis: tipe,				
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("x-api-key", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},			
 			success: function(data){			
-				pesan_loading('Simpan data Kamus Usulan '+opsi+' ke DB Lokal!');
+				pesan_loading('Simpan data Kamus Usulan '+tipe+' ke DB Lokal!');
 				var last = data.data.length-1;
 				data.data.reduce(function(sequence, nextData){
 					return sequence.then(function(current_data){
@@ -32,7 +32,7 @@ function singkron_kamus_usulan_pokir(opsi){
 							data_kamus.id_unit = current_data.id_unit;							
 							data_kamus.idskpd = current_data.id_unit;
 							data_kamus.is_locked = current_data.is_locked;
-							data_kamus.namaprogram = current_data.namaprogram;
+							data_kamus.namaprogram = current_data.nama_program;
 							data_kamus.jenis_profil = current_data.jenis_profil;
 							data_kamus.jml = current_data.jml;
 							data_kamus.kelompok = current_data.kelompok;
@@ -50,11 +50,11 @@ function singkron_kamus_usulan_pokir(opsi){
 							var idusulan = current_data.id_kamus;
 							var tahun = current_data.tahun;
 							get_detail_kamus_pokir(iddaerah, idusulan, tahun).then(function(detail){
-								data_kamus.idbidangurusan = detail.idbidangurusan;
+								// console.log(detail.data[0]);
+								data_kamus.idbidangurusan = detail.data[0].id_bidang_urusan;
 								// data_kamus.idskpd = detail.idskpd;								
-								data_kamus.id_jenis_usul = detail.id_jenis_usul;
-								data_kamus.kodeprogram = detail.kodeprogram;
-								// data_kamus.namaprogram = detail.namaprogram;
+								data_kamus.id_jenis_usul = detail.data[0].id_jenis_usul;
+								data_kamus.kodeprogram = detail.data[0].kodeprogram;								
 								var data = {
 									message:{
 										type: "get-url",
