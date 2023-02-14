@@ -31,6 +31,7 @@ function singkron_skpd_ke_lokal(tampil_renja){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(unit){
+				pesan_loading('Simpan data Master Profil SKPD ke DB Lokal!');
 				var sendData = unit.data.data.map(function(b, i){
 					return new Promise(function(resolve, reject){
                             var idsetupunit;
@@ -52,8 +53,7 @@ function singkron_skpd_ke_lokal(tampil_renja){
 									xhr.setRequestHeader("X-API-KEY", x_api_key());
 									xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 								},					          	
-					          	success: function(data){
-                                    console.log(data.data[0]);                                    
+					          	success: function(data){                                                                     
 					          		var data_unit = {
 										id_skpd : b.id_skpd,                            
 										is_skpd : b.is_skpd,
