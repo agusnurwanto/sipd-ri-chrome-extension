@@ -10,7 +10,7 @@ function singkron_pokir_lokal(){
             level: 2,
             id_jenis_usul: 13,
             page: 0,
-            pageSize: 20,
+            pageSize: 1000000,
             pencarian:'',
             order: 'id_usulan',
             order_dir: 'asc',					

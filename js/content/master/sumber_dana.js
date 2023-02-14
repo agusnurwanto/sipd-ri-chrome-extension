@@ -20,6 +20,7 @@ function singkron_sumber_dana_lokal() {
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
             success: function (data) {
+                pesan_loading('Simpan data Sumber Dana ke DB Lokal!');
                 const tgl = new Date();
                 var data_sumber_dana = {
                     action: 'singkron_sumber_dana',

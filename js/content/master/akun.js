@@ -20,6 +20,7 @@ function singkron_akun_ke_lokal(){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){
+				pesan_loading('Simpan data Akun Belanja ke DB Lokal!');
 				var data_akun = { 
 					action: 'singkron_akun_belanja',
 					type: 'ri',
