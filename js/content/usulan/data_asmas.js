@@ -13,7 +13,7 @@ function singkron_asmas_lokal(){
 				level: 2,
 				id_jenis_usul: 8,
 				page: 0,
-				pageSize: 5,
+				pageSize: 1000000,
 				pencarian:'',
 				order: 'id_usulan',
 				order_dir: 'asc',					
