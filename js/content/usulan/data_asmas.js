@@ -28,8 +28,8 @@ function singkron_asmas_lokal(){
                 data.data.data.reduce(function(sequence, nextData){
                     return sequence.then(function(current_data){
                         return new Promise(function(resolve_reduce, reject_reduce){                            
-                            console.log(typeof current_data.id_kecamatan);
-                            console.log(current_data.id_kecamatan == 0);
+                            // console.log(typeof current_data.id_kecamatan);
+                            // console.log(current_data.id_kecamatan == 0);
                             if(
                                 current_data.id_kecamatan == 0
                                 && current_data.id_kelurahan == 0
