@@ -215,7 +215,7 @@ function singkron_asmas_lokal(){
                                 data_asmas.id_pengusul = current_data.id_pengusul;
                                 data_asmas.id_jenis_usul = current_data.id_jenis_usul;
                                 data_asmas.id_bidang_urusan = current_data.id_bidang_urusan;
-                                data_asmas.giat_teks = current_data.nama_kamus; //baru
+                                data_asmas.giat_teks = current_data.nama_kamus; 
                                 data_asmas.masalah = current_data.masalah;
                                 data_asmas.alamat_teks = current_data.alamat_teks;
                                 data_asmas.id_kab_kota = current_data.id_kab_kota;
@@ -293,6 +293,7 @@ function singkron_asmas_lokal(){
                                     data_asmas.id_sub_bl = detail.data[0].id_sub_bl; //baru
                                     data_asmas.sub_giat_baru = detail.data[0].sub_giat_baru; //baru
                                     data_asmas.rev_skpd = detail.data[0].rev_unit;
+                                    data_asmas.rev_unit = detail.data[0].rev_unit; //baru
                                     data_asmas.id_skpd_bl = detail.data[0].id_skpd_bl; //baru
                                     data_asmas.id_sub_skpd_bl = detail.data[0].id_sub_skpd_bl; //baru
                                     data_asmas.id_program_bl = detail.data[0].id_program_bl; //baru
@@ -305,7 +306,8 @@ function singkron_asmas_lokal(){
                                     data_asmas.detail_lurahteks = detail.data[0].nama_lurah;
                                     data_asmas.detail_bidangurusan = detail.data[0].nama_bidang_urusan;
                                     data_asmas.bidang_urusan = detail.data[0].nama_bidang_urusan;
-                                    data_asmas.detail_idskpd = detail.data[0].id_skpd_awal;                                
+                                    data_asmas.detail_idskpd = detail.data[0].id_skpd_awal;
+                                    data_asmas.detail_id_skpd_awal = detail.data[0].id_skpd_awal;                                
                                     data_asmas.detail_kodeskpd = detail.data[0].kodeskpd;
                                     data_asmas.detail_namaskpd = detail.data[0].nama_skpd_awal;
                                     data_asmas.detail_nama_rev_unit = detail.data[0].nama_rev_unit;
