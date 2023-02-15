@@ -189,6 +189,130 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
+	// Data Master User
+	else if(current_url.indexOf('/user') != -1)
+	{
+		if(current_url.indexOf('/user/admin_bappeda_keuangan') != -1)
+		{
+			console.log('halaman User admin_bappeda_keuangan');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/ppkd') != -1)
+		{
+			console.log('halaman User ppkd');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/anggota_dewan') != -1)
+		{
+			console.log('halaman User anggota_dewan');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/penyelia_inspektorat') != -1)
+		{
+			console.log('halaman User penyelia_inspektorat');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/penyelia_barang_jasa') != -1)
+		{
+			console.log('halaman User penyelia_barang_jasa');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/kelurahan_desa') != -1)
+		{
+			console.log('halaman User kelurahan_desa');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/admin_standar_harga') != -1)
+		{
+			console.log('halaman User admin_standar_harga');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/masyarakat') != -1)
+		{
+			console.log('halaman User masyarakat');		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_dewan_lokal').on('click', function(){
+					singkron_user_dewan_lokal();
+				});
+			}, 1000);
+		}
+	}	
 	// Data Master SKPD
 	else if(current_url.indexOf('/master/skpd') != -1)
 	{
