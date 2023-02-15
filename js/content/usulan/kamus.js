@@ -28,6 +28,7 @@ function singkron_kamus_usulan_pokir(tipe){
 							data_kamus.giat_teks = current_data.giat_teks;
 							data_kamus.id_kamus = current_data.id_kamus;
 							data_kamus.id_program = current_data.id_program;
+							data_kamus.id_jenis_usul = current_data.id_jenis_usul;
 							data_kamus.id_unik = current_data.id_unik;
 							data_kamus.id_unit = current_data.id_unit;							
 							data_kamus.idskpd = current_data.id_unit;
