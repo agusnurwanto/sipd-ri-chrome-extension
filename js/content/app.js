@@ -173,6 +173,22 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
+	// Data pengaturan SIPD
+	else if(current_url.indexOf('/pengaturan/sipd') != -1)
+	{
+		console.log('halaman Pengaturan SIPD');		
+		setTimeout(function(){
+			jQuery('.aksi-extension').remove();
+			var btn = ''
+				+'<div class="aksi-extension">'						
+					+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_pengaturan_sipd_lokal">Singkron ke DB Lokal</button>'					
+				+'</div>';
+			jQuery('.page-title').append(btn);
+			jQuery('#singkron_pengaturan_sipd_lokal').on('click', function(){
+				singkron_pengaturan_sipd_lokal();
+			});
+		}, 1000);
+	}
 	// Data Master SKPD
 	else if(current_url.indexOf('/master/skpd') != -1)
 	{
