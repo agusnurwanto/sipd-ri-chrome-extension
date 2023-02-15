@@ -54,10 +54,11 @@ function singkron_pokir_lokal(){
 							// data_pokir.id_unit = current_data.id_unit;
 							data_pokir.id_usulan = current_data.id_usulan;
 							data_pokir.is_batal = current_data.is_batal;
-							// data_pokir.is_tolak = current_data.is_tolak;
-							data_pokir.is_tolak = current_data.is_kembalikan; //baru                        
+							data_pokir.is_tolak = current_data.is_tolak;							 
+							data_pokir.is_kembalikan = current_data.is_kembalikan; //baru                       
 							data_pokir.is_verif = current_data.is_verif; //baru
-							data_pokir.tolak_teks = current_data.kembalikan; //baru
+							data_pokir.tolak_teks = current_data.tolak_teks;
+							data_pokir.kembalikan = current_data.kembalikan; //baru
 							data_pokir.jenis_belanja = current_data.jenis_belanja;
 							// data_pokir.jenis_usul_teks = current_data.jenis_usul_teks;
 							// data_pokir.kelompok = current_data.kelompok;
@@ -192,10 +193,11 @@ function singkron_pokir_lokal(){
 							// data_pokir.id_unit = current_data.id_unit;
 							data_pokir.id_usulan = current_data.id_usulan;
 							data_pokir.is_batal = current_data.is_batal;
-							// data_pokir.is_tolak = current_data.is_tolak;
-							data_pokir.is_tolak = current_data.is_kembalikan; //baru                        
+							data_pokir.is_tolak = current_data.is_tolak;
+							data_pokir.is_kembalikan = current_data.is_kembalikan; //baru                       
 							data_pokir.is_verif = current_data.is_verif; //baru
-							data_pokir.tolak_teks = current_data.kembalikan; //baru
+							data_pokir.tolak_teks = current_data.tolak_teks;
+							data_pokir.kembalikan = current_data.kembalikan; //baru
 							data_pokir.jenis_belanja = current_data.jenis_belanja;
 							// data_pokir.jenis_usul_teks = current_data.jenis_usul_teks;
 							// data_pokir.kelompok = current_data.kelompok;
@@ -220,6 +222,7 @@ function singkron_pokir_lokal(){
 							// data_pokir.rekom_tapd_koefisien = current_data.rekom_tapd.koefisien;
 							// data_pokir.rekom_tapd_rekomendasi = current_data.rekom_tapd.rekomendasi;
 							// data_pokir.satuan = current_data.satuan;
+							data_pokir.rekom_teks = current_data.rekom_teks;               
 							data_pokir.rekom_tapd_rekomendasi = current_data.rekom_teks;                        
 							data_pokir.status_usul = current_data.status_usul;
 							data_pokir.status_usul_teks = current_data.nama_status;
