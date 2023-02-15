@@ -44,7 +44,7 @@ function singkron_sumber_dana_lokal() {
                     data_sumber_dana.dana[i].nama_dana = dana.nama_dana                    
                     data_sumber_dana.dana[i].set_input = dana.set_input
                     data_sumber_dana.dana[i].sumber_dana = dana.sumber_dana //baru
-                    data_sumber_dana.dana[i].status = dana.sumber_dana
+                    // data_sumber_dana.dana[i].status = dana.sumber_dana
                     // data_sumber_dana.dana[i].status = dana.status
                     // data_sumber_dana.dana[i].tahun = dana.tahun
                     data_sumber_dana.dana[i].tahun = _token.tahun
