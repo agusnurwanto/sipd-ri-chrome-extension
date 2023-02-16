@@ -195,6 +195,8 @@ function cekUrl(current_url){
 		if(current_url.indexOf('/user/admin_bappeda_keuangan') != -1)
 		{
 			console.log('halaman User admin_bappeda_keuangan');		
+			level = "3,4";
+			levelmitra = "7,11";			
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -203,13 +205,14 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/ppkd') != -1)
 		{
-			console.log('halaman User ppkd');		
+			console.log('halaman User ppkd');	
+			level = "8";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -218,13 +221,14 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/anggota_dewan') != -1)
 		{
 			console.log('halaman User anggota_dewan');		
+			level = "16";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -233,13 +237,14 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/penyelia_inspektorat') != -1)
 		{
 			console.log('halaman User penyelia_inspektorat');		
+			level = "26";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -248,13 +253,14 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/penyelia_barang_jasa') != -1)
 		{
-			console.log('halaman User penyelia_barang_jasa');		
+			console.log('halaman User penyelia_barang_jasa');
+			level = "30";		
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -263,13 +269,14 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/kelurahan_desa') != -1)
 		{
-			console.log('halaman User kelurahan_desa');		
+			console.log('halaman User kelurahan_desa');	
+			level = "20";	
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -278,13 +285,14 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/admin_standar_harga') != -1)
 		{
-			console.log('halaman User admin_standar_harga');		
+			console.log('halaman User admin_standar_harga');
+			level = "6";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -293,13 +301,30 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/user/masyarakat') != -1)
 		{
-			console.log('halaman User masyarakat');		
+			console.log('halaman User masyarakat');	
+			level = "21";		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_masyarakat_lokal">Singkron User ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_masyarakat_lokal').on('click', function(){
+					singkron_user_masyarakat_lokal(level);
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/penyelia_standar_harga') != -1)
+		{
+			console.log('halaman User Penyelia Standar Harga');	
+			level = "10,14";	
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -308,7 +333,7 @@ function cekUrl(current_url){
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
-					singkron_user_dewan_lokal();
+					singkron_user_dewan_lokal(level);
 				});
 			}, 1000);
 		}
