@@ -204,6 +204,7 @@ function singkron_user_dewan_lokal(level){
 function singkron_user_masyarakat_lokal(level){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		jQuery('#wrap-loading').show();		
+		console.log('level', level);
 		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/user/list_user_masyarakat',
@@ -356,6 +357,161 @@ function singkron_user_masyarakat_lokal(level){
 	}
 }
 
+function singkron_user_mitra_lokal(level, model){
+	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+		jQuery('#wrap-loading').show();
+		console.log('level', level);
+		console.log('model', model);		
+		var apiKey = x_api_key();
+		relayAjax({
+			url: config.sipd_url+'api/master/user/listuserbylevelid',
+			type: 'POST',
+			data: {            
+				id_daerah: _token.daerah_id,				
+				id_level: level,
+				tahun: _token.tahun,
+				// deleted_data: true,
+				// order[0][column]: 0,
+				// order[0][dir]: asc,
+				// search[value]: '',
+				// length: 200000,
+				// start: 0,
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(dewan){				
+				pesan_loading('Simpan data Master User Mitra / Penyelia ke DB Lokal!');		
+				console.log(dewan);	
+				var last = dewan.data.length-1;
+				var first = true;
+				dewan.data.reduce(function(sequence, nextData){
+				    return sequence.then(function(current_data){
+						return new Promise(function(resolve_reduce, reject_reduce){							
+							var active = 1;
+							if (current_data.is_locked == 1)
+							{
+								var active = 0;
+							}
+							var iduser = current_data.id_user;						 															
+								get_view_user(iduser).then(function(detil){
+									var data_dewan = { 
+										action: 'singkron_user_dewan',
+										type: 'ri',
+						                tahun_anggaran: _token.tahun,
+										api_key: config.api_key,
+										data: {}
+									};
+									
+									data_dewan.data.is_locked = current_data.is_locked; //baru int
+									data_dewan.data.active = active;
+									data_dewan.data.accasmas = detil.data.accAsmas;
+									data_dewan.data.accbankeu = detil.data.accBankeu;
+									data_dewan.data.accdisposisi = detil.data.accDisposisi;
+									data_dewan.data.accgiat = detil.data.accGiat;
+									data_dewan.data.acchibah = detil.data.accHibban;
+									data_dewan.data.accinput = detil.data.accInput;
+									data_dewan.data.accjadwal = detil.data.accJadwal;
+									data_dewan.data.acckunci = detil.data.accKunci;
+									data_dewan.data.accmaster = detil.data.accMaster;
+									data_dewan.data.accmonitor = detil.data.accMonitor; //baru
+									data_dewan.data.accspv = detil.data.accSpv;
+									data_dewan.data.accunit = detil.data.accUnit;
+									data_dewan.data.accusulan = detil.data.accUsulan;
+									data_dewan.data.akses_user = detil.data.akses_user; //baru
+									data_dewan.data.idlevel = detil.data.id_level;
+									data_dewan.data.idprofil = detil.data.id_profil;
+									data_dewan.data.iduser = detil.data.id_user;
+									data_dewan.data.jabatan = detil.data.jabatan;
+									data_dewan.data.loginname = detil.data.login_name;
+									data_dewan.data.nama = detil.data.nama_user;
+									data_dewan.data.nip = detil.data.nip;								
+
+									var idusers = detil.data.id_user;
+									var idprofil = detil.data.id_profil;										
+
+									get_skpd_pemangku(idusers, model).then(function(skpd){
+										console.log(skpd.data.length);		
+										if(skpd.data.length >= 2){
+											var data_skpd = { 
+												action: 'singkron_skpd_mitra_bappeda',
+												type: 'ri',
+												tahun_anggaran: _token.tahun,
+												api_key: config.api_key,
+												id_user: current_data.id_user,
+												data: []
+											};
+											skpd.data.map(function(b, i){
+												var current_user_skpd = {};
+												current_user_skpd.akses_user = b.akses_user;
+												current_user_skpd.id_level = b.id_level;
+												current_user_skpd.id_unit = b.id_unit;
+												current_user_skpd.id_user = b.id_user;
+												current_user_skpd.is_locked = b.is_locked;
+												current_user_skpd.kode_skpd = b.kode_skpd;
+												current_user_skpd.login_name = b.login_name;
+												current_user_skpd.nama_skpd = b.nama_skpd;
+												current_user_skpd.nama_user = b.nama_user;
+												current_user_skpd.nip = b.nip;
+												data_skpd.data.push(current_user_skpd);
+											});
+									
+											var data = {
+												message:{
+													type: "get-url",
+													content: {
+														url: config.url_server_lokal,
+														type: 'post',
+														data: data_skpd,
+														return: false
+													}
+												}
+											};
+											chrome.runtime.sendMessage(data, function(response) {
+												console.log('responeMessage', response);
+												resolve_reduce(nextData);
+											});
+										}
+
+										var data = {
+											message:{
+												type: "get-url",
+												content: {
+													url: config.url_server_lokal,
+													type: 'post',
+													data: data_dewan,
+													return: false
+												}
+											}
+										};
+										chrome.runtime.sendMessage(data, function(response) {
+											console.log('responeMessage', response);
+											resolve_reduce(nextData);
+										});
+										
+									})
+								});							
+						})
+				        .catch(function(e){
+				            console.log(e);
+				            return Promise.resolve(nextData);
+				        });
+				    })
+				    .catch(function(e){
+				        console.log(e);
+				        return Promise.resolve(nextData);
+				    });
+				}, Promise.resolve(dewan.data[last]))
+				.then(function(data_last){
+					alert('Berhasil singkron data User!');
+					jQuery('#wrap-loading').hide();
+				});
+			}
+		});
+	}
+}
+
 function get_view_user(iduser){    
     return new Promise(function(resolve, reject){    	
 		relayAjax({
@@ -414,6 +570,28 @@ function get_view_profil(iduser, idprofil){
 			},
 	      	success: function(profil){
 	      		return resolve(profil);
+	      	}
+	    });
+    });
+}
+
+function get_skpd_pemangku(iduser, model){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/user/view_user_skpd_pemangku',                                    
+			type: 'POST',	      				
+			data: {            
+					id_daerah: _token.daerah_id,				
+					id_user: iduser,					
+					tahun: _token.tahun,
+					model: model,
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(skpd){
+	      		return resolve(skpd);
 	      	}
 	    });
     });

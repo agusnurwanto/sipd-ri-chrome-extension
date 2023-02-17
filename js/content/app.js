@@ -196,16 +196,55 @@ function cekUrl(current_url){
 		{
 			console.log('halaman User admin_bappeda_keuangan');		
 			level = "3,4";
-			levelmitra = "7,11";			
+			levelmitra = "7,11";
+			model="mitra";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="singkron_user_mitra_lokal">Singkron User Mitra Bappeda ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
 					singkron_user_dewan_lokal(level);
+				});
+				jQuery('#singkron_user_mitra_lokal').on('click', function(){
+					singkron_user_mitra_lokal(levelmitra, model);
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/mitra_bappeda') != -1)
+		{
+			console.log('halaman User mitra_bappeda');	
+			level = "7,11";
+			model="mitra";
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_mitra_lokal">Singkron User Mitra/Penyelia ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_mitra_lokal').on('click', function(){
+					singkron_user_mitra_lokal(level, model);
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/penyelia_keuangan') != -1)
+		{
+			console.log('halaman User penyelia_keuangan');	
+			level = "8,9,10,14,12";	
+			model = "ppkd"		
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_mitra_lokal">Singkron User Mitra/Penyelia ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_mitra_lokal').on('click', function(){
+					singkron_user_mitra_lokal(level, model);
 				});
 			}, 1000);
 		}
@@ -213,15 +252,21 @@ function cekUrl(current_url){
 		{
 			console.log('halaman User ppkd');	
 			level = "8";
+			levelp = "8,9,10,14,12";
+			model = "ppkd"
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="singkron_user_mitra_lokal">Singkron User Mitra/Penyelia ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
 					singkron_user_dewan_lokal(level);
+				});
+				jQuery('#singkron_user_mitra_lokal').on('click', function(){
+					singkron_user_mitra_lokal(levelp, model);
 				});
 			}, 1000);
 		}
@@ -245,15 +290,20 @@ function cekUrl(current_url){
 		{
 			console.log('halaman User penyelia_inspektorat');		
 			level = "26";
+			model="inspektorat";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="singkron_user_mitra_lokal">Singkron User Mitra/Penyelia ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
 					singkron_user_dewan_lokal(level);
+				});
+				jQuery('#singkron_user_mitra_lokal').on('click', function(){
+					singkron_user_mitra_lokal(level, model);
 				});
 			}, 1000);
 		}
@@ -261,15 +311,20 @@ function cekUrl(current_url){
 		{
 			console.log('halaman User penyelia_barang_jasa');
 			level = "30";		
+			model="pbj";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="singkron_user_mitra_lokal">Singkron User Mitra/Penyelia ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
 					singkron_user_dewan_lokal(level);
+				});
+				jQuery('#singkron_user_mitra_lokal').on('click', function(){
+					singkron_user_mitra_lokal(level, model);
 				});
 			}, 1000);
 		}
