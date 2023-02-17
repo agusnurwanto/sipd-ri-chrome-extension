@@ -234,8 +234,8 @@ function cekUrl(current_url){
 		else if(current_url.indexOf('/user/penyelia_keuangan') != -1)
 		{
 			console.log('halaman User penyelia_keuangan');	
-			level = "8,9,10,14,12";	
-			model = "ppkd"		
+			level = "8";
+			model = "penyelia";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -252,8 +252,8 @@ function cekUrl(current_url){
 		{
 			console.log('halaman User ppkd');	
 			level = "8";
-			levelp = "8,9,10,14,12";
-			model = "ppkd"
+			// levelp = "8,9,10,14,12";			
+			model = "penyelia";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
@@ -266,7 +266,7 @@ function cekUrl(current_url){
 					singkron_user_dewan_lokal(level);
 				});
 				jQuery('#singkron_user_mitra_lokal').on('click', function(){
-					singkron_user_mitra_lokal(levelp, model);
+					singkron_user_mitra_lokal(level, model);
 				});
 			}, 1000);
 		}

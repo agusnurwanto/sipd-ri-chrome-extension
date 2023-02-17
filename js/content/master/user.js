@@ -429,11 +429,9 @@ function singkron_user_mitra_lokal(level, model){
 									data_dewan.data.nip = detil.data.nip;								
 
 									var idusers = detil.data.id_user;
-									var idprofil = detil.data.id_profil;										
-
 									get_skpd_pemangku(idusers, model).then(function(skpd){
 										console.log(skpd.data.length);		
-										if(skpd.data.length >= 2){
+										if(skpd.data.length >= 1){
 											var data_skpd = { 
 												action: 'singkron_skpd_mitra_bappeda',
 												type: 'ri',
