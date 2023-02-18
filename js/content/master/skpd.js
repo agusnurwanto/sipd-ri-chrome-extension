@@ -11,7 +11,7 @@ function singkron_skpd_ke_lokal(tampil_renja){
 		return;
 	}
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();	
+		show_loading();
         var apiKey = x_api_key();	
 		relayAjax({
 			url: config.sipd_url+'api/master/skpd/listNew',
@@ -131,7 +131,7 @@ function singkron_skpd_ke_lokal(tampil_renja){
 	            .catch(function(err){
 	                console.log('err', err);
 	        		alert('Ada kesalahan sistem!');
-	        		jQuery('#wrap-loading').hide();
+	        		hide_loading();
 	            });
 			}
 		});

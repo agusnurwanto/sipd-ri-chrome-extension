@@ -1,6 +1,6 @@
 function singkron_user_dewan_lokal(level){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();		
+		show_loading();
 		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/user/listuserbylevelid',
@@ -194,7 +194,7 @@ function singkron_user_dewan_lokal(level){
 				}, Promise.resolve(dewan.data[last]))
 				.then(function(data_last){
 					alert('Berhasil singkron data User!');
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 				});
 			}
 		});
@@ -203,7 +203,7 @@ function singkron_user_dewan_lokal(level){
 
 function singkron_user_masyarakat_lokal(level){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();		
+		show_loading();		
 		console.log('level', level);
 		var apiKey = x_api_key();
 		relayAjax({
@@ -350,7 +350,7 @@ function singkron_user_masyarakat_lokal(level){
 				}, Promise.resolve(dewan.data.data[last]))
 				.then(function(data_last){
 					alert('Berhasil singkron data User!');
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 				});
 			}
 		});
@@ -359,7 +359,7 @@ function singkron_user_masyarakat_lokal(level){
 
 function singkron_user_mitra_lokal(level, model){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();				
+		show_loading();			
 		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/user/listuserbylevelid',
@@ -501,7 +501,7 @@ function singkron_user_mitra_lokal(level, model){
 				}, Promise.resolve(dewan.data[last]))
 				.then(function(data_last){
 					alert('Berhasil singkron data User!');
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 				});
 			}
 		});
@@ -510,7 +510,7 @@ function singkron_user_mitra_lokal(level, model){
 
 function singkron_user_skpd_lokal(level, model, idunit){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
 		console.log('level', level);
 		console.log('model', model);
 		console.log('idunit', idunit);
@@ -606,7 +606,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 					}, Promise.resolve(dewan.data[last]))
 					.then(function(data_last){
 						alert('Berhasil singkron data User!');
-						jQuery('#wrap-loading').hide();
+						hide_loading();
 					});			
 				}
 			})
@@ -729,7 +729,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 					}, Promise.resolve(opd.data[last]))
 					.then(function(data_last){
 						alert('Berhasil singkron data User!');
-						jQuery('#wrap-loading').hide();
+						hide_loading();
 					});			
 				}
 			})

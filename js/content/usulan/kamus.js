@@ -1,7 +1,7 @@
 function singkron_kamus_usulan_pokir(tipe){
 	console.log('tipe', tipe);
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
 		jQuery('#persen-loading').attr('persen', 0);
 		jQuery('#persen-loading').html('0%');				
 		relayAjax({
@@ -90,7 +90,7 @@ function singkron_kamus_usulan_pokir(tipe){
 					});
 				}, Promise.resolve(data.data[last]))
 				.then(function(data_last){
-					jQuery('#wrap-loading').hide();
+					hide_loading();        
 					alert('Berhasil singkron data kamus usulan!');
 				})
 				.catch(function(e){

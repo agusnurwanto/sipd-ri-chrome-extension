@@ -1,6 +1,6 @@
 function singkron_data_giat_lokal() {
     if (confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')) {
-        jQuery('#wrap-loading').show();
+        show_loading();
         var apiKey = x_api_key();
         relayAjax({
             url: config.sipd_url+'api/master/sub_giat/list',
@@ -111,7 +111,7 @@ function singkron_data_giat_lokal() {
 					});
 				}, Promise.resolve(data.data.data[last]))
 				.then(function(data_last){
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 					alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan !');
 				})
 				.catch(function(e){

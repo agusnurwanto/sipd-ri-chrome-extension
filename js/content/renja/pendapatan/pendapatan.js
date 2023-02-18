@@ -1,6 +1,6 @@
 function singkron_pendapatan_lokal(){
     if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
         var idunit = _token.unit;
 		var apiKey = x_api_key();
         if (idunit >= 1)
@@ -120,7 +120,7 @@ function singkron_pendapatan_lokal(){
                         });
                     }, Promise.resolve(skpd.data.data[last]))
                     .then(function(data_last){
-                        jQuery('#wrap-loading').hide();
+                        hide_loading();
                         alert('Sukses singkronisasi data Pendapatan!');
                     });
                 }
@@ -259,7 +259,7 @@ function singkron_pendapatan_lokal(){
                         });
                     }, Promise.resolve(skpd.data.data[last]))
                     .then(function(data_last){
-                        jQuery('#wrap-loading').hide();
+                        hide_loading();
                         alert('Sukses singkronisasi data Pendapatan!');
                     });
                 }

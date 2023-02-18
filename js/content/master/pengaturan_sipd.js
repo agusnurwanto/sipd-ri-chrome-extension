@@ -1,6 +1,6 @@
 function singkron_pengaturan_sipd_lokal(){
     if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();	
+		show_loading();
         var apiKey = x_api_key();	
 		relayAjax({
 			url: config.sipd_url+'api/renja/setup_anggaran/get_pengaturan_sipd',

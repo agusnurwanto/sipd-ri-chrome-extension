@@ -1,6 +1,6 @@
 function singkron_sumber_dana_lokal() {
     if (confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')) {
-        jQuery('#wrap-loading').show();
+        show_loading();
         var apiKey = x_api_key();
 		relayAjax({
             url: config.sipd_url+'api/master/sumber_dana/listNew',
