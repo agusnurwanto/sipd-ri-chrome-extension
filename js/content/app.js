@@ -667,4 +667,51 @@ function cekUrl(current_url){
 			}, 1000);
 		}
 	}
+	//Pendapatan
+	else if(current_url.indexOf('/pendapatan') != -1){
+		console.log('halaman pendapatan');		
+		setTimeout(function(){
+			jQuery('.aksi-extension').remove();
+			var btn = ''
+				+'<div class="aksi-extension">'						
+					+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_pendapatan_lokal">Singkron ke DB Lokal</button>'
+				+'</div>';
+			jQuery('.page-title').append(btn);
+			jQuery('#singkron_pendapatan_lokal').on('click', function(){
+				singkron_pendapatan_lokal();
+			});
+		}, 1000);
+	}
+	// Pembiayaan
+	else if(current_url.indexOf('/pembiayaan') != -1)
+	{
+		if(current_url.indexOf('/pembiayaan/penerimaan') != -1){
+			tipe = 'penerimaan';					
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_pembiayaan_lokal">Singkron '+tipe+' ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_pembiayaan_lokal').on('click', function(){
+					singkron_pembiayaan_lokal(tipe);
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/pembiayaan/pengeluaran') != -1){
+			tipe = 'pengeluaran';
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_pembiayaan_lokal">Singkron '+tipe+' ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_pembiayaan_lokal').on('click', function(){
+					singkron_pembiayaan_lokal(tipe);
+				});
+			}, 1000);
+		}
+	}
 }

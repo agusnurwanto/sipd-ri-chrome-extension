@@ -533,8 +533,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 					xhr.setRequestHeader("x-access-token", _token.token);
 				},
 				success: function(dewan){				
-					pesan_loading('Simpan data Master User SKPD ke DB Lokal!');		
-					console.log(dewan.data);	
+					pesan_loading('Simpan data Master User SKPD ke DB Lokal!');							
 					var last = dewan.data.length-1;
 					var first = true;
 					dewan.data.reduce(function(sequence, nextData){
@@ -626,16 +625,15 @@ function singkron_user_skpd_lokal(level, model, idunit){
 					xhr.setRequestHeader("x-access-token", _token.token);
 				},
 				success: function(opd){				
-					pesan_loading('Get data Master SKPD');		
-					console.log(opd.data);	
+					pesan_loading('Get data Master SKPD');							
 					var last = opd.data.length-1;
 					opd.data.reduce(function(sequence, nextData){
 						return sequence.then(function(opd_data){
 							return new Promise(function(resolve_reduce, reject_reduce){
 								var idunit = opd_data.id_unit;
 								get_listuserbylevelid(level, model, idunit).then(function(dewan){
-									pesan_loading('Simpan data Master User SKPD ke DB Lokal!');		
-									console.log(dewan.data);	
+									console.log('nama_skpd', opd_data.nama_skpd);
+                                    pesan_loading('Simpan data User SKPD '+opd_data.nama_skpd+' ke DB Lokal!');											
 									var lastopd = dewan.data.length-1;
 									var first = true;
 									dewan.data.reduce(function(sequence2, nextData2){
@@ -647,7 +645,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 													var active = 0;
 												}
 												var iduser = current_data.id_user;	
-												console.log(current_data);		
+												
 												get_view_user(iduser).then(function(detil){
 													var data_dewan = { 
 														action: 'singkron_user_dewan',
@@ -655,8 +653,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 														tahun_anggaran: _token.tahun,
 														api_key: config.api_key,
 														data: {}
-													};
-													console.log(detil);		
+													};													
 													data_dewan.data.id_sub_skpd = current_data.id_unit;
 													data_dewan.data.is_locked = current_data.is_locked; //baru int
 													data_dewan.data.active = active;
