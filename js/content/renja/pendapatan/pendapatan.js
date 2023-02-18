@@ -67,6 +67,7 @@ function singkron_pendapatan_lokal(){
                                                 data_pendapatan[i].rkpd_pak = b.rkpd_pak; //baru int
                                                 //   data_pendapatan[i].nilaimurni = b.nilaimurni; //?                                              
                                                 //   data_pendapatan[i].rekening = b.rekening; //?
+                                                data_pendapatan[i].rekening = b.kode_akun+' '+nama_akun;
                                                 data_pendapatan[i].satuan = b.satuan; //baru var
                                                 data_pendapatan[i].skpd_koordinator = b.skpd_koordinator;
                                                 data_pendapatan[i].total = b.total;
@@ -183,61 +184,62 @@ function singkron_pendapatan_lokal(){
                                                 let ujam = ud.getHours();
                                                 let umenit = ud.getMinutes();
                                                 let udetik = ud.getSeconds();
-                                              data_pendapatan[i] = {};
-                                              data_pendapatan[i].createdtime = cjam+':'+cmenit+':'+cdetik;
-                                              data_pendapatan[i].createddate = ctgl+'-'+cbln+'-'+cthn;
-                                            //   data_pendapatan[i].createddate = b.created_at;
-                                              data_pendapatan[i].created_user = b.created_user;                                              
-                                              data_pendapatan[i].id_akun = b.id_akun; //baru int
-                                              data_pendapatan[i].id_jadwal_murni = b.id_jadwal_murni; //baru int
-                                              data_pendapatan[i].id_pendapatan = b.id_pendapatan;
-                                              data_pendapatan[i].is_locked = b.is_locked; //baru
-                                              data_pendapatan[i].keterangan = b.keterangan;
-                                              data_pendapatan[i].kode_akun = b.kode_akun;
-                                              data_pendapatan[i].koefisien = b.koefisien; //baru var
-                                              data_pendapatan[i].kua_murni = b.kua_murni; //baru var
-                                              data_pendapatan[i].kua_pak = b.kua_pak; //baru var
-                                              data_pendapatan[i].nama_akun = b.nama_akun;
-                                              data_pendapatan[i].program_koordinator = b.program_koordinator;
-                                              data_pendapatan[i].rkpd_murni = b.rkpd_murni; //baru int
-                                              data_pendapatan[i].rkpd_pak = b.rkpd_pak; //baru int
-                                            //   data_pendapatan[i].nilaimurni = b.nilaimurni; //?                                              
-                                            //   data_pendapatan[i].rekening = b.rekening; //?
-                                              data_pendapatan[i].satuan = b.satuan; //baru var
-                                              data_pendapatan[i].skpd_koordinator = b.skpd_koordinator;
-                                              data_pendapatan[i].total = b.total;
-                                              data_pendapatan[i].updated_user = b.updated_user;
-                                              data_pendapatan[i].updatedtime = ujam+':'+umenit+':'+udetik;
-                                              data_pendapatan[i].updateddate = utgl+'-'+ubln+'-'+uthn;
-                                            //   data_pendapatan[i].updateddate = b.updated_at;
-                                            //   data_pendapatan[i].updatedtime = b.updatedtime;
-                                              data_pendapatan[i].uraian = b.uraian;
-                                              data_pendapatan[i].urusan_koordinator = b.urusan_koordinator;
-                                              data_pendapatan[i].volume = b.volume; //baru int
-                                            //   data_pendapatan[i].user1 = b.user1;
-                                            //   data_pendapatan[i].user2 = b.user2;
-                                          });
-                                          var data = {
-                                              message:{
-                                                  type: "get-url",
-                                                  content: {
-                                                      url: config.url_server_lokal,
-                                                      type: 'post',
-                                                      data: { 
-                                                          action: 'singkron_pendapatan',
-                                                          type: 'ri',
-						                                  tahun_anggaran: _token.tahun,
-                                                          api_key: config.api_key,
-                                                          data: data_pendapatan,
-                                                          id_skpd: idskpd
-                                                      },
-                                                      return: true
-                                                  }
-                                              }
-                                          };                                          
-                                          chrome.runtime.sendMessage(data, function(response) {
-                                              console.log('responeMessage', response);
-                                          });
+                                                data_pendapatan[i] = {};
+                                                data_pendapatan[i].createdtime = cjam+':'+cmenit+':'+cdetik;
+                                                data_pendapatan[i].createddate = ctgl+'-'+cbln+'-'+cthn;
+                                                //   data_pendapatan[i].createddate = b.created_at;
+                                                data_pendapatan[i].created_user = b.created_user;                                              
+                                                data_pendapatan[i].id_akun = b.id_akun; //baru int
+                                                data_pendapatan[i].id_jadwal_murni = b.id_jadwal_murni; //baru int
+                                                data_pendapatan[i].id_pendapatan = b.id_pendapatan;
+                                                data_pendapatan[i].is_locked = b.is_locked; //baru
+                                                data_pendapatan[i].keterangan = b.keterangan;
+                                                data_pendapatan[i].kode_akun = b.kode_akun;
+                                                data_pendapatan[i].koefisien = b.koefisien; //baru var
+                                                data_pendapatan[i].kua_murni = b.kua_murni; //baru var
+                                                data_pendapatan[i].kua_pak = b.kua_pak; //baru var
+                                                data_pendapatan[i].nama_akun = b.nama_akun;
+                                                data_pendapatan[i].program_koordinator = b.program_koordinator;
+                                                data_pendapatan[i].rkpd_murni = b.rkpd_murni; //baru int
+                                                data_pendapatan[i].rkpd_pak = b.rkpd_pak; //baru int
+                                                //   data_pendapatan[i].nilaimurni = b.nilaimurni; //?                                              
+                                                //   data_pendapatan[i].rekening = b.rekening; //?
+                                                data_pendapatan[i].rekening = b.kode_akun+' '+nama_akun;
+                                                data_pendapatan[i].satuan = b.satuan; //baru var
+                                                data_pendapatan[i].skpd_koordinator = b.skpd_koordinator;
+                                                data_pendapatan[i].total = b.total;
+                                                data_pendapatan[i].updated_user = b.updated_user;
+                                                data_pendapatan[i].updatedtime = ujam+':'+umenit+':'+udetik;
+                                                data_pendapatan[i].updateddate = utgl+'-'+ubln+'-'+uthn;
+                                                //   data_pendapatan[i].updateddate = b.updated_at;
+                                                //   data_pendapatan[i].updatedtime = b.updatedtime;
+                                                data_pendapatan[i].uraian = b.uraian;
+                                                data_pendapatan[i].urusan_koordinator = b.urusan_koordinator;
+                                                data_pendapatan[i].volume = b.volume; //baru int
+                                                //   data_pendapatan[i].user1 = b.user1;
+                                                //   data_pendapatan[i].user2 = b.user2;
+                                            });
+                                            var data = {
+                                                message:{
+                                                    type: "get-url",
+                                                    content: {
+                                                        url: config.url_server_lokal,
+                                                        type: 'post',
+                                                        data: { 
+                                                            action: 'singkron_pendapatan',
+                                                            type: 'ri',
+                                                            tahun_anggaran: _token.tahun,
+                                                            api_key: config.api_key,
+                                                            data: data_pendapatan,
+                                                            id_skpd: idskpd
+                                                        },
+                                                        return: true
+                                                    }
+                                                }
+                                            };                                          
+                                            chrome.runtime.sendMessage(data, function(response) {
+                                                console.log('responeMessage', response);
+                                            });
                                         },
                                         error: function(e) {
                                             console.log(e);

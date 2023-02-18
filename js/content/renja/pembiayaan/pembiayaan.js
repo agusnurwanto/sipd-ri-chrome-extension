@@ -90,6 +90,7 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].rkpd_pak = b.rkpd_pak; //baru int
                                                     //   data_pembiayaan[i].nilaimurni = b.nilaimurni; //?                                              
                                                     //   data_pembiayaan[i].rekening = b.rekening; //?
+                                                    data_pembiayaan[i].rekening = b.kode_akun+' '+nama_akun;
                                                     data_pembiayaan[i].satuan = b.satuan; //baru var
                                                     data_pembiayaan[i].skpd_koordinator = b.skpd_koordinator;
                                                     data_pembiayaan[i].total = b.total;
@@ -236,7 +237,7 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].rkpd_murni = b.rkpd_murni; //baru int
                                                     data_pembiayaan[i].rkpd_pak = b.rkpd_pak; //baru int
                                                     //   data_pembiayaan[i].nilaimurni = b.nilaimurni; //?                                              
-                                                    //   data_pembiayaan[i].rekening = b.rekening; //?
+                                                      data_pembiayaan[i].rekening = b.kode_akun+' '+nama_akun;
                                                     data_pembiayaan[i].satuan = b.satuan; //baru var
                                                     data_pembiayaan[i].skpd_koordinator = b.skpd_koordinator;
                                                     data_pembiayaan[i].total = b.total;
