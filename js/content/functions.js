@@ -216,7 +216,7 @@ function getToken(){
 	for(var i in localStorage){ 
 		if(
 			i.indexOf('auth') != -1
-			|| i == 'sipd-konfigurasi'
+			|| i == 'sipd-konfigurasi' || i == 'sipd-konfigurasi-unit-set'
 		){
 		    var item = localStorage.getItem(i);
 	    	if(!_token){

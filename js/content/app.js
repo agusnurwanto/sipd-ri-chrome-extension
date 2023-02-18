@@ -197,13 +197,17 @@ function cekUrl(current_url){
 			console.log('halaman User admin_bappeda_keuangan');		
 			level = "3,4";
 			levelmitra = "7,11";
+			levelskpd = "9,13,40";
 			model="mitra";
+			models="skpd";
+			idunit="0";
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_dewan_lokal">Singkron User ke DB Lokal</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="singkron_user_mitra_lokal">Singkron User Mitra Bappeda ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="singkron_user_mitra_lokal">Singkron User Mitra ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_user_skpd_lokal">Singkron User SKPD ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
@@ -211,6 +215,9 @@ function cekUrl(current_url){
 				});
 				jQuery('#singkron_user_mitra_lokal').on('click', function(){
 					singkron_user_mitra_lokal(levelmitra, model);
+				});
+				jQuery('#singkron_user_skpd_lokal').on('click', function(){
+					singkron_user_skpd_lokal(levelskpd, models, idunit);
 				});
 			}, 1000);
 		}
@@ -389,6 +396,24 @@ function cekUrl(current_url){
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_user_dewan_lokal').on('click', function(){
 					singkron_user_dewan_lokal(level);
+				});
+			}, 1000);
+		}
+		else if(current_url.indexOf('/user/skpd') != -1)
+		{
+			console.log('halaman User SKPD');	
+			level = "9,13,40";
+			model="skpd";
+			idunit=_token.unit;
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_user_skpd_lokal">Singkron User SKPD ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_user_skpd_lokal').on('click', function(){
+					singkron_user_skpd_lokal(level, model, idunit);
 				});
 			}, 1000);
 		}
