@@ -632,7 +632,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 					opd.data.data.reduce(function(sequence, nextData){
 						return sequence.then(function(opd_data){
 							return new Promise(function(resolve_reduce, reject_reduce){
-								var idunit = opd_data.id_unit;
+								var idunit = opd_data.id_skpd;
 								get_listuserbylevelid(level, model, idunit).then(function(dewan){
 									console.log('nama_skpd', opd_data.nama_skpd);
                                     pesan_loading('Simpan data User SKPD '+opd_data.nama_skpd+' ke DB Lokal!');											
