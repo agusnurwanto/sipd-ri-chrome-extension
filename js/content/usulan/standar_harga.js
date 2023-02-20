@@ -37,7 +37,7 @@ function get_arsip_ssh(type_data_ssh){
 function singkron_ssh_ke_lokal(type_data_ssh){
 	console.log('type_data_ssh', type_data_ssh);
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
 		jQuery('#persen-loading').attr('persen', 0);
 		jQuery('#persen-loading').html('0%');
 		var kelompok;
@@ -144,10 +144,7 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 				}, Promise.resolve(data_all[last]))
 				.then(function(data_last){
 					console.log(data_last);
-					jQuery('#wrap-loading').hide();
-					jQuery('#persen-loading').html('');
-					jQuery('#persen-loading').attr('persen', '');
-					jQuery('#persen-loading').attr('total', '');
+					hide_loading();        
 					alert('Data berhasil disimpan di database lokal!');
 				})
 				.catch(function(e){

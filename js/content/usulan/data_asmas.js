@@ -1,8 +1,6 @@
 function singkron_asmas_lokal(){	
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
-		// jQuery('#persen-loading').attr('persen', 0);
-		// jQuery('#persen-loading').html('0%');				
+		show_loading();					
 		relayAjax({
 			url: config.sipd_url+'api/usulan/usul_bantuan/monitor',
 			type: 'POST',
@@ -27,9 +25,7 @@ function singkron_asmas_lokal(){
                 var last = data.data.data.length-1;
                 data.data.data.reduce(function(sequence, nextData){
                     return sequence.then(function(current_data){
-                        return new Promise(function(resolve_reduce, reject_reduce){                            
-                            // console.log(typeof current_data.id_kecamatan);
-                            // console.log(current_data.id_kecamatan == 0);
+                        return new Promise(function(resolve_reduce, reject_reduce){                                                        
                             if(
                                 current_data.id_kecamatan == 0
                                 && current_data.id_kelurahan == 0
@@ -356,7 +352,7 @@ function singkron_asmas_lokal(){
                     });
                 }, Promise.resolve(data.data.data[last]))
                 .then(function(data_last){
-                    jQuery('#wrap-loading').hide();                    
+                    hide_loading();                 
                     alert('Berhasil singkron data ASMAS!');
                 })
                 .catch(function(e){

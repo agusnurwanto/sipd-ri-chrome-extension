@@ -1,6 +1,6 @@
 function singkron_pokir_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
 		relayAjax({
 			url: config.sipd_url+'api/usulan/usul_bantuan/monitor',
 			type: 'POST',
@@ -325,7 +325,7 @@ function singkron_pokir_lokal(){
 					});
 				}, Promise.resolve(data.data[last]))
 				.then(function(data_last){
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 					alert('Berhasil singkron data POKIR!');
 				})
 				.catch(function(e){

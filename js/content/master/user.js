@@ -1,6 +1,6 @@
 function singkron_user_dewan_lokal(level){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();		
+		show_loading();
 		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/user/listuserbylevelid',
@@ -194,7 +194,7 @@ function singkron_user_dewan_lokal(level){
 				}, Promise.resolve(dewan.data[last]))
 				.then(function(data_last){
 					alert('Berhasil singkron data User!');
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 				});
 			}
 		});
@@ -203,7 +203,7 @@ function singkron_user_dewan_lokal(level){
 
 function singkron_user_masyarakat_lokal(level){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();		
+		show_loading();		
 		console.log('level', level);
 		var apiKey = x_api_key();
 		relayAjax({
@@ -350,7 +350,7 @@ function singkron_user_masyarakat_lokal(level){
 				}, Promise.resolve(dewan.data.data[last]))
 				.then(function(data_last){
 					alert('Berhasil singkron data User!');
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 				});
 			}
 		});
@@ -359,7 +359,7 @@ function singkron_user_masyarakat_lokal(level){
 
 function singkron_user_mitra_lokal(level, model){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();				
+		show_loading();			
 		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/user/listuserbylevelid',
@@ -501,7 +501,7 @@ function singkron_user_mitra_lokal(level, model){
 				}, Promise.resolve(dewan.data[last]))
 				.then(function(data_last){
 					alert('Berhasil singkron data User!');
-					jQuery('#wrap-loading').hide();
+					hide_loading();
 				});
 			}
 		});
@@ -510,7 +510,7 @@ function singkron_user_mitra_lokal(level, model){
 
 function singkron_user_skpd_lokal(level, model, idunit){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
 		console.log('level', level);
 		console.log('model', model);
 		console.log('idunit', idunit);
@@ -606,7 +606,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 					}, Promise.resolve(dewan.data[last]))
 					.then(function(data_last){
 						alert('Berhasil singkron data User!');
-						jQuery('#wrap-loading').hide();
+						hide_loading();
 					});			
 				}
 			})
@@ -614,11 +614,13 @@ function singkron_user_skpd_lokal(level, model, idunit){
 		else
 		{
 			relayAjax({
-				url: config.sipd_url+'api/renja/sub_bl/list_skpd',
+				url: config.sipd_url+'api/master/skpd/listNew',
 				type: 'POST',
 				data: {            
 					id_daerah: _token.daerah_id,									
 					tahun: _token.tahun,
+					length: 100000,
+					start: 0
 				},
 				beforeSend: function (xhr) {			    
 					xhr.setRequestHeader("X-API-KEY", apiKey);
@@ -626,8 +628,8 @@ function singkron_user_skpd_lokal(level, model, idunit){
 				},
 				success: function(opd){				
 					pesan_loading('Get data Master SKPD');							
-					var last = opd.data.length-1;
-					opd.data.reduce(function(sequence, nextData){
+					var last = opd.data.data.length-1;
+					opd.data.data.reduce(function(sequence, nextData){
 						return sequence.then(function(opd_data){
 							return new Promise(function(resolve_reduce, reject_reduce){
 								var idunit = opd_data.id_unit;
@@ -726,10 +728,10 @@ function singkron_user_skpd_lokal(level, model, idunit){
 							console.log(e);
 							return Promise.resolve(nextData);
 						});
-					}, Promise.resolve(opd.data[last]))
+					}, Promise.resolve(opd.data.data[last]))
 					.then(function(data_last){
 						alert('Berhasil singkron data User!');
-						jQuery('#wrap-loading').hide();
+						hide_loading();
 					});			
 				}
 			})

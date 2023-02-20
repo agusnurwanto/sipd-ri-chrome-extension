@@ -1,6 +1,6 @@
 function singkron_pembiayaan_lokal(tipe){
     if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		jQuery('#wrap-loading').show();
+		show_loading();
         var idunit = _token.unit;
 		var apiKey = x_api_key();
         if (idunit >= 1)
@@ -147,7 +147,7 @@ function singkron_pembiayaan_lokal(tipe){
                         });
                     }, Promise.resolve(skpd.data[last]))
                     .then(function(data_last){
-                        jQuery('#wrap-loading').hide();
+                        hide_loading();
                         alert('Sukses singkronisasi data Pembiayaan '+tipe+' !');
                     });
                 }
@@ -294,7 +294,7 @@ function singkron_pembiayaan_lokal(tipe){
                         });
                     }, Promise.resolve(skpd.data[last]))
                     .then(function(data_last){
-                        jQuery('#wrap-loading').hide();
+                        hide_loading();
                         alert('Sukses singkronisasi data Pembiayaan '+tipe+' !');
                     });
                 }
