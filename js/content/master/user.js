@@ -614,11 +614,13 @@ function singkron_user_skpd_lokal(level, model, idunit){
 		else
 		{
 			relayAjax({
-				url: config.sipd_url+'api/renja/sub_bl/list_skpd',
+				url: config.sipd_url+'api/master/skpd/listNew',
 				type: 'POST',
 				data: {            
 					id_daerah: _token.daerah_id,									
 					tahun: _token.tahun,
+					length: 100000,
+					start: 0
 				},
 				beforeSend: function (xhr) {			    
 					xhr.setRequestHeader("X-API-KEY", apiKey);
@@ -626,8 +628,8 @@ function singkron_user_skpd_lokal(level, model, idunit){
 				},
 				success: function(opd){				
 					pesan_loading('Get data Master SKPD');							
-					var last = opd.data.length-1;
-					opd.data.reduce(function(sequence, nextData){
+					var last = opd.data.data.length-1;
+					opd.data.data.reduce(function(sequence, nextData){
 						return sequence.then(function(opd_data){
 							return new Promise(function(resolve_reduce, reject_reduce){
 								var idunit = opd_data.id_unit;
@@ -726,7 +728,7 @@ function singkron_user_skpd_lokal(level, model, idunit){
 							console.log(e);
 							return Promise.resolve(nextData);
 						});
-					}, Promise.resolve(opd.data[last]))
+					}, Promise.resolve(opd.data.data[last]))
 					.then(function(data_last){
 						alert('Berhasil singkron data User!');
 						hide_loading();
