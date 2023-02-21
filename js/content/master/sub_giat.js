@@ -101,18 +101,18 @@ function singkron_data_giat_lokal() {
 							})
 						})
 						.catch(function(e){
-									console.log(e);
-									return Promise.resolve(nextData);
-								});
-							})
-							.catch(function(e){
-								console.log(e);
-								return Promise.resolve(nextData);
-							});
-						}, Promise.resolve(data.data.data[last]))
-						.then(function(data_last){
-							hide_loading();
-							alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan !');
+							console.log(e);
+							return Promise.resolve(nextData);
+						});
+					})
+					.catch(function(e){
+						console.log(e);
+						return Promise.resolve(nextData);
+					});
+				}, Promise.resolve(data.data.data[last]))
+					.then(function(data_last){
+						hide_loading();
+						alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan !');
 					})
 					.catch(function(e){
 						console.log(e);

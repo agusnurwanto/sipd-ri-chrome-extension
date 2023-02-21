@@ -10,7 +10,7 @@ function get_skpd(){
 			    data: { 
 					action: 'get_skpd',
 					run: 'open_modal_skpd',
-					table: 'data_skpd_renja',
+					table: 'table_skpd_modal',
 					type: 1,
 					api_key: config.api_key
 				},
@@ -35,7 +35,7 @@ function open_modal_skpd(){
 		relayAjax({
 			url: config.sipd_url+'api/renja/sub_bl/list_skpd',
 			cache: true,
-			type: 'post',
+			type: 'POST',
 			data: {
 				id_daerah: _token.daerah_id,
 				tahun: _token.tahun,
@@ -62,6 +62,7 @@ function open_modal_skpd(){
 					// run_script('jQuery("#table_skpd_modal").DataTable({lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]]});');
 					// run_script('jQuery("#mod-konfirmasi-units").modal("show");');
 					jQuery('#table-extension tbody').html(body);
+					run_script('jQuery("#table-extension tbody").DataTable({lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]]});');
 					run_script('show_modal');
 					hide_loading();
 			}
