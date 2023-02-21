@@ -599,10 +599,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_ssh').on('click', function(){
 					get_arsip_ssh();
@@ -618,10 +622,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_ssh').on('click', function(){
 					get_arsip_ssh();
@@ -637,10 +645,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_ssh').on('click', function(){
 					get_arsip_ssh();
@@ -656,10 +668,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_sbu">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_sbu').on('click', function(){
 					get_arsip_sbu();
@@ -696,7 +712,8 @@ function cekUrl(current_url){
 		            +'<div class="modal-content">'
 		                +'<div class="modal-header bgpanel-theme">'
 		                    +'<h3 class="fw-bolder m-0">Sinkronisasi Renja Unit SKPD</h4>'
-		                    +'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+		                    // +'<button _ngcontent-xfr-c138="" type="button" aria-label="Close" class="btn-close"></button>'
+							+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 		                +'</div>'
 		                +'<div class="modal-body">'
 		                  	+'<table class="table table-bordered table-hover" id="table-extension">'
@@ -713,6 +730,7 @@ function cekUrl(current_url){
 		                +'<div class="modal-footer">'
 		                    +'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
 		                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+							// +'<button _ngcontent-xfr-c138="" type="button" aria-label="Tutup" class="btn-close"></button>'
 		                +'</div>'
 		            +'</div>'
 		        +'</div>'

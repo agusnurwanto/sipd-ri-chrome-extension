@@ -28,12 +28,12 @@ function singkron_data_giat_lokal() {
                     api_key: config.api_key,
                     subgiat: {}
                 };
-                // data.data.data.map(function (subgiat, i) {
+                
 				var last =  data.data.data.length-1;
 				data.data.data.reduce(function(sequence, nextData){
 					return sequence.then(function(subgiat, i){
 						return new Promise(function(resolve_reduce, reject_reduce){
-							// console.log(subgiat);   
+				
 							var idurusan = subgiat.id_urusan;
 							var idbidangurusan = subgiat.id_bidang_urusan;
 							var idprogram = subgiat.id_program;	
@@ -99,24 +99,24 @@ function singkron_data_giat_lokal() {
 									})
 								})
 							})
-                })
-                .catch(function(e){
-							console.log(e);
-							return Promise.resolve(nextData);
-						});
+						})
+						.catch(function(e){
+									console.log(e);
+									return Promise.resolve(nextData);
+								});
+							})
+							.catch(function(e){
+								console.log(e);
+								return Promise.resolve(nextData);
+							});
+						}, Promise.resolve(data.data.data[last]))
+						.then(function(data_last){
+							hide_loading();
+							alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan !');
 					})
 					.catch(function(e){
 						console.log(e);
-						return Promise.resolve(nextData);
-					});
-				}, Promise.resolve(data.data.data[last]))
-				.then(function(data_last){
-					hide_loading();
-					alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan !');
-				})
-				.catch(function(e){
-					console.log(e);
-				});      								
+					});      								
 			}
 		});
 	}

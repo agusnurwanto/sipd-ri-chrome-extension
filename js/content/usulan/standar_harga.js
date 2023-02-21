@@ -25,8 +25,7 @@ function get_arsip_ssh(type_data_ssh){
 				xhr.setRequestHeader("X-API-KEY", apiKey);
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
-			success: function(ret){
-				//localStorage.setItem(auth_key, JSON.stringify(ret));
+			success: function(ret){				
 				resolve(ret);
 			}
 		})
@@ -249,4 +248,77 @@ function hapus_arsip_ssh(opsi){
 			}
 		})
 	});
+}
+
+function singkron_satuan_ke_lokal(){
+	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+		show_loading();
+        var apiKey = x_api_key();	
+		relayAjax({
+			url: config.sipd_url+'api/master/satuan/list',
+			type: 'POST',
+			data: {
+				tahun: _token.tahun,
+				// id_daerah: _token.daerah_id,				                
+                length: 1000
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(data){
+				pesan_loading('Simpan data Master Profil SKPD ke DB Lokal!');
+				console.log('data', data.data.data);
+				var data_ssh = { 
+					action: 'singkron_satuan',
+					type: 'ri',
+					tahun_anggaran: _token.tahun,
+					api_key: config.api_key,					
+					satuan : {}
+				};
+				var last =  data.data.data.length-1;
+				data.data.data.reduce(function(sequence, nextData){
+					return sequence.then(function(option, i){
+						return new Promise(function(resolve_reduce, reject_reduce){
+							data_ssh.satuan[i] = {};
+							data_ssh.satuan[i].satuan = option.nama_satuan;
+							data_ssh.satuan[i].id_satuan = option.id_satuan; //baru
+							data_ssh.satuan[i].is_locked = option.is_locked; //baru
+						
+							var data = {
+								message:{
+									type: "get-url",
+									content: {
+										url: config.url_server_lokal,
+										type: 'post',
+										data: data_ssh,
+										return: false
+									}
+								}
+							};
+							chrome.runtime.sendMessage(data, function (response) {
+								console.log('responeMessage', response);
+							});
+							return resolve_reduce(nextData);
+						})
+						.catch(function(e){
+							console.log(e);
+							return Promise.resolve(nextData);
+						});
+					})
+					.catch(function(e){
+						console.log(e);
+						return Promise.resolve(nextData);
+					});
+				}, Promise.resolve(data.data.data[last]))
+					.then(function(data_last){
+						hide_loading();
+						alert('Berhasil singkron data Master Satuan Standar Harga !');
+					})
+					.catch(function(e){
+						console.log(e);
+					}); 
+			}		
+		})
+	}
 }
