@@ -599,10 +599,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_ssh').on('click', function(){
 					get_arsip_ssh();
@@ -618,10 +622,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_ssh').on('click', function(){
 					get_arsip_ssh();
@@ -637,10 +645,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_ssh').on('click', function(){
 					get_arsip_ssh();
@@ -656,10 +668,14 @@ function cekUrl(current_url){
 					+'<div class="aksi-extension">'
 						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_sbu">Arsip '+type_data_ssh+'</button>'
 						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 					singkron_ssh_ke_lokal(type_data_ssh);
+				});
+				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
+					singkron_satuan_ke_lokal();
 				});
 				jQuery('#get_arsip_sbu').on('click', function(){
 					get_arsip_sbu();
@@ -667,7 +683,84 @@ function cekUrl(current_url){
 			}, 1000);
 		}
 	}
-	//Pendapatan
+	// Renja Belanja
+	else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){
+		var rekap_suber_dana = ''
+			+'<button style="margin-left: 20px;" class="btn btn-md btn-success btn-outline" id="rekap_sumber_dana">'
+				+'<i class="menu-eye m-r-5"></i> <span>Lihat Rekap Sumber Dana</span>'
+			+'</button>'
+			+'<button style="margin-left: 20px;" class="btn btn-md btn-warning btn-outline" id="singkron_indikator_sub">'
+				+'<i class="menu-download m-r-5"></i> <span>Singkron Master Indikator ke DB Lokal</span>'
+			+'</button>';
+		var singkron_rka = ''
+			+'<button style="margin-left: 20px;" class="btn btn-md btn-danger btn-outline" id="open_modal_skpd">'
+				+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
+			+'</button>';
+		idunit=_token.unit;
+
+		if (idunit >= 1){
+			console.log('halaman Renja SKPD');
+			idunitskpd=_token.unit;
+		}
+		else
+		{
+			console.log('halaman Renja list SKPD oleh admin TAPD');	
+			idunitskpd=0;
+			var modal = ''
+			+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+		        +'<div class="modal-dialog" style="max-width: 1500px;" role="document">'
+		            +'<div class="modal-content">'
+		                +'<div class="modal-header bgpanel-theme">'
+		                    +'<h3 class="fw-bolder m-0">Sinkronisasi Renja Unit SKPD</h4>'
+		                    // +'<button _ngcontent-xfr-c138="" type="button" aria-label="Close" class="btn-close"></button>'
+							+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+		                +'</div>'
+		                +'<div class="modal-body">'
+		                  	+'<table class="table table-bordered table-hover" id="table-extension">'
+		                      	+'<thead>'
+		                        	+'<tr>'
+		                          		+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
+		                          		+'<th class="text-center" style="font-weight: bold;">SKPD</th>'
+		                          		+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'
+		                        	+'</tr>'
+		                      	+'</thead>'
+		                      	+'<tbody></tbody>'
+		                  	+'</table>'
+		                +'</div>'
+		                +'<div class="modal-footer">'
+		                    +'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+		                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+							// +'<button _ngcontent-xfr-c138="" type="button" aria-label="Tutup" class="btn-close"></button>'
+		                +'</div>'
+		            +'</div>'
+		        +'</div>'
+		    +'</div>';		
+			
+			jQuery('body').append(modal);
+			jQuery('#proses-extension').on('click', function(){
+				singkron_rka_ke_lokal();
+			});
+			jQuery('#modal_cek_all').on('click', function(){
+				var cek = jQuery(this).is(':checked');
+				jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
+			});	
+			setTimeout(function(){
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
+						+singkron_rka
+					+'</div>';				
+				jQuery('.page-title').append(btn);
+				jQuery('#open_modal_skpd').on('click', function(){					
+					// singkron_rka_ke_lokal(idunitskpd);
+					// get_skpd();
+					open_modal_skpd();
+				});
+			}, 1000);
+		}
+	}
+	// Pendapatan
 	else if(current_url.indexOf('/pendapatan') != -1){
 		console.log('halaman pendapatan');		
 		setTimeout(function(){
