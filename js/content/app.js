@@ -155,7 +155,13 @@ function cekUrl(current_url){
 		    +'</div>';
 		jQuery('body').append(modal);
 		jQuery('#proses-extension').on('click', function(){
-			singkronisasi_rpd_dari_lokal();
+			if(type_data_rpd == 'tujuan'){
+				singkronisasi_rpd_dari_lokal();
+			}else if(type_data_rpd == 'sasaran'){
+				singkronisasi_rpd_sasaran_dari_lokal();
+			}else if(type_data_rpd == 'program'){
+				singkronisasi_rpd_program_dari_lokal();
+			}
 		});
 	    jQuery('#modal_cek_all').on('click', function(){
 			var cek = jQuery(this).is(':checked');
@@ -708,11 +714,10 @@ function cekUrl(current_url){
 			idunitskpd=0;
 			var modal = ''
 			+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-		        +'<div class="modal-dialog" style="max-width: 1500px;" role="document">'
+		        +'<div class="modal-dialog" style="max-width: 900px;" role="document">'
 		            +'<div class="modal-content">'
 		                +'<div class="modal-header bgpanel-theme">'
 		                    +'<h3 class="fw-bolder m-0">Sinkronisasi Renja Unit SKPD</h4>'
-		                    // +'<button _ngcontent-xfr-c138="" type="button" aria-label="Close" class="btn-close"></button>'
 							+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 		                +'</div>'
 		                +'<div class="modal-body">'
@@ -730,7 +735,6 @@ function cekUrl(current_url){
 		                +'<div class="modal-footer">'
 		                    +'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
 		                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
-							// +'<button _ngcontent-xfr-c138="" type="button" aria-label="Tutup" class="btn-close"></button>'
 		                +'</div>'
 		            +'</div>'
 		        +'</div>'

@@ -95,6 +95,12 @@ function open_modal_rpd(rpd){
 							b[bb] = '';
 						}
 					}
+					b.tujuan_ri = {};
+					sasaran_sipd.tujuan.map(function(ts, ii){
+						if(replace_string(ts.tujuan_teks) == replace_string(b.tujuan_teks)){
+							b.tujuan_ri = ts;
+						}
+					});
 					rpd_all[keyword] = b;
 				}
 			});
@@ -231,6 +237,154 @@ function getJadwalAktifRpd(){
 			}
 		});
 	});
+}
+
+function singkronisasi_rpd_sasaran_dari_lokal(){
+	var data_selected = [];
+	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){
+		var cek = jQuery(b).is(':checked');
+		if(cek){
+			var id = jQuery(b).val();
+			data_selected.push(rpd_all[id]);
+		}
+	});
+	if(data_selected.length >= 1){
+		show_loading();
+		console.log('data_selected', data_selected);
+		getJadwalAktifRpd()
+		.then(function(jadwal){
+			get_sasaran_rpd({tahun: _token.tahun})
+			.then(function(sasaran_ri){
+				var last = data_selected.length-1;
+				data_selected.reduce(function(sequence, nextData){
+		            return sequence.then(function(current_data){
+		        		return new Promise(function(resolve_reduce, reject_reduce){
+		        			if(current_data.id_unik_indikator != ''){
+		        				return resolve_reduce(nextData);
+		        			}
+		        			var sasaran_wp = replace_string(current_data.sasaran_teks);
+		        			var check_exist = false;
+		        			sasaran_ri.data.map(function(b, i){
+		        				if(sasaran_wp == replace_string(b.sasaran_teks)){
+		        					check_exist = b;
+		        				}
+		        			});
+		        			if(!current_data.tujuan.tujuan_ri.id_unik){
+        						pesan_loading('ID unik tujuan SIPD RI tidak ditemukan! dari sasaran = '+current_data.sasaran_teks, true);
+		        				return resolve_reduce(nextData);
+		        			}
+
+		        			// jika sasaran kosong
+		        			if(!check_exist){
+        						pesan_loading('Simpan sasaran RPD '+current_data.sasaran_teks, true);
+		        				relayAjaxApiKey({
+		        					url: config.sipd_url+'api/rpjm/rpd_sasaran/add',
+		        					type: 'post',
+		        					data: formData({
+		        						id_daerah: _token.daerah_id,
+										tahun_awal: jadwal.tahun_awal,
+										tahun_akhir: jadwal.tahun_akhir,
+										id_tahap: jadwal.id_tahap,
+										nama_tahap: jadwal.detail_tahap.nama_tahap,
+										id_misi: 0,
+										kode_tujuan: current_data.tujuan.tujuan_ri.id_unik, 
+										sasaran_teks: current_data.sasaran_teks,
+		        						urut_sasaran: current_data.sasaran_no_urut,
+										indikator_teks: '',
+										satuan: '',
+										target_awal: '',
+										target_1: '',
+										target_2: '',
+										target_3: '',
+										target_4: '',
+										target_5: '',
+										target_akhir: '',
+										rpjpd_id_visi: 0,
+										rpjpd_id_misi: 0,
+										rpjpd_id_sasaran: 0,
+										rpjpd_id_kebijakan: 0,
+										rpjpd_id_strategi: 0,
+										id_user_log: _token.user_id,
+										id_daerah_log: _token.daerah_id,
+		        					}),
+		        					success: function(ret){
+		        						resolve_reduce(nextData);
+		        					}
+		        				});
+		        			// jika nomor urut tidak sama diupdate
+		        			}else if(
+		        				current_data.sasaran_no_urut != ''
+		        				&& check_exist.urut_sasaran != current_data.sasaran_no_urut
+		        			){
+        						pesan_loading('Update sasaran RPD '+current_data.tujuan_teks, true);
+		        				relayAjaxApiKey({
+		        					url: config.sipd_url+'api/rpjm/rpd_sasaran/updateBySasaranTeks',
+		        					type: 'post',
+		        					data: formData({
+		        						urut_sasaran: current_data.sasaran_no_urut,
+		        						id_daerah: check_exist.id_daerah,
+										tahun_awal: check_exist.tahun_awal,
+										tahun_akhir: check_exist.tahun_akhir,
+										id_tahap: check_exist.id_tahap,
+										nama_tahap: check_exist.nama_tahap,
+										kode_tujuan: check_exist.kode_tujuan, 
+										sasaran_teks: check_exist.sasaran_teks,
+										indikator_teks: check_exist.indikator_teks,
+										satuan: check_exist.satuan,
+										target_awal: check_exist.target_awal,
+										target_1: check_exist.target_1,
+										target_2: check_exist.target_2,
+										target_3: check_exist.target_3,
+										target_4: check_exist.target_4,
+										target_5: check_exist.target_5,
+										target_akhir: check_exist.target_akhir,
+										rpjpd_id_visi: check_exist.rpjpd_id_visi,
+										rpjpd_id_misi: check_exist.rpjpd_id_misi,
+										rpjpd_id_sasaran: check_exist.rpjpd_id_sasaran,
+										rpjpd_id_kebijakan: check_exist.rpjpd_id_kebijakan,
+										rpjpd_id_strategi: check_exist.rpjpd_id_strategi,
+										id_user_log: _token.user_id,
+										id_daerah_log: _token.daerah_id,
+										id_misi: check_exist.id_misi,
+										id_misi_old: check_exist.id_misi,
+										id_tujuan_old: check_exist.id_tujuan_old,
+										tujuan_teks_old: check_exist.tujuan_teks,
+										id_unik: check_exist.id_unik,
+										is_locked: check_exist.is_locked,
+										is_locked_indikator: check_exist.is_locked_indikator
+		        					}),
+		        					success: function(ret){
+		        						resolve_reduce(nextData);
+		        					}
+		        				});
+		        			}else{
+        						pesan_loading('Sudah ada tujuan RPD '+current_data.tujuan_teks, true);
+		        				resolve_reduce(nextData);
+		        			}
+		        		})
+		                .catch(function(e){
+		                    console.log(e);
+		                    return Promise.resolve(nextData);
+		                });
+		            })
+		            .catch(function(e){
+		                console.log(e);
+		                return Promise.resolve(nextData);
+		            });
+		        }, Promise.resolve(data_selected[last]))
+		        .then(function(){
+		        	singkron_indikator_sasaran_rpd(data_selected, jadwal, function(){
+						hide_loading();
+						if(confirm('Berhasil simpan data RPD! Apakah anda mau merefresh halaman ini untuk melihat hasil perubahan terbaru?')){
+							location.href = location.href;
+						}
+		        	});
+		        });
+			});
+		});
+	}else{
+		alert('Pilih data dulu!');
+	}
 }
 
 function singkronisasi_rpd_dari_lokal(){
@@ -372,6 +526,141 @@ function singkronisasi_rpd_dari_lokal(){
 	}else{
 		alert('Pilih data dulu!');
 	}
+}
+
+function singkron_indikator_sasaran_rpd(data_selected, jadwal, cb){
+	get_sasaran_rpd({tahun: _token.tahun})
+	.then(function(sasaran_ri){
+		var last = data_selected.length-1;
+		data_selected.reduce(function(sequence, nextData){
+            return sequence.then(function(current_data){
+        		return new Promise(function(resolve_reduce, reject_reduce){
+        			if(current_data.id_unik_indikator == ''){
+        				return resolve_reduce(nextData);
+        			}
+        			var sasaran_wp = replace_string(current_data.sasaran_teks);
+        			var indikator_sasaran_wp = replace_string(current_data.indikator_teks);
+        			var check_exist_sasaran = false;
+        			var check_exist_sasaran_indikator = false;
+        			sasaran_ri.data.map(function(b, i){
+        				if(sasaran_wp == replace_string(b.sasaran_teks)){
+        					check_exist_sasaran = b;
+        					if(indikator_sasaran_wp == replace_string(b.indikator_teks)){
+        						check_exist_sasaran_indikator = b;
+        					}
+        				}
+        			});
+        			if(!check_exist_sasaran){
+        				console.log('Sasaran RPD tidak ditemukan!', current_data);
+        				return resolve_reduce(nextData);
+        			}
+        			if(!check_exist_sasaran_indikator){
+        				pesan_loading('Simpan indikator sasaran RPD '+current_data.indikator_teks, true);
+        				relayAjaxApiKey({
+        					url: config.sipd_url+'api/rpjm/rpd_sasaran/add',
+        					type: 'post',
+        					data: formData({
+        						id_daerah: _token.daerah_id,
+								tahun_awal: jadwal.tahun_awal,
+								tahun_akhir: jadwal.tahun_akhir,
+								id_tahap: jadwal.id_tahap,
+								nama_tahap: jadwal.detail_tahap.nama_tahap,
+								id_misi: 0,
+        						urut_sasaran: 0,
+								kode_tujuan: check_exist_sasaran.id_unik,
+								sasaran_teks: current_data.sasaran_teks,
+								indikator_teks: current_data.indikator_teks,
+								satuan: current_data.satuan,
+								target_awal: current_data.target_awal,
+								target_1: current_data.target_1,
+								target_2: current_data.target_2,
+								target_3: current_data.target_3,
+								target_4: current_data.target_4,
+								target_5: current_data.target_5,
+								target_akhir: current_data.target_akhir,
+								rpjpd_id_visi: 0,
+								rpjpd_id_misi: 0,
+								rpjpd_id_sasaran: 0,
+								rpjpd_id_kebijakan: 0,
+								rpjpd_id_strategi: 0,
+								id_user_log: _token.user_id,
+								id_daerah_log: _token.daerah_id,
+								id_unik: check_exist_sasaran.id_unik
+        					}),
+        					success: function(ret){
+        						resolve_reduce(nextData);
+        					}
+        				});
+        			}else if(
+        				check_exist_sasaran_indikator.satuan != current_data.satuan
+        				|| check_exist_sasaran_indikator.target_1 != current_data.target_1
+        				|| check_exist_sasaran_indikator.target_2 != current_data.target_2
+        				|| check_exist_sasaran_indikator.target_3 != current_data.target_3
+        				|| check_exist_sasaran_indikator.target_4 != current_data.target_4
+        				|| check_exist_sasaran_indikator.target_5 != current_data.target_5
+        				|| check_exist_sasaran_indikator.target_awal != current_data.target_awal
+        				|| check_exist_sasaran_indikator.target_akhir != current_data.target_akhir
+		        	){
+        				pesan_loading('Update indikator sasaran RPD '+current_data.indikator_teks, true);
+        				relayAjaxApiKey({
+        					url: config.sipd_url+'api/rpjm/rpd_sasaran/updateBySasaranTeks',
+        					type: 'post',
+        					data: formData({
+        						urut_sasaran: check_exist_sasaran_indikator.no_urut,
+        						id_daerah: check_exist_sasaran_indikator.id_daerah,
+								tahun_awal: check_exist_sasaran_indikator.tahun_awal,
+								tahun_akhir: check_exist_sasaran_indikator.tahun_akhir,
+								id_tahap: check_exist_sasaran_indikator.id_tahap,
+								nama_tahap: check_exist_sasaran_indikator.nama_tahap,
+								sasaran_teks: check_exist_sasaran_indikator.sasaran_teks,
+								indikator_teks: check_exist_sasaran_indikator.indikator_teks,
+								satuan: current_data.satuan,
+								target_awal: current_data.target_awal,
+								target_1: current_data.target_1,
+								target_2: current_data.target_2,
+								target_3: current_data.target_3,
+								target_4: current_data.target_4,
+								target_5: current_data.target_5,
+								target_akhir: current_data.target_akhir,
+								rpjpd_id_visi: check_exist_sasaran_indikator.rpjpd_id_visi,
+								rpjpd_id_misi: check_exist_sasaran_indikator.rpjpd_id_misi,
+								rpjpd_id_sasaran: check_exist_sasaran_indikator.rpjpd_id_sasaran,
+								rpjpd_id_kebijakan: check_exist_sasaran_indikator.rpjpd_id_kebijakan,
+								rpjpd_id_strategi: check_exist_sasaran_indikator.rpjpd_id_strategi,
+								id_user_log: _token.user_id,
+								id_daerah_log: _token.daerah_id,
+								id_misi: check_exist_sasaran_indikator.id_misi,
+								id_misi_old: check_exist_sasaran_indikator.id_misi,
+								id_sasaran_old: check_exist_sasaran_indikator.id_sasaran_old,
+								sasaran_teks_old: check_exist_sasaran_indikator.sasaran_teks,
+								id_unik: check_exist_sasaran_indikator.id_unik,
+								id_unik_indikator: check_exist_sasaran_indikator.id_unik_indikator,
+								is_locked: check_exist_sasaran_indikator.is_locked,
+								is_locked_indikator: check_exist_sasaran_indikator.is_locked_indikator
+        					}),
+        					success: function(ret){
+        						resolve_reduce(nextData);
+        					}
+        				});
+        			}else{
+        				pesan_loading('Sudah ada indikator sasaran RPD '+current_data.indikator_teks, true);
+        				resolve_reduce(nextData);
+        			}
+                })
+                .catch(function(e){
+                    console.log(e);
+                    return Promise.resolve(nextData);
+                });
+            })
+            .catch(function(e){
+                console.log(e);
+                return Promise.resolve(nextData);
+            });
+        }, Promise.resolve(data_selected[last]))
+        .then(function(){
+        	cb();
+        });
+	});
 }
 
 function singkron_indikator_tujuan_rpd(data_selected, jadwal, cb){
@@ -530,21 +819,25 @@ function get_tujuan_rpd(opsi){
 
 function get_sasaran_rpd(opsi){
 	return new Promise(function(resolve, reduce){
-		var apiKey = x_api_key();
-		relayAjax({
-			url: config.sipd_url+'api/rpjm/rpd_sasaran/list',
-			type: 'post',
-			data: {
-				id_daerah: _token.daerah_id,
-				tahun: opsi.tahun,
-			},
-			beforeSend: function (xhr) {
-			    xhr.setRequestHeader("X-API-KEY", apiKey);
-			},
-			success: function(ret){
-				resolve(ret);
-			}
-		})
+		get_tujuan_rpd(opsi)
+		.then(function(tujuan_ri){
+			var apiKey = x_api_key();
+			relayAjax({
+				url: config.sipd_url+'api/rpjm/rpd_sasaran/list',
+				type: 'post',
+				data: {
+					id_daerah: _token.daerah_id,
+					tahun: opsi.tahun,
+				},
+				beforeSend: function (xhr) {
+				    xhr.setRequestHeader("X-API-KEY", apiKey);
+				},
+				success: function(ret){
+					ret.tujuan = tujuan_ri.data;
+					resolve(ret);
+				}
+			})
+		});
 	});
 }
 
