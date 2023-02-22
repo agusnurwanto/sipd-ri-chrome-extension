@@ -734,20 +734,20 @@ function cekUrl(current_url){
 		                +'</div>'
 		                +'<div class="modal-footer">'
 		                    +'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
-		                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+		                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
 		                +'</div>'
 		            +'</div>'
 		        +'</div>'
 		    +'</div>';		
 			
-			jQuery('body').append(modal);
-			jQuery('#proses-extension').on('click', function(){
-				singkron_rka_ke_lokal();
-			});
+			jQuery('body').append(modal);			
 			jQuery('#modal_cek_all').on('click', function(){
 				var cek = jQuery(this).is(':checked');
 				jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
 			});	
+			jQuery('#proses-extension').on('click', function(){
+				singkron_rka_ke_lokal();
+			});
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
