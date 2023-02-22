@@ -155,7 +155,13 @@ function cekUrl(current_url){
 		    +'</div>';
 		jQuery('body').append(modal);
 		jQuery('#proses-extension').on('click', function(){
-			singkronisasi_rpd_dari_lokal();
+			if(type_data_rpd == 'tujuan'){
+				singkronisasi_rpd_dari_lokal();
+			}else if(type_data_rpd == 'sasaran'){
+				singkronisasi_rpd_sasaran_dari_lokal();
+			}else if(type_data_rpd == 'program'){
+				singkronisasi_rpd_program_dari_lokal();
+			}
 		});
 	    jQuery('#modal_cek_all').on('click', function(){
 			var cek = jQuery(this).is(':checked');
