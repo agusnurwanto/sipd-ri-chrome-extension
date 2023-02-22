@@ -567,7 +567,7 @@ function singkron_indikator_sasaran_rpd(data_selected, jadwal, cb){
 								nama_tahap: jadwal.detail_tahap.nama_tahap,
 								id_misi: 0,
         						urut_sasaran: 0,
-								kode_tujuan: check_exist_sasaran.id_unik
+								kode_tujuan: check_exist_sasaran.id_unik,
 								sasaran_teks: current_data.sasaran_teks,
 								indikator_teks: current_data.indikator_teks,
 								satuan: current_data.satuan,

@@ -57,13 +57,8 @@ function open_modal_skpd(){
 								+'<td>-</td>'								
 							+'</tr>';
 					});
-					// run_script('jQuery("#table_skpd_modal").DataTable().destroy();');
-					// jQuery('#table_skpd_modal tbody').html(html);
-					// run_script('jQuery("#table_skpd_modal").DataTable({lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]]});');
-					// run_script('jQuery("#mod-konfirmasi-units").modal("show");');
 					jQuery('#table-extension tbody').html(body);
-					run_script('jQuery("#table-extension tbody").DataTable({lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]]});');
-					run_script('show_modal');
+					run_script('show_modal_sm');
 					hide_loading();
 			}
 		});
