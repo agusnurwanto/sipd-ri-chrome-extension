@@ -494,7 +494,7 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
-	// kamus usulan
+	// Kamus Usulan
 	else if(current_url.indexOf('/settings/kamus_usulan/asmas') != -1){
 		console.log('halaman Kamus Usulan Aspirasi Masyarakat');
 		tipe = 'asmas';
@@ -592,20 +592,20 @@ function cekUrl(current_url){
 			}, 1000);
 		}
 	}
-	// standar harga
+	// Standar Harga
 	else if(current_url.indexOf('/standar_harga') != -1)
 	{
 		window.type_data_ssh = 'ssh';
 		if(current_url.indexOf('/standar_harga/ssh') != -1){
 			type_data_ssh = 'SSH';
-					
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'
-						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="hapus_arsip_ssh">Kosongkan Arsip '+type_data_ssh+'</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_kategori_ke_lokal">Singkron Kelompok Standar Harga ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -614,21 +614,24 @@ function cekUrl(current_url){
 				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
 					singkron_satuan_ke_lokal();
 				});
-				jQuery('#get_arsip_ssh').on('click', function(){
-					get_arsip_ssh();
+				jQuery('#singkron_kategori_ke_lokal').on('click', function(){
+					singkron_kategori_ke_lokal();
+				});
+				jQuery('#hapus_arsip_ssh').on('click', function(){
+					hapus_arsip_ssh(type_data_ssh);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/standar_harga/hspk') != -1){
 			type_data_ssh = 'HSPK';
-
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'
-						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="hapus_arsip_ssh">Kosongkan Arsip '+type_data_ssh+'</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_kategori_ke_lokal">Singkron Kelompok Standar Harga ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -637,21 +640,24 @@ function cekUrl(current_url){
 				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
 					singkron_satuan_ke_lokal();
 				});
-				jQuery('#get_arsip_ssh').on('click', function(){
-					get_arsip_ssh();
+				jQuery('#singkron_kategori_ke_lokal').on('click', function(){
+					singkron_kategori_ke_lokal();
+				});
+				jQuery('#hapus_arsip_ssh').on('click', function(){
+					hapus_arsip_ssh(type_data_ssh);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/standar_harga/asb') != -1){
 			type_data_ssh = 'ASB';
-
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'
-						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_ssh">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="hapus_arsip_ssh">Kosongkan Arsip '+type_data_ssh+'</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_kategori_ke_lokal">Singkron Kelompok Standar Harga ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -660,21 +666,24 @@ function cekUrl(current_url){
 				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
 					singkron_satuan_ke_lokal();
 				});
-				jQuery('#get_arsip_ssh').on('click', function(){
-					get_arsip_ssh();
+				jQuery('#singkron_kategori_ke_lokal').on('click', function(){
+					singkron_kategori_ke_lokal();
+				});
+				jQuery('#hapus_arsip_ssh').on('click', function(){
+					hapus_arsip_ssh(type_data_ssh);
 				});
 			}, 1000);
 		}
 		else if(current_url.indexOf('/standar_harga/sbu') != -1){
-			type_data_ssh = 'SBU';
-				
+			type_data_ssh = 'SBU';				
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'
-						// +'<button style="margin-left: 20px;" class="btn btn-md btn-warning" id="get_arsip_sbu">Arsip '+type_data_ssh+'</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-md btn-info" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="hapus_arsip_ssh">Kosongkan Arsip '+type_data_ssh+'</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_kategori_ke_lokal">Singkron Kelompok Standar Harga ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_ssh_ke_lokal').on('click', function(){
@@ -683,8 +692,11 @@ function cekUrl(current_url){
 				jQuery('#singkron_satuan_ke_lokal').on('click', function(){
 					singkron_satuan_ke_lokal();
 				});
-				jQuery('#get_arsip_sbu').on('click', function(){
-					get_arsip_sbu();
+				jQuery('#singkron_kategori_ke_lokal').on('click', function(){
+					singkron_kategori_ke_lokal();
+				});
+				jQuery('#hapus_arsip_ssh').on('click', function(){
+					hapus_arsip_ssh(type_data_ssh);
 				});
 			}, 1000);
 		}
@@ -746,7 +758,7 @@ function cekUrl(current_url){
 				jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
 			});	
 			jQuery('#proses-extension').on('click', function(){
-				singkron_rka_ke_lokal();
+				singkron_skpd_modal();
 			});
 			setTimeout(function(){
 				jQuery('.aksi-extension').remove();
@@ -756,9 +768,7 @@ function cekUrl(current_url){
 						+singkron_rka
 					+'</div>';				
 				jQuery('.page-title').append(btn);
-				jQuery('#open_modal_skpd').on('click', function(){					
-					// singkron_rka_ke_lokal(idunitskpd);
-					// get_skpd();
+				jQuery('#open_modal_skpd').on('click', function(){										
 					open_modal_skpd();
 				});
 			}, 1000);
