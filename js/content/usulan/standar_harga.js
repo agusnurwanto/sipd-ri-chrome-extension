@@ -276,23 +276,18 @@ function singkron_satuan_ke_lokal(){
 	}
 }
 
-function singkron_kategori_ke_lokal(page=0, per_page=300, options){
-	return new Promise(function(resolve, reduce){
-		jQuery('#wrap-loading').show();
-		// show_loading();	
-		var apiKey = x_api_key();
-	    // var param_encrypt = false;
-	    var dataparam = {			
-	        tahun: _token.tahun,	        
-	        length: per_page,
-			start: page,	        
-	    };
+function singkron_kategori_ke_lokal(page=0, per_page=10, options){
+	return new Promise(function(resolve, reduce){		
+		show_loading();	
+		var apiKey = x_api_key();	    
 	    // param_encrypt = en(JSON.stringify(data));
 	    relayAjax({
 			url: config.sipd_url+'api/master/kel_standar_harga/list',
 			type: 'post',
 			data: {
-				data: dataparam
+				tahun: _token.tahun,	        
+				length: per_page,
+				start: page,
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", apiKey);
@@ -304,9 +299,8 @@ function singkron_kategori_ke_lokal(page=0, per_page=300, options){
 				console.log('Total', ret.data.recordsTotal);
 				
 				// ret = JSON.parse(de(ret));
-				var data_ssh = { 
-					meta: options,
-					page: page,
+				var data_ssh = { 					
+					// page: page,
 					action: 'singkron_kategori_ssh',
 					type: 'ri',
 					tahun_anggaran: _token.tahun,
@@ -329,52 +323,57 @@ function singkron_kategori_ke_lokal(page=0, per_page=300, options){
 		        }
 		        var last = data_all.length - 1;
 		        data_all.reduce(function(sequence, nextData){
-		            // return sequence.then(function(current_data){
-					return sequence.then(function(current_data, i){
+		            return sequence.then(function(current_data){					
 		                return new Promise(function(resolve_reduce, reject_reduce){		
-							console.log('current_data', current_data);					
-		                	// var current_data2 = {
-		                	// 	meta: options,
-		                	// 	page: page,
-		                	// 	data: current_data
-		                	// };
-		                	// pesan_loading('kirim data ke lokal '+JSON.stringify(options)+'. Halaman = '+page);
-							pesan_loading('kirim data ke lokal '+options+'. Halaman = '+page);
-							
-							var active = 1;
-							if (current_data.is_locked == 1)
-							{
-								var active = 0;
-							}
-							data_ssh.kategori[i] = {};
-							data_ssh.kategori[i].id_kategori = current_data.id_kel_standar_harga;
-							data_ssh.kategori[i].kode_kategori = current_data.kode_kel_standar_harga; 
-							data_ssh.kategori[i].uraian_kategori = current_data.nama_kel_standar_harga;
-							data_ssh.kategori[i].kelompok = current_data.tipe_standar_harga;
-							data_ssh.kategori[i].active = active;								
-							data_ssh.kategori[i].status_aktif = current_data.status_aktif; //baru
-							data_ssh.kategori[i].is_locked = current_data.is_locked; //baru
-							data_ssh.kategori[i].pjg_kode = current_data.pjg_kode; //baru
-							data_ssh.kategori[i].id_daerah = current_data.id_daerah; //baru
-						
-							var data = {
-								message:{
-									type: "get-url",
-									content: {
-										url: config.url_server_lokal,
-										type: 'post',
-										data: data_ssh,
-										return: false
-									}
+							console.log('current_data', current_data);
+							current_data.map(function(option, i){
+								pesan_loading('kirim data ke lokal Data Start = '+page);
+								
+								var active = 1;
+								if (option.is_locked == 1)
+								{
+									var active = 0;
 								}
-							};
-							chrome.runtime.sendMessage(data, function(response) {
-							    console.log('responeMessage', response);
+								data_ssh.kategori[i] = {};
+								data_ssh.kategori[i].id_kategori = option.id_kel_standar_harga;
+								data_ssh.kategori[i].kode_kategori = option.kode_kel_standar_harga; 
+								data_ssh.kategori[i].uraian_kategori = option.nama_kel_standar_harga;
+								data_ssh.kategori[i].kelompok = option.tipe_standar_harga;
+								// data_ssh.tipe_ssh = option.tipe_standar_harga;
+								data_ssh.kategori[i].active = active;								
+								data_ssh.kategori[i].status_aktif = option.status_aktif; //baru
+								data_ssh.kategori[i].is_locked = option.is_locked; //baru
+								data_ssh.kategori[i].pjg_kode = option.pjg_kode; //baru
+								data_ssh.kategori[i].id_daerah = option.id_daerah; //baru
+							
+								var data = {
+									message:{
+										type: "get-url",
+										content: {
+											url: config.url_server_lokal,
+											type: 'post',
+											data: data_ssh,
+											return: false
+										}
+									}
+								};
+								chrome.runtime.sendMessage(data, function(response) {
+									console.log('responeMessage', response);
+								});
 							});
 							
 							window.continue_kategori = resolve_reduce;
 							window.continue_kategori_next_data = nextData;
-							return resolve_reduce(nextData);
+							// return resolve_reduce(nextData);
+							Promise.all()
+							.then(function(data_last){								
+									
+								return resolve_redurce(nextData);
+							})
+							.catch(function(err){
+								console.log('err', err);
+								return resolve_redurce(nextData);
+							});
 		                })
 		                .catch(function(e){
 		                    console.log(e);
@@ -389,24 +388,25 @@ function singkron_kategori_ke_lokal(page=0, per_page=300, options){
 		        .then(function(data_last){
 					var page_before = per_page*page;
 					if(ret.data.recordsTotal > ret.data.data.length+page_before){
-						singkron_kategori_ke_lokal(page+1, per_page, options)
+						singkron_kategori_ke_lokal(page+10, per_page, options)
 							.then(function(){
 								resolve();
 							});
 					}else{
 						resolve();
-					}
+					}					
 		        })
 		        .catch(function(e){
 		            console.log(e);
 		            resolve();
-		        });
+		        });				
 			}
 		});
+		
 	});
 }
 
-function singkron_kategori_ke_lokal2(){
+function singkron_kategori_ke_lokal_tanpa_page(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
 		show_loading();
 		var apiKey = x_api_key();
@@ -414,8 +414,7 @@ function singkron_kategori_ke_lokal2(){
 			url: config.sipd_url+'api/master/kel_standar_harga/list',
 			type: 'POST',
 			data: {
-				tahun: _token.tahun,
-				// id_daerah: _token.daerah_id,								                
+				tahun: _token.tahun,											                
 				length: 100000,
 				start: 0
 			},
