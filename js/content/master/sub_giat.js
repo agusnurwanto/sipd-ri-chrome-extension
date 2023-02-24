@@ -201,6 +201,10 @@ function get_sub_giat(idsubgiat, tahun){
 			type: 'GET',	      				
 			processData: false,
 			contentType : 'application/json',
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},	
 	      	success: function(data){
 	      		return resolve(data);
 	      	}
