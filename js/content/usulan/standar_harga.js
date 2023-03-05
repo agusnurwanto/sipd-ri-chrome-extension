@@ -529,7 +529,7 @@ function hapus_arsip_ssh(type_data_ssh){
 							pesan_loading('Hapus data komponen '+current_data.nama_standar_harga+' dari Arsip SIPD!');	
 							var idstandarharga = current_data.id_standar_harga;
 							hapus_komponen(idstandarharga).then(function(hapus){
-								chrome.runtime.sendMessage(hapus, function(response) {
+								chrome.runtime.sendMessage(data, function(response) {
 									console.log('responeMessage', response);
 									resolve_reduce(nextData);
 								});													

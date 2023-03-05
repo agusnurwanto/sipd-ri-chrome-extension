@@ -11,7 +11,6 @@ Semoga bermanfaat
 ### Fitur:
 - Menampilkan checkbox tampil password di halaman login
 - Melakukan interval request ke server untuk menjaga session login
-
 - Export data SSH ke database lokal
 - Export data akun belanja ke database lokal
 - Export RKA satu perangkat daerah ke database lokal
@@ -26,11 +25,8 @@ Semoga bermanfaat
 - Export data user anggota dewan ke database lokal
 - Export data user SKPD ke database lokal
 - Export data user Mitra/Penyelia ke database lokal
-
 - Update status non active di database lokal jika ada sub kegiatan yang dihapus di SIPD
-
 - Hapus Arsip Standar Harga
-
 
 ### Video tutorial
 - ...
