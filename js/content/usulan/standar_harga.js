@@ -1,38 +1,3 @@
-function get_arsip_ssh(type_data_ssh){	
-	return new Promise(function(resolve, reduce){
-		var apiKey = x_api_key();
-		var kelompok;
-			if (type_data_ssh =='SSH') {
-				kelompok = 1;
-			}else if (type_data_ssh =='HSPK') {
-				kelompok = 2;
-			}else if (type_data_ssh =='ASB') {
-				kelompok = 3;
-			}else if (type_data_ssh =='SBU') {
-				kelompok = 4;
-			}
-		relayAjax({
-			url: config.sipd_url+'api/master/d_komponen/list',
-			type: 'post',
-			data: {
-				tahun: _token.tahun,
-				id_daerah: _token.daerah_id,
-				kelompok: kelompok,				
-				tipe: type_data_ssh,
-				is_locked: 3,
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
-				xhr.setRequestHeader("x-access-token", _token.token);
-			},
-			success: function(ret){				
-				resolve(ret);
-			}
-		})
-	});
-}
-
-
 function singkron_ssh_ke_lokal(type_data_ssh){
 	console.log('type_data_ssh', type_data_ssh);
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
@@ -222,68 +187,142 @@ function send_to_lokal(val){
 	});
 }
 
-function hapus_arsip_ssh(opsi){
-	return new Promise(function(resolve, reduce){
-		var apiKey = x_api_key();
-		relayAjax({
-			url: config.sipd_url+'api/master/d_komponen/deleteArsip',
-			type: 'post',
-			data: {
-				tahun: opsi.tahun,
-				id_daerah: _token.daerah_id,				
-				id_standar_harga: _token.id_standar_harga,
-				id_user_log: _token.user_id,
-				id_daerah_log: _token.daerah_id,
-			},
-			beforeSend: function (xhr) {
-			    xhr.setRequestHeader("X-API-KEY", apiKey);
-			},
-			success: function(ret){
-				resolve();
-				if(ret.status_code == 403){
-					console.log('Session user habis!');
-				}else{
-					console.log('success simpan visi!');
-				}
-			}
+function satuan_kategori_ke_lokal(){
+	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+		show_loading();
+		new Promise(function(resolve, reject){
+			window.continue_kategori_ssh = resolve;	
+			// singkron_kategori_ke_lokal();
+			singkron_satuan_ke_lokal();
 		})
-	});
+		.then(function(){			
+			singkron_kategori_ke_lokal();
+			// singkron_satuan_ke_lokal();
+			hide_loading();
+		});
+	}
 }
 
 function singkron_satuan_ke_lokal(){
-	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
+			show_loading();
+			var apiKey = x_api_key();
+			relayAjax({
+				url: config.sipd_url+'api/master/satuan/list',
+				type: 'POST',
+				data: {
+					tahun: _token.tahun,
+					// id_daerah: _token.daerah_id,				                
+					length: 100000
+				},
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", apiKey);
+					xhr.setRequestHeader("x-access-token", _token.token);
+				},
+				success: function(data){
+					pesan_loading('Simpan data Master Satuan ke DB Lokal!');
+					console.log('data', data.data.data);
+					var data_ssh = { 
+						action: 'singkron_satuan',
+						type: 'ri',
+						tahun_anggaran: _token.tahun,
+						api_key: config.api_key,					
+						satuan : {}
+					};
+					var last =  data.data.data.length-1;
+					data.data.data.reduce(function(sequence, nextData){
+						return sequence.then(function(option, i){
+							return new Promise(function(resolve_reduce, reject_reduce){
+								data_ssh.satuan[i] = {};
+								data_ssh.satuan[i].satuan = option.nama_satuan;
+								data_ssh.satuan[i].id_satuan = option.id_satuan; //baru
+								data_ssh.satuan[i].is_locked = option.is_locked; //baru
+							
+								var data = {
+									message:{
+										type: "get-url",
+										content: {
+											url: config.url_server_lokal,
+											type: 'post',
+											data: data_ssh,
+											return: false
+										}
+									}
+								};
+								chrome.runtime.sendMessage(data, function (response) {
+									console.log('responeMessage', response);
+								});
+								return resolve_reduce(nextData);
+							})
+							.catch(function(e){
+								console.log(e);
+								return Promise.resolve(nextData);
+							});
+						})
+						.catch(function(e){
+							console.log(e);
+							return Promise.resolve(nextData);
+						});
+					}, Promise.resolve(data.data.data[last]))
+						.then(function(data_last){
+							hide_loading();
+							alert('Berhasil singkron data Master Satuan Standar Harga !');
+						})
+						.catch(function(e){
+							console.log(e);
+						}); 
+				}		
+			})
+	}
+}
+
+function singkron_kategori_ke_lokal(){
+	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
 		show_loading();
-        var apiKey = x_api_key();	
+		var apiKey = x_api_key();
 		relayAjax({
-			url: config.sipd_url+'api/master/satuan/list',
+			url: config.sipd_url+'api/master/kel_standar_harga/list',
 			type: 'POST',
 			data: {
 				tahun: _token.tahun,
-				// id_daerah: _token.daerah_id,				                
-                length: 1000
+				// id_daerah: _token.daerah_id,								                
+				length: 100000,
+				start: 0
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", apiKey);
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){
-				pesan_loading('Simpan data Master Profil SKPD ke DB Lokal!');
+				pesan_loading('Simpan data Master Kelompok Standar Harga ke DB Lokal!');
 				console.log('data', data.data.data);
 				var data_ssh = { 
-					action: 'singkron_satuan',
+					action: 'singkron_kategori_ssh',
 					type: 'ri',
 					tahun_anggaran: _token.tahun,
-					api_key: config.api_key,					
-					satuan : {}
+					api_key: config.api_key,
+					tipe_ssh: type_data_ssh,					
+					kategori : {}
 				};
 				var last =  data.data.data.length-1;
 				data.data.data.reduce(function(sequence, nextData){
 					return sequence.then(function(option, i){
 						return new Promise(function(resolve_reduce, reject_reduce){
-							data_ssh.satuan[i] = {};
-							data_ssh.satuan[i].satuan = option.nama_satuan;
-							data_ssh.satuan[i].id_satuan = option.id_satuan; //baru
-							data_ssh.satuan[i].is_locked = option.is_locked; //baru
+							var active = 1;
+							if (option.is_locked == 1)
+							{
+								var active = 0;
+							}
+							data_ssh.kategori[i] = {};
+							data_ssh.kategori[i].id_kategori = option.id_kel_standar_harga;
+							data_ssh.kategori[i].kode_kategori = option.kode_kel_standar_harga; 
+							data_ssh.kategori[i].uraian_kategori = option.nama_kel_standar_harga;
+							data_ssh.kategori[i].kelompok = option.tipe_standar_harga;
+							data_ssh.kategori[i].active = active;								
+							data_ssh.kategori[i].status_aktif = option.status_aktif; //baru
+							data_ssh.kategori[i].is_locked = option.is_locked; //baru
+							data_ssh.kategori[i].pjg_kode = option.pjg_kode; //baru
+							data_ssh.kategori[i].id_daerah = option.id_daerah; //baru
 						
 							var data = {
 								message:{
@@ -312,13 +351,102 @@ function singkron_satuan_ke_lokal(){
 					});
 				}, Promise.resolve(data.data.data[last]))
 					.then(function(data_last){
-						hide_loading();
-						alert('Berhasil singkron data Master Satuan Standar Harga !');
+						// hide_loading();
+						alert('Berhasil singkron data Master Kelompok Standar Harga !');
 					})
 					.catch(function(e){
 						console.log(e);
 					}); 
 			}		
-		})
+		});
 	}
+}
+
+function hapus_arsip_ssh(type_data_ssh){
+	console.log('type_data_ssh', type_data_ssh);
+	if(confirm('Apakah anda yakin melakukan ini? data arsip '+type_data_ssh+' pada sipd-ri akan dihapus.')){
+		show_loading();	
+		var kelompok;
+			if (type_data_ssh =='SSH') {
+				kelompok = 1;
+			}else if (type_data_ssh =='HSPK') {
+				kelompok = 2;
+			}else if (type_data_ssh =='ASB') {
+				kelompok = 3;
+			}else if (type_data_ssh =='SBU') {
+				kelompok = 4;
+			}		
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/list',
+			type: 'POST',
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,				
+				kelompok: kelompok,				
+				tipe: type_data_ssh,				
+				is_locked: 3			
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("x-api-key", x_api_key());
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},			
+			success: function(data){			
+				pesan_loading('Ambil Data Arsip '+type_data_ssh+' ');
+				console.log('data',data.data);
+				var last = data.data.length-1;
+				data.data.reduce(function(sequence, nextData){
+					return sequence.then(function(current_data){
+						return new Promise(function(resolve_reduce, reject_reduce){
+							pesan_loading('Hapus data komponen '+current_data.nama_standar_harga+' dari Arsip SIPD!');	
+							var idstandarharga = current_data.id_standar_harga;
+							hapus_komponen(idstandarharga).then(function(hapus){
+								chrome.runtime.sendMessage(hapus, function(response) {
+									console.log('responeMessage', response);
+									resolve_reduce(nextData);
+								});													
+							})		
+						})
+						.catch(function(e){
+							console.log(e);
+							return Promise.resolve(nextData);
+						});
+					})
+					.catch(function(e){
+						console.log(e);
+						return Promise.resolve(nextData);
+					});
+				}, Promise.resolve(data.data[last]))
+				.then(function(data_last){
+					hide_loading();        
+					alert('Berhasil Kosongkan Data Arsip '+type_data_ssh+' ');
+				})
+				.catch(function(e){
+					console.log(e);
+				});      								
+			}
+		});		
+	}
+}
+
+function hapus_komponen(idstandarharga){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/deleteArsip',                                    
+			type: 'POST',	      				
+			data: {            
+					tahun: _token.tahun,				
+					id_daerah: _token.daerah_id,	
+					id_user_log: 1,	
+					id_daerah_log: _token.daerah_id,	
+					id_standar_harga: idstandarharga
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(hapus){
+	      		return resolve(hapus);
+	      	}
+	    });
+    });
 }

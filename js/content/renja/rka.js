@@ -1,35 +1,7 @@
-function get_skpd(){
-	show_loading();
-	pesan_loading('Get data SKPD');
-	var data = {
-	    message:{
-	        type: "get-url",
-	        content: {
-			    url: config.url_server_lokal,
-			    type: 'post',
-			    data: { 
-					action: 'get_skpd',
-					run: 'open_modal_skpd',
-					table: 'table_skpd_modal',
-					type: 1,
-					api_key: config.api_key
-				},
-    			return: true
-			}
-	    }
-	};
-	chrome.runtime.sendMessage(data, function(response) {
-	    console.log('responeMessage', response);
-	});
-}
-
 function open_modal_skpd(){
-	// console.log('rka', skpd);
 	window.rka_all = {};
 	var body = '';
-	// var cek_unit = jQuery('#singkron_rka_ke_lokal').attr('id_unit');
 	var cek_unit = idunitskpd;
-	//if(cek_unit == 'all'){
 	if(cek_unit == 0){
 		show_loading();
 		relayAjax({
@@ -39,6 +11,7 @@ function open_modal_skpd(){
 			data: {
 				id_daerah: _token.daerah_id,
 				tahun: _token.tahun,
+				length: 10000
 			},
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader("x-api-key", x_api_key());
@@ -65,6 +38,25 @@ function open_modal_skpd(){
 	}else{
 		singkron_rka_ke_lokal_all();
 	}	
+}
+
+function singkron_skpd_modal(){
+	var data_selected = [];
+	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){
+		var cek = jQuery(b).is(':checked');
+		if(cek){
+			var id = jQuery(b).val();
+			data_selected.push(rka_all[id]);
+		}
+	});
+	if(data_selected.length >= 1){
+		console.log('data_selected', data_selected);
+		if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+			singkron_all_unit(data_selected);
+		}		
+	}else{
+		alert('Pilih data dulu!');
+	}
 }
 
 function singkron_rka_ke_lokal_all(opsi_unit, callback) {
@@ -284,6 +276,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 }
 
 function singkron_rka_ke_lokal(opsi, callback) {
+	// if((opsi && opsi.kode_bl) || confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 	if((opsi && opsi.kode_bl) || confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
 		if(jQuery('#only_pagu').is(':checked')){
@@ -845,6 +838,66 @@ function singkron_rka_ke_lokal(opsi, callback) {
 			hide_loading();
 		}
 	}
+}
+
+function singkron_all_unit(units) {
+	jQuery('#persen-loading').attr('persen', 0);
+	jQuery('#persen-loading').html('0%');
+	var last = units.length-1;
+	jQuery('#persen-loading').attr('total', units.length);
+	units.reduce(function(sequence, nextData){
+        return sequence.then(function(current_data){
+    		return new Promise(function(resolve_reduce, reject_reduce){
+				var c_persen = +jQuery('#persen-loading').attr('persen');
+				c_persen++;
+				jQuery('#persen-loading').attr('persen', c_persen);
+				jQuery('#persen-loading').html(((c_persen/units.length)*100).toFixed(2)+'%'+'<br>'+current_data.nama_skpd);
+    			relayAjax({
+					url: endog + '?' + current_data.nama_skpd.sParam,
+					success: function(html){
+						var kode_get = html.split('lru8="')[1].split('"')[0];
+						current_data.kode_get = kode_get;
+            			singkron_rka_ke_lokal_all(current_data, function(){
+            				console.log('next reduce', nextData);
+							resolve_reduce(nextData);
+            			});
+            		}
+            	});
+			})
+            .catch(function(e){
+                console.log(e);
+                return Promise.resolve(nextData);
+            });
+        })
+        .catch(function(e){
+            console.log(e);
+            return Promise.resolve(nextData);
+        });
+    }, Promise.resolve(units[last]))
+    .then(function(data_last){
+    	var opsi = { 
+			action: 'get_cat_url',
+			api_key: config.api_key,
+			category : 'Semua Perangkat Daerah Tahun Anggaran '+config.tahun_anggaran
+		};
+		var data = {
+		    message:{
+		        type: "get-url",
+		        content: {
+				    url: config.url_server_lokal,
+				    type: 'post',
+				    data: opsi,
+	    			return: true
+				}
+		    }
+		};
+		chrome.runtime.sendMessage(data, function(response) {
+		    console.log('responeMessage', response);
+		});
+    })
+    .catch(function(e){
+        console.log(e);
+    });
 }
 
 function getJadwalAktifRenja(){
