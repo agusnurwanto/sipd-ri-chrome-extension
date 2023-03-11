@@ -13,7 +13,7 @@ observer.observe(document, { subtree: true, childList: true });
 
 function cekUrl(current_url){
 	getToken();
-	
+
 	// untuk menjaga session
 	clearInterval(_interval);
 	intervalSession();
@@ -481,7 +481,7 @@ function cekUrl(current_url){
 			});
 		}, 1000);
 	}
-	// Data Master Akun
+	// Data Master Sumber Dana
 	else if(current_url.indexOf('/master/sumber_dana') != -1)
 	{
 		console.log('halaman Master Sumber Dana');		
@@ -713,7 +713,9 @@ function cekUrl(current_url){
 		}		
 	}
 	// Renja Belanja
-	else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){
+	else if(current_url.indexOf('/perencanaan/renja/') != -1)
+	{		
+		var id_skpd = getUrlVars("id_skpd");
 		var rekap_suber_dana = ''
 			+'<button style="margin-left: 20px;" class="btn btn-md btn-success btn-outline" id="rekap_sumber_dana">'
 				+'<i class="menu-eye m-r-5"></i> <span>Lihat Rekap Sumber Dana</span>'
@@ -725,44 +727,37 @@ function cekUrl(current_url){
 			+'<button style="margin-left: 20px;" class="btn btn-md btn-danger btn-outline" id="open_modal_skpd">'
 				+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
 			+'</button>';
-		idunit=_token.unit;
-
-		if (idunit >= 1){
+		// idunit=_token.unit;				
+		if(current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1){			
 			console.log('halaman Renja SKPD');
-			idunitskpd=_token.unit;
-		}
-		else
-		{
-			console.log('halaman Renja list SKPD oleh admin TAPD');	
-			idunitskpd=0;
+			idunitskpd=id_skpd;
 			var modal = ''
-			+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-		        +'<div class="modal-dialog" style="max-width: 900px;" role="document">'
-		            +'<div class="modal-content">'
-		                +'<div class="modal-header bgpanel-theme">'
-		                    +'<h3 class="fw-bolder m-0">Sinkronisasi Renja Unit SKPD</h4>'
-							+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-		                +'</div>'
-		                +'<div class="modal-body">'
-		                  	+'<table class="table table-bordered table-hover" id="table-extension">'
-		                      	+'<thead>'
-		                        	+'<tr>'
-		                          		+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
-		                          		+'<th class="text-center" style="font-weight: bold;">SKPD</th>'
-		                          		+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'
-		                        	+'</tr>'
-		                      	+'</thead>'
-		                      	+'<tbody></tbody>'
-		                  	+'</table>'
-		                +'</div>'
-		                +'<div class="modal-footer">'
-		                    +'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
-		                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
-		                +'</div>'
-		            +'</div>'
-		        +'</div>'
-		    +'</div>';		
-			
+					+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+						+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+							+'<div class="modal-content">'
+								+'<div class="modal-header bgpanel-theme">'
+									+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
+									+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+								+'</div>'
+								+'<div class="modal-body">'
+									+'<table class="table table-bordered table-hover" id="table-extension">'
+										+'<thead>'
+											+'<tr>'
+												+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'												
+												+'<th class="text-left" style="font-weight: bold;">Sub Kegiatan</th>'
+												+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'											
+											+'</tr>'
+										+'</thead>'
+										+'<tbody></tbody>'
+									+'</table>'
+								+'</div>'
+								+'<div class="modal-footer">'
+									+'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+									+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+								+'</div>'
+							+'</div>'
+						+'</div>'
+					+'</div>';
 			jQuery('body').append(modal);			
 			jQuery('#modal_cek_all').on('click', function(){
 				var cek = jQuery(this).is(':checked');
@@ -783,7 +778,7 @@ function cekUrl(current_url){
 					open_modal_skpd();
 				});
 			}, 1000);
-		}
+		}		
 	}
 	// Pendapatan
 	else if(current_url.indexOf('/pendapatan') != -1){

@@ -307,9 +307,7 @@ function singkron_asmas_lokal(){
                                     data_asmas.detail_kodeskpd = detail.data[0].kodeskpd;
                                     data_asmas.detail_namaskpd = detail.data[0].nama_skpd_awal;
                                     data_asmas.detail_nama_rev_unit = detail.data[0].nama_rev_unit;
-
                                     data_asmas.nama_skpd = detail.data[0].nama_rev_unit;
-
                                     data_asmas.detail_kode_bidang_urusan = detail.data[0].kode_bidang_urusan;
                                     data_asmas.detail_rekomteks = detail.data[0].rekom_teks;
                                     

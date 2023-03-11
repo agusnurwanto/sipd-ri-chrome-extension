@@ -187,21 +187,21 @@ function send_to_lokal(val){
 	});
 }
 
-function satuan_kategori_ke_lokal(){
-	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-		new Promise(function(resolve, reject){
-			window.continue_kategori_ssh = resolve;	
-			// singkron_kategori_ke_lokal();
-			singkron_satuan_ke_lokal();
-		})
-		.then(function(){			
-			singkron_kategori_ke_lokal();
-			// singkron_satuan_ke_lokal();
-			hide_loading();
-		});
-	}
-}
+// function satuan_kategori_ke_lokal(){
+// 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+// 		show_loading();
+// 		new Promise(function(resolve, reject){
+// 			window.continue_kategori_ssh = resolve;	
+// 			// singkron_kategori_ke_lokal();
+// 			singkron_satuan_ke_lokal();
+// 		})
+// 		.then(function(){			
+// 			singkron_kategori_ke_lokal();
+// 			// singkron_satuan_ke_lokal();
+// 			hide_loading();
+// 		});
+// 	}
+// }
 
 function singkron_satuan_ke_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
@@ -276,7 +276,137 @@ function singkron_satuan_ke_lokal(){
 	}
 }
 
-function singkron_kategori_ke_lokal(){
+function singkron_kategori_ke_lokal(page=0, per_page=10, options){
+	return new Promise(function(resolve, reduce){		
+		show_loading();	
+		var apiKey = x_api_key();	    
+	    // param_encrypt = en(JSON.stringify(data));
+	    relayAjax({
+			url: config.sipd_url+'api/master/kel_standar_harga/list',
+			type: 'post',
+			data: {
+				tahun: _token.tahun,	        
+				length: per_page,
+				start: page,
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(ret){
+				console.log('ret success', ret);
+				console.log('data', ret.data.data);
+				console.log('Total', ret.data.recordsTotal);
+				
+				// ret = JSON.parse(de(ret));
+				var data_ssh = { 					
+					// page: page,
+					action: 'singkron_kategori_ssh',
+					type: 'ri',
+					tahun_anggaran: _token.tahun,
+					api_key: config.api_key,
+					// tipe_ssh: type_data_ssh,					
+					kategori : {}
+				};
+				var data_all = [];
+		        var data_sementara = [];
+		        var max = per_page;
+		        ret.data.data.map(function(b, i){
+		            data_sementara.push(b);
+		            if(data_sementara.length%max == 0){
+		                data_all.push(data_sementara);
+		                data_sementara = [];
+		            }
+		        });
+		        if(data_sementara.length > 0){
+		            data_all.push(data_sementara);
+		        }
+		        var last = data_all.length - 1;
+		        data_all.reduce(function(sequence, nextData){
+		            return sequence.then(function(current_data){					
+		                return new Promise(function(resolve_reduce, reject_reduce){		
+							console.log('current_data', current_data);
+							current_data.map(function(option, i){
+								pesan_loading('kirim data ke lokal Data Start = '+page);
+								
+								var active = 1;
+								if (option.is_locked == 1)
+								{
+									var active = 0;
+								}
+								data_ssh.kategori[i] = {};
+								data_ssh.kategori[i].id_kategori = option.id_kel_standar_harga;
+								data_ssh.kategori[i].kode_kategori = option.kode_kel_standar_harga; 
+								data_ssh.kategori[i].uraian_kategori = option.nama_kel_standar_harga;
+								data_ssh.kategori[i].kelompok = option.tipe_standar_harga;
+								// data_ssh.tipe_ssh = option.tipe_standar_harga;
+								data_ssh.kategori[i].active = active;								
+								data_ssh.kategori[i].status_aktif = option.status_aktif; //baru
+								data_ssh.kategori[i].is_locked = option.is_locked; //baru
+								data_ssh.kategori[i].pjg_kode = option.pjg_kode; //baru
+								data_ssh.kategori[i].id_daerah = option.id_daerah; //baru
+							
+								var data = {
+									message:{
+										type: "get-url",
+										content: {
+											url: config.url_server_lokal,
+											type: 'post',
+											data: data_ssh,
+											return: false
+										}
+									}
+								};
+								chrome.runtime.sendMessage(data, function(response) {
+									console.log('responeMessage', response);
+								});
+							});
+							
+							window.continue_kategori = resolve_reduce;
+							window.continue_kategori_next_data = nextData;
+							// return resolve_reduce(nextData);
+							Promise.all()
+							.then(function(data_last){								
+									
+								return resolve_redurce(nextData);
+							})
+							.catch(function(err){
+								console.log('err', err);
+								return resolve_redurce(nextData);
+							});
+		                })
+		                .catch(function(e){
+		                    console.log(e);
+		                    return Promise.resolve(nextData);
+		                });
+		            })
+		            .catch(function(e){
+		                console.log(e);
+		                return Promise.resolve(nextData);
+		            });
+		        }, Promise.resolve(data_all[last]))
+		        .then(function(data_last){
+					var page_before = per_page*page;
+					if(ret.data.recordsTotal > ret.data.data.length+page_before){
+						singkron_kategori_ke_lokal(page+10, per_page, options)
+							.then(function(){
+								resolve();
+							});
+					}else{
+						resolve();
+					}					
+		        })
+		        .catch(function(e){
+		            console.log(e);
+		            resolve();
+		        });				
+			}
+		});
+		
+	});
+}
+
+function singkron_kategori_ke_lokal_tanpa_page(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
 		show_loading();
 		var apiKey = x_api_key();
