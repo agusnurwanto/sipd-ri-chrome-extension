@@ -414,7 +414,8 @@ function singkron_kategori_ke_lokal_tanpa_page(){
 			url: config.sipd_url+'api/master/kel_standar_harga/list',
 			type: 'POST',
 			data: {
-				tahun: _token.tahun,											                
+				tahun: _token.tahun,
+				// id_daerah: _token.daerah_id,								                
 				length: 100000,
 				start: 0
 			},
@@ -430,7 +431,7 @@ function singkron_kategori_ke_lokal_tanpa_page(){
 					type: 'ri',
 					tahun_anggaran: _token.tahun,
 					api_key: config.api_key,
-					// tipe_ssh: type_data_ssh,					
+					tipe_ssh: type_data_ssh,					
 					kategori : {}
 				};
 				var last =  data.data.data.length-1;
@@ -529,7 +530,7 @@ function hapus_arsip_ssh(type_data_ssh){
 							pesan_loading('Hapus data komponen '+current_data.nama_standar_harga+' dari Arsip SIPD!');	
 							var idstandarharga = current_data.id_standar_harga;
 							hapus_komponen(idstandarharga).then(function(hapus){
-								chrome.runtime.sendMessage(data, function(response) {
+								chrome.runtime.sendMessage(hapus, function(response) {
 									console.log('responeMessage', response);
 									resolve_reduce(nextData);
 								});													
