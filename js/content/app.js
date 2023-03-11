@@ -597,13 +597,8 @@ function cekUrl(current_url){
 	}
 	// Standar Harga
 	else if(current_url.indexOf('/standar_harga') != -1)
-	{
-		idunit=_token.unit;
-		if (idunit >= 1){
-			console.log('halaman Renja SKPD');
-			idunitskpd=_token.unit;
-		}
-		else
+	{	
+		if ([2, 6, 10, 14].includes(_token.level_id) )
 		{
 			window.type_data_ssh = 'ssh';
 			if(current_url.indexOf('/standar_harga/ssh') != -1){
