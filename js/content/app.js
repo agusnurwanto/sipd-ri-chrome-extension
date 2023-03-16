@@ -13,7 +13,7 @@ observer.observe(document, { subtree: true, childList: true });
 
 function cekUrl(current_url, nomor=1){
 	if(nomor > 1){
-		console.log('Run ulang cekUrl() ke '+nomor);
+		console.log('Run ulang cekUrl() ke '+nomor+' URL: '+current_url);
 	}
 
 	getToken();

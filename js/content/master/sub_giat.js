@@ -119,7 +119,10 @@ function singkron_data_giat_lokal() {
 								chrome.runtime.sendMessage(data, function (response) {
 									console.log('responeMessage', response);
 								});
-								return resolve_reduce(nextData);
+								// dikasih jeda agar lebih aman di server
+								setTimeout(function(){
+									resolve_reduce(nextData);
+								}, 1000);
 							});
 						})
 						.catch(function(e){
@@ -132,13 +135,13 @@ function singkron_data_giat_lokal() {
 						return Promise.resolve(nextData);
 					});
 				}, Promise.resolve(data_all[last]))
-					.then(function(data_last){
-						hide_loading();
-						alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan !');
-					})
-					.catch(function(e){
-						console.log(e);
-					});      								
+				.then(function(data_last){
+					hide_loading();
+					alert('Berhasil singkron data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan! '+nomor+' request data dikirimkan ke lokal.');
+				})
+				.catch(function(e){
+					console.log(e);
+				});      								
 			}
 		});
 	}
