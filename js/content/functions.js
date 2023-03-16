@@ -88,6 +88,7 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     	// console.log('jqXHR, exception', jqXHR, exception);
     	if(
     		jqXHR.status != '0' 
+    		&& jqXHR.status != '502'
     		&& jqXHR.status != '503'
     		&& jqXHR.status != '500'
     	){
