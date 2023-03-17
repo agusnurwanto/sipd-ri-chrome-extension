@@ -658,13 +658,16 @@ function cekUrl(current_url, nomor=1){
 						+'<i class="menu-download m-r-5"></i> <span>Singkron Master Indikator ke DB Lokal</span>'
 					+'</button>';
 				var singkron_rka = ''
-					+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="open_modal_skpd">'
+					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="open_modal_skpd">'
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
+					+'</button>'
+					+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="open_modal_skpd_import">'
+						+'<i class="menu-download m-r-5"></i> <span>Tarik RENJA dari DB lokal</span>'
 					+'</button>';
 				// idunit=_token.unit;				
 				if(current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1){			
 					console.log('halaman Renja SKPD');
-					idunitskpd=id_skpd;
+					window.idunitskpd = id_skpd;
 					var modal = ''
 							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
