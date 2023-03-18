@@ -2,7 +2,7 @@ function singkron_asmas_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();					
 		relayAjax({
-			url: config.sipd_url+'api/usulan/usul_bantuan/monitor',
+			url: config.sipd_url+'api/usulan/usul_bantuan/listMonitor',
 			type: 'POST',
 			data: {
 				id_daerah: _token.daerah_id,
@@ -84,19 +84,22 @@ function singkron_asmas_lokal(){
                                 // data_asmas.nip = current_data.nip;
                                 // data_asmas.rekom_camat_anggaran = current_data.rekom_camat.anggaran;
                                 // data_asmas.rekom_camat_koefisien = current_data.rekom_camat.koefisien;
-                                // data_asmas.rekom_camat_rekomendasi = current_data.rekom_camat.rekomendasi;
+                                data_asmas.rekom_camat_rekomendasi = current_data.rekomendasi_kecamatan;
                                 // data_asmas.rekom_lurah_anggaran = current_data.rekom_lurah.anggaran;
                                 // data_asmas.rekom_lurah_koefisien = current_data.rekom_lurah.koefisien;
-                                // data_asmas.rekom_lurah_rekomendasi = current_data.rekom_lurah.rekomendasi;
+                                data_asmas.rekom_lurah_rekomendasi = current_data.rekomendasi_kelurahan;
                                 // data_asmas.rekom_mitra_anggaran = current_data.rekom_mitra.anggaran;
                                 // data_asmas.rekom_mitra_koefisien = current_data.rekom_mitra.koefisien;
-                                // data_asmas.rekom_mitra_rekomendasi = current_data.rekom_mitra.rekomendasi;
+                                data_asmas.rekom_mitra_rekomendasi = current_data.rekomendasi_mitra;
                                 // data_asmas.rekom_skpd_anggaran = current_data.rekom_skpd.anggaran;
                                 // data_asmas.rekom_skpd_koefisien = current_data.rekom_skpd.koefisien;
-                                // data_asmas.rekom_skpd_rekomendasi = current_data.rekom_skpd.rekomendasi;
+                                data_asmas.rekom_skpd_rekomendasi = current_data.rekomendasi_skpd;
                                 // data_asmas.rekom_tapd_anggaran = current_data.rekom_tapd.anggaran;
                                 // data_asmas.rekom_tapd_koefisien = current_data.rekom_tapd.koefisien;
-                                // data_asmas.rekom_tapd_rekomendasi = current_data.rekom_tapd.rekomendasi;
+                                data_asmas.rekom_tapd_rekomendasi = current_data.rekomendasi_tapd;
+                                data_pokir.rekom_teks = current_data.rekom_teks;   
+                                data_pokir.status_usul = current_data.status_usul;
+								data_pokir.status_usul_teks = current_data.nama_status;
                                 // data_asmas.rev_skpd = current_data.rev_skpd;
                                 // data_asmas.satuan = current_data.satuan;
                                 // data_asmas.tolak_teks = current_data.tolak_teks;

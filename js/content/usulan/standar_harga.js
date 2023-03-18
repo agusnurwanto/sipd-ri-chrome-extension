@@ -128,7 +128,7 @@ function send_to_lokal(val){
 		api_key: config.api_key,
 		ssh : {}
 	};
-	console.log('ssh', val);
+	
 	val.map(function(b, i){		
 			var kelompok;
 			if (b.tipe_standar_harga == 'SSH') {
@@ -220,8 +220,7 @@ function singkron_satuan_ke_lokal(){
 					xhr.setRequestHeader("x-access-token", _token.token);
 				},
 				success: function(data){
-					pesan_loading('Simpan data Master Satuan ke DB Lokal!');
-					console.log('data', data.data.data);
+					pesan_loading('Simpan data Master Satuan ke DB Lokal!');				
 					var data_ssh = { 
 						action: 'singkron_satuan',
 						type: 'ri',
@@ -493,7 +492,6 @@ function singkron_kategori_ke_lokal_tanpa_page(){
 }
 
 function hapus_arsip_ssh(type_data_ssh){
-	console.log('type_data_ssh', type_data_ssh);
 	if(confirm('Apakah anda yakin melakukan ini? data arsip '+type_data_ssh+' pada sipd-ri akan dihapus.')){
 		show_loading();	
 		var kelompok;
@@ -522,7 +520,6 @@ function hapus_arsip_ssh(type_data_ssh){
 			},			
 			success: function(data){			
 				pesan_loading('Ambil Data Arsip '+type_data_ssh+' ');
-				console.log('data',data.data);
 				var last = data.data.length-1;
 				data.data.reduce(function(sequence, nextData){
 					return sequence.then(function(current_data){

@@ -2,7 +2,7 @@ function singkron_pokir_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
 		relayAjax({
-			url: config.sipd_url+'api/usulan/usul_bantuan/monitor',
+			url: config.sipd_url+'api/usulan/usul_bantuan/listMonitor',
 			type: 'POST',
 			data: {
 				id_daerah: _token.daerah_id,
@@ -212,19 +212,19 @@ function singkron_pokir_lokal(){
 								data_pokir.pengusul = current_data.nama_pengusul;
 								// data_pokir.rekom_mitra_anggaran = current_data.rekom_mitra.anggaran;
 								// data_pokir.rekom_mitra_koefisien = current_data.rekom_mitra.koefisien;
-								// data_pokir.rekom_mitra_rekomendasi = current_data.rekom_mitra.rekomendasi;
+								data_pokir.rekom_mitra_rekomendasi = current_data.rekomendasi_mitra;
 								// data_pokir.rekom_setwan_anggaran = current_data.rekom_setwan.anggaran;
 								// data_pokir.rekom_setwan_koefisien = current_data.rekom_setwan.koefisien;
-								// data_pokir.rekom_setwan_rekomendasi = current_data.rekom_setwan.rekomendasi;
+								data_pokir.rekom_setwan_rekomendasi = current_data.rekomendasi_sekwan;
 								// data_pokir.rekom_skpd_anggaran = current_data.rekom_skpd.anggaran;
 								// data_pokir.rekom_skpd_koefisien = current_data.rekom_skpd.koefisien;
-								// data_pokir.rekom_skpd_rekomendasi = current_data.rekom_skpd.rekomendasi;
+								data_pokir.rekom_skpd_rekomendasi = current_data.rekomendasi_skpd;
 								// data_pokir.rekom_tapd_anggaran = current_data.rekom_tapd.anggaran;
 								// data_pokir.rekom_tapd_koefisien = current_data.rekom_tapd.koefisien;
-								// data_pokir.rekom_tapd_rekomendasi = current_data.rekom_tapd.rekomendasi;
+								//data_pokir.rekom_tapd_rekomendasi = current_data.rekom_tapd.rekomendasi;
 								// data_pokir.satuan = current_data.satuan;
 								data_pokir.rekom_teks = current_data.rekom_teks;               
-								data_pokir.rekom_tapd_rekomendasi = current_data.rekom_teks;                        
+								data_pokir.rekom_tapd_rekomendasi = current_data.rekomendasi_tapd;                        
 								data_pokir.status_usul = current_data.status_usul;
 								data_pokir.status_usul_teks = current_data.nama_status;
 								
