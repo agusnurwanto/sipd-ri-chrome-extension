@@ -187,22 +187,6 @@ function send_to_lokal(val){
 	});
 }
 
-// function satuan_kategori_ke_lokal(){
-// 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-// 		show_loading();
-// 		new Promise(function(resolve, reject){
-// 			window.continue_kategori_ssh = resolve;	
-// 			// singkron_kategori_ke_lokal();
-// 			singkron_satuan_ke_lokal();
-// 		})
-// 		.then(function(){			
-// 			singkron_kategori_ke_lokal();
-// 			// singkron_satuan_ke_lokal();
-// 			hide_loading();
-// 		});
-// 	}
-// }
-
 function singkron_satuan_ke_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
 			show_loading();
@@ -526,7 +510,7 @@ function hapus_arsip_ssh(type_data_ssh){
 						return new Promise(function(resolve_reduce, reject_reduce){
 							pesan_loading('Hapus data komponen '+current_data.nama_standar_harga+' dari Arsip SIPD!');	
 							var idstandarharga = current_data.id_standar_harga;
-							hapus_komponen(idstandarharga).then(function(hapus){
+							hapus_komponen_arsip(idstandarharga).then(function(hapus){
 								chrome.runtime.sendMessage(hapus, function(response) {
 									console.log('responeMessage', response);
 									resolve_reduce(nextData);
@@ -555,7 +539,7 @@ function hapus_arsip_ssh(type_data_ssh){
 	}
 }
 
-function hapus_komponen(idstandarharga){    
+function hapus_komponen_arsip(idstandarharga){    
     return new Promise(function(resolve, reject){    	
 		relayAjax({
 			url: config.sipd_url+'api/master/d_komponen/deleteArsip',                                    
@@ -576,4 +560,139 @@ function hapus_komponen(idstandarharga){
 	      	}
 	    });
     });
+}
+
+function hapus_komponen(idstandarharga){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/delete',                                    
+			type: 'POST',	      				
+			data: {            
+					tahun: _token.tahun,				
+					id_daerah: _token.daerah_id,	
+					id_user_log: 1,	
+					id_daerah_log: _token.daerah_id,
+					is_locked: 0,	
+					id_standar_harga: idstandarharga
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(hapus){
+	      		return resolve(hapus);
+	      	}
+	    });
+    });
+}
+
+function cek_duplikat_ssh(){
+    jQuery('#wrap-loading').show();
+	var kelompok;
+	if (type_data_ssh =='SSH') {
+		kelompok = 1;
+	}else if (type_data_ssh =='HSPK') {
+		kelompok = 2;
+	}else if (type_data_ssh =='ASB') {
+		kelompok = 3;
+	}else if (type_data_ssh =='SBU') {
+		kelompok = 4;
+	}		
+	relayAjax({
+		url: config.sipd_url+'api/master/d_komponen/listAll',
+		type: 'POST',
+		data: {
+			tahun: _token.tahun,
+			id_daerah: _token.daerah_id,				
+			kelompok: kelompok,				
+			tipe: type_data_ssh,				
+			//search[value]:'',
+			length: 100000,
+			start: 0,				
+		},
+		beforeSend: function (xhr) {			    
+			xhr.setRequestHeader("x-api-key", x_api_key());
+			xhr.setRequestHeader("x-access-token", _token.token);
+		},	
+		success: function(data_ssh){
+			window.data_all_ssh = {};
+			window.duplikat_ssh = {};
+			var l1=0;
+			var l2=0;
+			var html_duplikat = '';
+			data_ssh.data.data.map(function(b, i){
+				var id_duplikat = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
+				if(typeof data_all_ssh[id_duplikat] == 'undefined'){
+					data_all_ssh[id_duplikat] = {
+						detail: []
+					};
+				}else{
+					if(typeof duplikat_ssh[id_duplikat] == 'undefined'){
+						duplikat_ssh[id_duplikat] = {
+							detail: []
+						};
+					}
+					duplikat_ssh[id_duplikat].detail.push(b);
+					l2++;
+				}
+				data_all_ssh[id_duplikat].detail.push(b);
+				l1++;
+			});
+			var no = 0;
+			for(var i in duplikat_ssh){
+				var id = [];
+				var url_hapus = [];
+				var ssh = duplikat_ssh[i].detail;
+				ssh.map(function(b, n){
+					id.push(b.id_standar_harga+' ( '+b.kode_standar_harga+' )');
+					// var url = b.action.split("hapusKomp('")[1].split("'")[0];
+					// url_hapus.push(url);
+				});
+				no++;
+				html_duplikat += ''
+					+'<tr>'
+						+'<td>'+no+'</td>'
+						+'<td><input type="checkbox" class="list-ssh-duplikat" checked data-nama="'+ssh[0].nama_standar_harga +'('+id.join(', ')+')'+'"><br>'+id.join('<br>')+'</td>'
+						+'<td>'+ssh[0].kode_kel_standar_harga+'</td>'
+						+'<td>'+ssh[0].nama_standar_harga+'</td>'
+						+'<td>'+ssh[0].spek+'</td>'
+						+'<td>'+ssh[0].satuan+'</td>'
+						+'<td>'+ssh[0].harga+'</td>'
+					+'</tr>';
+			}
+			console.log('data_all_ssh = '+l1, 'duplikat_ssh = '+l2);
+			jQuery('#duplikat-komponen-akun .modal-title .info-title').html('( Jumlah Semua Data: '+l1+', Jumlah Duplikat: '+l2+' )');
+			jQuery('#table_duplikat').html(html_duplikat);
+			//jQuery('#table_duplikat').DataTable({'columnDefs': [{ orderable: false, targets: 1 }], lengthMenu: [ [10, 250, 500, -1], [10, 250, 500, 'All'] ]});
+			run_script('show_modal_sm');
+			hide_loading();
+			// jQuery('#wrap-loading').hide();
+			
+			// run_script("jQuery('#table_duplikat').DataTable().clear();");
+			// run_script("jQuery('#table_duplikat').DataTable().destroy();");
+			// jQuery('#table_duplikat tbody').html(html_duplikat);
+			// run_script("jQuery('#table_duplikat').DataTable({'columnDefs': [{ orderable: false, targets: 1 }], lengthMenu: [ [10, 250, 500, -1], [10, 250, 500, 'All'] ]});");
+			// run_script("jQuery('#duplikat-komponen-akun').modal('show');");
+		}
+	});
+}
+
+function hapus_duplikat_ssh(){
+	var data_selected = [];
+	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){
+		var cek = jQuery(b).is(':checked');
+		if(cek){
+			var id = jQuery(b).val();
+			data_selected.push(duplikat_ssh[id]);
+		}
+	});
+	if(data_selected.length >= 1){
+		console.log('data_selected', data_selected);
+		if(confirm('Apakah anda yakin melakukan ini? data duplikat akan dihapus.')){
+			console.log(data_selected);
+			//hapus_duplikat_komponen(data_selected);
+		}		
+	}else{
+		alert('Pilih data dulu!');
+	}
 }
