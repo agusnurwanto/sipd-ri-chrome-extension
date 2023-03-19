@@ -409,7 +409,6 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 					    console.log('responeMessage', response);
 					})
 				}).then(function(){
-					console.log('setelah itu', opsi_unit);
 					if(opsi_unit && opsi_unit.id_skpd){
 						var cat_wp = '';
 						var last = subkeg.data.length-1;

@@ -52,6 +52,10 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 			}else{
 				open_modal_rpd(res.data);
 			}
+		}else if(res.action == 'update_nonactive_sub_bl'){
+			_alert = false;
+			hide_loading = false;
+			promise_nonactive[res.id_unit]();
 		}
 		if(cek_hide_loading){
 			hide_loading();
