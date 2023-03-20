@@ -427,9 +427,9 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 										// nama_skpd.shift();
 										// nama_skpd = nama_skpd.join(' ');
 										singkron_rka_ke_lokal({
-											id_daerah: id_daerah,
-											tahun: tahun,
-											id_unit: id_unit,
+											id_daerah: current_data.id_daerah,
+											tahun: current_data.tahun,
+											id_unit: current_data.id_unit,
 											id_skpd: current_data.id_skpd,
 											id_sub_skpd: current_data.id_sub_skpd,
 											id_giat: current_data.id_giat,
@@ -443,7 +443,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 											idbl: current_data.id_bl,
 											idsubbl: current_data.id_sub_bl,
 											kode_skpd: current_data.kode_skpd,
-											nama_skpd: nama_skpd,
+											nama_skpd: current_data.nama_skpd,
 											kode_sub_skpd: current_data.kode_sub_skpd,
 											nama_sub_skpd: current_data.nama_sub_skpd,
 											pagumurni: current_data.pagumurni,
@@ -527,8 +527,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 
 function singkron_rka_ke_lokal(opsi, callback) {
 	if((opsi && opsi.kode_bl) || confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		// show_loading();
-		jQuery('#wrap-loading').show();
+		show_loading();		
 		// var id_unit = idune;
         console.log('singkron_rka_ke_lokal', opsi);
 		var id_unit = opsi.id_skpd ? opsi.id_skpd : _token.unit;
