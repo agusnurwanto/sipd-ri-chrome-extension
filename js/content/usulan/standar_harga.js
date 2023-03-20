@@ -572,7 +572,7 @@ function hapus_komponen(idstandarharga){
 					id_daerah: _token.daerah_id,	
 					id_user_log: 1,	
 					id_daerah_log: _token.daerah_id,
-					is_locked: 0,	
+					is_locked: 3,	
 					id_standar_harga: idstandarharga
 				},
 			beforeSend: function (xhr) {			    
@@ -587,7 +587,7 @@ function hapus_komponen(idstandarharga){
 }
 
 function cek_duplikat_ssh(){
-    jQuery('#wrap-loading').show();
+    show_loading();	
 	var kelompok;
 	if (type_data_ssh =='SSH') {
 		kelompok = 1;
@@ -640,6 +640,7 @@ function cek_duplikat_ssh(){
 			});
 			var no = 0;
 			for(var i in duplikat_ssh){
+				window.ssh_duplikat = {};
 				var id = [];
 				var url_hapus = [];
 				var ssh = duplikat_ssh[i].detail;
@@ -647,52 +648,80 @@ function cek_duplikat_ssh(){
 					id.push(b.id_standar_harga+' ( '+b.kode_standar_harga+' )');
 					// var url = b.action.split("hapusKomp('")[1].split("'")[0];
 					// url_hapus.push(url);
+					var keyword = b.id_standar_harga;
+					//ssh_duplikat[keyword] = b;
+				
+					no++;
+					html_duplikat += ''
+						+'<tr>'
+							+'<td>'+no+'</td>'
+							//+'<td><input type="checkbox" class="list-ssh-duplikat" data-nama="'+ssh[0].nama_standar_harga +'('+id.join(', ')+')'+'"><br>'+id.join('<br>')+'</td>'
+							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+							+'<td>'+id.join('<br>')+'</td>'
+							//+'<td>'+ssh[0].id_standar_harga+' ( '+ssh[0].kode_standar_harga+' )</td>'
+							+'<td>'+ssh[0].kode_kel_standar_harga+'</td>'
+							+'<td>'+ssh[0].nama_standar_harga+'</td>'
+							+'<td>'+ssh[0].spek+'</td>'
+							+'<td>'+ssh[0].satuan+'</td>'
+							+'<td>'+ssh[0].harga+'</td>'
+						+'</tr>';
 				});
-				no++;
-				html_duplikat += ''
-					+'<tr>'
-						+'<td>'+no+'</td>'
-						+'<td><input type="checkbox" class="list-ssh-duplikat" checked data-nama="'+ssh[0].nama_standar_harga +'('+id.join(', ')+')'+'"><br>'+id.join('<br>')+'</td>'
-						+'<td>'+ssh[0].kode_kel_standar_harga+'</td>'
-						+'<td>'+ssh[0].nama_standar_harga+'</td>'
-						+'<td>'+ssh[0].spek+'</td>'
-						+'<td>'+ssh[0].satuan+'</td>'
-						+'<td>'+ssh[0].harga+'</td>'
-					+'</tr>';
 			}
 			console.log('data_all_ssh = '+l1, 'duplikat_ssh = '+l2);
 			jQuery('#duplikat-komponen-akun .modal-title .info-title').html('( Jumlah Semua Data: '+l1+', Jumlah Duplikat: '+l2+' )');
-			jQuery('#table_duplikat').html(html_duplikat);
+			jQuery('#table_duplikat tbody').html(html_duplikat);
 			//jQuery('#table_duplikat').DataTable({'columnDefs': [{ orderable: false, targets: 1 }], lengthMenu: [ [10, 250, 500, -1], [10, 250, 500, 'All'] ]});
 			run_script('show_modal_sm');
 			hide_loading();
-			// jQuery('#wrap-loading').hide();
-			
-			// run_script("jQuery('#table_duplikat').DataTable().clear();");
-			// run_script("jQuery('#table_duplikat').DataTable().destroy();");
-			// jQuery('#table_duplikat tbody').html(html_duplikat);
-			// run_script("jQuery('#table_duplikat').DataTable({'columnDefs': [{ orderable: false, targets: 1 }], lengthMenu: [ [10, 250, 500, -1], [10, 250, 500, 'All'] ]});");
-			// run_script("jQuery('#duplikat-komponen-akun').modal('show');");
 		}
 	});
 }
 
 function hapus_duplikat_ssh(){
-	var data_selected = [];
-	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){
+	var data_komponen_selected = [];
+	jQuery('#table_duplikat tbody tr input[type="checkbox"]').map(function(i, b){
 		var cek = jQuery(b).is(':checked');
 		if(cek){
 			var id = jQuery(b).val();
-			data_selected.push(duplikat_ssh[id]);
+			data_komponen_selected.push([id]);
+			// console.log(id);
 		}
 	});
-	if(data_selected.length >= 1){
-		console.log('data_selected', data_selected);
-		if(confirm('Apakah anda yakin melakukan ini? data duplikat akan dihapus.')){
-			console.log(data_selected);
-			//hapus_duplikat_komponen(data_selected);
-		}		
-	}else{
-		alert('Pilih data dulu!');
+	if(data_komponen_selected.length == 0){
+		alert('Pilih dulu item SSH yang akan dihapus!');
+	}else if (confirm('Apakah anda yakin menghapus data ini? '+data_komponen_selected.join(','))) {
+		show_loading();
+		console.log('data_komponen_selected', data_komponen_selected);
+		var last = data_komponen_selected.length-1;
+		data_komponen_selected.reduce(function(sequence, nextData){
+			return sequence.then(function(current_data){
+				console.log('current_data data_komponen_selected', current_data);
+				return new Promise(function(resolve_reduce, reject_reduce){
+					console.log(current_data[0]);
+					var idstandarharga = current_data[0];
+					hapus_komponen(idstandarharga).then(function(hapus){
+						chrome.runtime.sendMessage(hapus, function(response) {
+							console.log('responeMessage', response);
+							resolve_reduce(nextData);
+						});													
+					})				
+				})
+				.catch(function(e){
+					console.log(e);
+					return Promise.resolve(nextData);
+				});
+			})
+			.catch(function(e){
+				console.log(e);
+				return Promise.resolve(nextData);
+			});
+		}, Promise.resolve(data_komponen_selected[last]))
+		.then(function(last){
+			hide_loading();        
+			alert('Berhasil hapus data !');
+		})
+		.catch(function(e){
+			console.log(e);
+		});
 	}
 }
