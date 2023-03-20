@@ -21,9 +21,9 @@ function cekUrl(current_url, nomor=1){
 	// untuk menjaga session
 	clearInterval(_interval);
 	intervalSession();
-	// if(_token.daerah_id == 101){
-	// 	return alert('Hubungi Pak Pur');
-	// }
+	if(_token.daerah_id == 101){
+		return alert('Hubungi Pak Pur');
+	}
 	
 	var loading = ''
 		+'<div id="wrap-loading">'
@@ -582,8 +582,7 @@ function cekUrl(current_url, nomor=1){
 							set_mulit_rek();
 						});
 
-						jQuery('#show_id_ssh').on('click', function(){	
-							show_loading();						
+						jQuery('#show_id_ssh').on('click', function(){												
 							show_id_ssh();
 						});
 

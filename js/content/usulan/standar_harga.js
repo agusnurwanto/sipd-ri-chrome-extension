@@ -852,7 +852,7 @@ function show_id_ssh(){
 }
 
 function show_akun_ssh(){
-	// show_loading();
+	show_loading();
 	jQuery('#kt_content_container tbody tr').map(function(i, b){
 		if(document.getElementsByClassName('tambah-komponen').length){ 
 			 var id = jQuery(b).find('td').eq(7).find('a').attr('onclick');
