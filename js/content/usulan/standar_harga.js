@@ -725,3 +725,152 @@ function hapus_duplikat_ssh(){
 		});
 	}
 }
+
+function simpan_rekening(idstandarharga, idakun){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen_akun/add',                                    
+			type: 'POST',	      				
+			data: {            
+					tahun: _token.tahun,				
+					id_daerah: _token.daerah_id,	
+					id_user_log: 1,	
+					id_daerah_log: _token.daerah_id,					
+					id_standar_harga: idstandarharga,
+					id_akun: idakun
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(simpanrekening){
+	      		return resolve(simpanrekening);
+	      	}
+	    });
+    });
+}
+
+function set_mulit_rek(){
+	var data_ssh = [];
+	jQuery('#table_komponen tbody tr').map(function(i, b){
+		if(jQuery(b).find('td input.set_lockKomponen:checked').length > 0){
+			data_ssh.push(i);
+		}
+	});
+	if(data_ssh.length == 0){
+		alert('Pilih dulu item Standar Harga!');
+	}else{
+		jQuery('#simpan_addkompakun').hide();
+		jQuery('#simpan_multiaddkompakun').show();
+		run_script("jQuery('#mod-tambah-kompakun').modal('show');");
+		jQuery('input[name="idkomp"]').val('');
+		run_script('jQuery("select[name=kompakun]").val("").trigger("change");');
+	}
+}
+
+jQuery('#simpan_multiaddkompakun').on('click', function(){
+	jQuery('#wrap-loading').hide();
+	var data_ssh = [];
+	jQuery('#table_komponen tbody tr').map(function(i, b){
+		if(jQuery(b).find('td input.set_lockKomponen:checked').length > 0){
+			var id = jQuery(b).find('td').eq(8).find('a').attr('onclick');
+			id = id.split("'")[1];
+			var kode = jQuery(b).find('td').eq(1).text();
+			var nama = jQuery(b).find('td').eq(2).text();
+			var spek = jQuery(b).find('td').eq(3).text();
+			var satuan = jQuery(b).find('td').eq(4).text();
+			var harga = jQuery(b).find('td').eq(5).text();
+			data_ssh.push({
+				kode: kode,
+				id: id,
+				nama: nama,
+				spek: spek,
+				satuan: satuan,
+				harga: harga
+			});
+		}
+	});
+	var items = [];
+	data_ssh.map(function(b, i){
+		items.push('"'+b.nama+' ['+b.spek+']"');
+	})
+	var confirm_dulu = "Apakah anda yakin menambahkan rekening ini ke item "+items.join(" | ");
+	if(confirm(confirm_dulu)){
+		var sendData = data_ssh.map(function(val, n){
+			return new Promise(function(resolve, reject){
+				jQuery('input[name="idkomp"]').val(val.id);
+				relayAjax({
+					  url: lru2,
+					  type: "post",
+					  data: {
+						  "_token":tokek,
+						  "v1bnA1m": v1bnA1m,
+						  "DsK121m":Curut(jQuery('#formtambahkompakun').serialize())
+					  },
+					  success: function(data){
+						return resolve(val);
+					},
+					error: function(argument) {
+						console.log(e);
+						return resolve(val);
+					}
+				});
+			})
+			.catch(function(e){
+				console.log(e);
+				return Promise.resolve(val);
+			});
+		});
+
+		Promise.all(sendData)
+		.then(function(val_all){
+			alert('Berhasil set multiple Rekening Belanja pada item SSH!');
+			run_script("jQuery('#mod-tambah-kompakun').modal('hide');");
+			run_script('jQuery("select[name=kompakun]").val("").trigger("change");');
+			jQuery('#wrap-loading').hide();
+		})
+		.catch(function(err){
+			console.log('err', err);
+			alert('Ada kesalahan sistem!');
+			jQuery('#wrap-loading').hide();
+		});
+	}
+});
+
+function show_id_ssh(){
+	jQuery('#table_komponen tbody tr').map(function(i, b){
+		 var id = jQuery(b).find('input[type="checkbox"].set_lockKomponen').attr('value');
+		 if(id){
+			 var nama = jQuery(b).find('td').eq(2);
+			 if(nama.find('.link-detail-ssh').length == 0){
+				 nama.html('( <span class="link-detail-ssh">'+id+'</span> ) '+nama.html());
+			 }
+		}
+	});
+	jQuery('#wrap-loading').hide();
+}
+
+function show_akun_ssh(){
+	jQuery('#table_komponen tbody tr').map(function(i, b){
+		if(document.getElementsByClassName('tambah-komponen').length){ 
+			 var id = jQuery(b).find('td').eq(7).find('a').attr('onclick');
+			 if(id){
+				 id = id.split("'")[1];
+				 var nama = jQuery(b).find('td').eq(2);
+				 if(nama.find('.link-detail-akun-ssh').length == 0){
+					 nama.html('( <span class="link-detail-akun-ssh"><textarea>'+id+'</textarea></span> ) '+nama.html());
+				 }
+			 }
+		}else{
+			 var id = jQuery(b).find('td').eq(6).find('a').attr('onclick');
+			 if(id){
+				 id = id.split("'")[1];
+				 var nama = jQuery(b).find('td').eq(1);
+				 if(nama.find('.link-detail-akun-ssh').length == 0){
+					 nama.html('( <span class="link-detail-akun-ssh"><textarea>'+id+'</textarea></span> ) '+nama.html());
+				 }
+			 }
+		}
+	});
+	jQuery('#wrap-loading').hide();
+}
