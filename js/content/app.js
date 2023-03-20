@@ -559,8 +559,10 @@ function cekUrl(current_url, nomor=1){
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'								
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'	
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'								
 							+'</div>';
-						jQuery('.page-title').append(btn);
+						jQuery('.page-title').append(btn);						
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -578,6 +580,14 @@ function cekUrl(current_url, nomor=1){
 						});
 						jQuery('#set_mulit_rek').on('click', function(){
 							set_mulit_rek();
+						});
+
+						jQuery('#show_id_ssh').on('click', function(){							
+							show_id_ssh();
+						});
+
+						jQuery('#show_akun_ssh').on('click', function(){							
+							show_akun_ssh();
 						});
 
 						var modal = ''

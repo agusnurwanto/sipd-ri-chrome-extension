@@ -838,6 +838,7 @@ jQuery('#simpan_multiaddkompakun').on('click', function(){
 });
 
 function show_id_ssh(){
+	show_loading();	
 	jQuery('#table_komponen tbody tr').map(function(i, b){
 		 var id = jQuery(b).find('input[type="checkbox"].set_lockKomponen').attr('value');
 		 if(id){
@@ -847,10 +848,11 @@ function show_id_ssh(){
 			 }
 		}
 	});
-	jQuery('#wrap-loading').hide();
+	hide_loading();
 }
 
 function show_akun_ssh(){
+	show_loading();
 	jQuery('#table_komponen tbody tr').map(function(i, b){
 		if(document.getElementsByClassName('tambah-komponen').length){ 
 			 var id = jQuery(b).find('td').eq(7).find('a').attr('onclick');
@@ -872,5 +874,5 @@ function show_akun_ssh(){
 			 }
 		}
 	});
-	jQuery('#wrap-loading').hide();
+	hide_loading();
 }
