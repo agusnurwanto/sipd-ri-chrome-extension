@@ -557,12 +557,16 @@ function cekUrl(current_url, nomor=1){
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_kategori_ke_lokal">Singkron Kelompok '+type_data_ssh+' ke DB Lokal</button>'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
-								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
-								+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'								
-								+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'	
-								+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'								
 							+'</div>';
-						jQuery('.page-title').append(btn);						
+						jQuery('.page-title').append(btn);
+						var btn2 = ''
+							+'<div class="aksi-extension">'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
+							+'</div>';
+						jQuery('#aksi-admin').append(btn2);
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -581,78 +585,76 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#set_mulit_rek').on('click', function(){
 							set_mulit_rek();
 						});
-
-						jQuery('#show_id_ssh').on('click', function(){												
+						jQuery('#show_id_ssh').on('click', function(){
 							show_id_ssh();
 						});
-
 						jQuery('#show_akun_ssh').on('click', function(){							
 							show_akun_ssh();
 						});
-
+						jQuery('body').on('click', '.checkall-ssh', function(){
+							jQuery('.sipd-table tbody > tr > td .checkbox_ssh').prop('checked', jQuery(this).is(':checked'));
+						});
 						var modal = ''
-									+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-										+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
-											+'<div class="modal-content">'
-												+'<div class="modal-header bgpanel-theme">'													
-													+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
-													+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-												+'</div>'
-												+'<div class="modal-body">'
-													+'<table class="table table-bordered table-hover" id="table_duplikat">'
-														+'<thead>'
-															+'<tr>'
-																+'<th class="text-center" style="font-weight: bold;">No</th>'
-																+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
-																+'<th class="text-center" style="font-weight: bold;">ID</th>'
-																+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
-																+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
-																+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
-																+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
-																+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
-															+'</tr>'
-														+'</thead>'
-														+'<tbody></tbody>'
-													+'</table>'
-												+'</div>'
-												+'<div class="modal-footer">'
-													+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
-													+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
-												+'</div>'
-											+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+									+'<div class="modal-content">'
+										+'<div class="modal-header bgpanel-theme">'													
+											+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
+											+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 										+'</div>'
-									+'</div>';;
-								jQuery('body').append(modal);
-								jQuery('#select_all_hapus_ssh').on('click', function(){
-									var cek = jQuery(this).is(':checked');
-									jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
-								});	
-								jQuery('#hapus-duplikat').on('click', function(){
-									hapus_duplikat_ssh();
-								});
+										+'<div class="modal-body">'
+											+'<table class="table table-bordered table-hover" id="table_duplikat">'
+												+'<thead>'
+													+'<tr>'
+														+'<th class="text-center" style="font-weight: bold;">No</th>'
+														+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
+														+'<th class="text-center" style="font-weight: bold;">ID</th>'
+														+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
+														+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
+														+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
+														+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
+														+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
+													+'</tr>'
+												+'</thead>'
+												+'<tbody></tbody>'
+											+'</table>'
+										+'</div>'
+										+'<div class="modal-footer">'
+											+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
+											+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+										+'</div>'
+									+'</div>'
+								+'</div>'
+							+'</div>';
+						jQuery('body').append(modal);
+						jQuery('#select_all_hapus_ssh').on('click', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
+						});	
+						jQuery('#hapus-duplikat').on('click', function(){
+							hapus_duplikat_ssh();
+						});
 
-								jQuery('#usulan-ssh-sipd').on('click', function(){
-									var list_usulan_selected = [];
-									var nama_usulan = [];
-									jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
-										if(jQuery(b).is(':checked')){
-											var data = data_usulan_ssh[jQuery(b).val()];
-											list_usulan_selected.push(data);
-											nama_usulan.push(data.nama_standar_harga);
-										}
-									});
-									if(list_usulan_selected.length == 0){
-										alert('Pilih dulu item SSH yang akan disimpan!');
-									}else{
-										console.log('list_usulan_selected', list_usulan_selected);
-										if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
-											simpan_usulan_ssh(list_usulan_selected);
-										}
-									}
-								});
-								
-					}
-					else if(current_url.indexOf('/standar_harga/hspk') != -1){
+						jQuery('#usulan-ssh-sipd').on('click', function(){
+							var list_usulan_selected = [];
+							var nama_usulan = [];
+							jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
+								if(jQuery(b).is(':checked')){
+									var data = data_usulan_ssh[jQuery(b).val()];
+									list_usulan_selected.push(data);
+									nama_usulan.push(data.nama_standar_harga);
+								}
+							});
+							if(list_usulan_selected.length == 0){
+								alert('Pilih dulu item SSH yang akan disimpan!');
+							}else{
+								console.log('list_usulan_selected', list_usulan_selected);
+								if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
+									simpan_usulan_ssh(list_usulan_selected);
+								}
+							}
+						});
+					}else if(current_url.indexOf('/standar_harga/hspk') != -1){
 						type_data_ssh = 'HSPK';
 						jQuery('.aksi-extension').remove();
 						var btn = ''
@@ -679,67 +681,66 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#cek_duplikat_ssh').on('click', function(){
 							cek_duplikat_ssh(type_data_ssh);
 						});
-
 						var modal = ''
-									+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-										+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
-											+'<div class="modal-content">'
-												+'<div class="modal-header bgpanel-theme">'													
-													+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
-													+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-												+'</div>'
-												+'<div class="modal-body">'
-													+'<table class="table table-bordered table-hover" id="table_duplikat">'
-														+'<thead>'
-															+'<tr>'
-																+'<th class="text-center" style="font-weight: bold;">No</th>'
-																+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
-																+'<th class="text-center" style="font-weight: bold;">ID</th>'
-																+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
-																+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
-																+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
-																+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
-																+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
-															+'</tr>'
-														+'</thead>'
-														+'<tbody></tbody>'
-													+'</table>'
-												+'</div>'
-												+'<div class="modal-footer">'
-													+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
-													+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
-												+'</div>'
-											+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+									+'<div class="modal-content">'
+										+'<div class="modal-header bgpanel-theme">'													
+											+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
+											+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 										+'</div>'
-									+'</div>';;
-								jQuery('body').append(modal);
-								jQuery('#select_all_hapus_ssh').on('click', function(){
-									var cek = jQuery(this).is(':checked');
-									jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
-								});	
-								jQuery('#hapus-duplikat').on('click', function(){
-									hapus_duplikat_ssh();
-								});
+										+'<div class="modal-body">'
+											+'<table class="table table-bordered table-hover" id="table_duplikat">'
+												+'<thead>'
+													+'<tr>'
+														+'<th class="text-center" style="font-weight: bold;">No</th>'
+														+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
+														+'<th class="text-center" style="font-weight: bold;">ID</th>'
+														+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
+														+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
+														+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
+														+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
+														+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
+													+'</tr>'
+												+'</thead>'
+												+'<tbody></tbody>'
+											+'</table>'
+										+'</div>'
+										+'<div class="modal-footer">'
+											+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
+											+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+										+'</div>'
+									+'</div>'
+								+'</div>'
+							+'</div>';;
+						jQuery('body').append(modal);
+						jQuery('#select_all_hapus_ssh').on('click', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
+						});	
+						jQuery('#hapus-duplikat').on('click', function(){
+							hapus_duplikat_ssh();
+						});
 
-								jQuery('#usulan-ssh-sipd').on('click', function(){
-									var list_usulan_selected = [];
-									var nama_usulan = [];
-									jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
-										if(jQuery(b).is(':checked')){
-											var data = data_usulan_ssh[jQuery(b).val()];
-											list_usulan_selected.push(data);
-											nama_usulan.push(data.nama_standar_harga);
-										}
-									});
-									if(list_usulan_selected.length == 0){
-										alert('Pilih dulu item SSH yang akan disimpan!');
-									}else{
-										console.log('list_usulan_selected', list_usulan_selected);
-										if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
-											simpan_usulan_ssh(list_usulan_selected);
-										}
-									}
-								});
+						jQuery('#usulan-ssh-sipd').on('click', function(){
+							var list_usulan_selected = [];
+							var nama_usulan = [];
+							jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
+								if(jQuery(b).is(':checked')){
+									var data = data_usulan_ssh[jQuery(b).val()];
+									list_usulan_selected.push(data);
+									nama_usulan.push(data.nama_standar_harga);
+								}
+							});
+							if(list_usulan_selected.length == 0){
+								alert('Pilih dulu item SSH yang akan disimpan!');
+							}else{
+								console.log('list_usulan_selected', list_usulan_selected);
+								if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
+									simpan_usulan_ssh(list_usulan_selected);
+								}
+							}
+						});
 					}
 					else if(current_url.indexOf('/standar_harga/asb') != -1){
 						type_data_ssh = 'ASB';
@@ -770,65 +771,65 @@ function cekUrl(current_url, nomor=1){
 						});
 
 						var modal = ''
-									+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-										+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
-											+'<div class="modal-content">'
-												+'<div class="modal-header bgpanel-theme">'													
-													+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
-													+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-												+'</div>'
-												+'<div class="modal-body">'
-													+'<table class="table table-bordered table-hover" id="table_duplikat">'
-														+'<thead>'
-															+'<tr>'
-																+'<th class="text-center" style="font-weight: bold;">No</th>'
-																+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
-																+'<th class="text-center" style="font-weight: bold;">ID</th>'
-																+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
-																+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
-																+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
-																+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
-																+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
-															+'</tr>'
-														+'</thead>'
-														+'<tbody></tbody>'
-													+'</table>'
-												+'</div>'
-												+'<div class="modal-footer">'
-													+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
-													+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
-												+'</div>'
-											+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+									+'<div class="modal-content">'
+										+'<div class="modal-header bgpanel-theme">'													
+											+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
+											+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 										+'</div>'
-									+'</div>';;
-								jQuery('body').append(modal);
-								jQuery('#select_all_hapus_ssh').on('click', function(){
-									var cek = jQuery(this).is(':checked');
-									jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
-								});	
-								jQuery('#hapus-duplikat').on('click', function(){
-									hapus_duplikat_ssh();
-								});
+										+'<div class="modal-body">'
+											+'<table class="table table-bordered table-hover" id="table_duplikat">'
+												+'<thead>'
+													+'<tr>'
+														+'<th class="text-center" style="font-weight: bold;">No</th>'
+														+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
+														+'<th class="text-center" style="font-weight: bold;">ID</th>'
+														+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
+														+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
+														+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
+														+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
+														+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
+													+'</tr>'
+												+'</thead>'
+												+'<tbody></tbody>'
+											+'</table>'
+										+'</div>'
+										+'<div class="modal-footer">'
+											+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
+											+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+										+'</div>'
+									+'</div>'
+								+'</div>'
+							+'</div>';;
+						jQuery('body').append(modal);
+						jQuery('#select_all_hapus_ssh').on('click', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
+						});	
+						jQuery('#hapus-duplikat').on('click', function(){
+							hapus_duplikat_ssh();
+						});
 
-								jQuery('#usulan-ssh-sipd').on('click', function(){
-									var list_usulan_selected = [];
-									var nama_usulan = [];
-									jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
-										if(jQuery(b).is(':checked')){
-											var data = data_usulan_ssh[jQuery(b).val()];
-											list_usulan_selected.push(data);
-											nama_usulan.push(data.nama_standar_harga);
-										}
-									});
-									if(list_usulan_selected.length == 0){
-										alert('Pilih dulu item SSH yang akan disimpan!');
-									}else{
-										console.log('list_usulan_selected', list_usulan_selected);
-										if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
-											simpan_usulan_ssh(list_usulan_selected);
-										}
-									}
-								});
+						jQuery('#usulan-ssh-sipd').on('click', function(){
+							var list_usulan_selected = [];
+							var nama_usulan = [];
+							jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
+								if(jQuery(b).is(':checked')){
+									var data = data_usulan_ssh[jQuery(b).val()];
+									list_usulan_selected.push(data);
+									nama_usulan.push(data.nama_standar_harga);
+								}
+							});
+							if(list_usulan_selected.length == 0){
+								alert('Pilih dulu item SSH yang akan disimpan!');
+							}else{
+								console.log('list_usulan_selected', list_usulan_selected);
+								if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
+									simpan_usulan_ssh(list_usulan_selected);
+								}
+							}
+						});
 					}
 					else if(current_url.indexOf('/standar_harga/sbu') != -1){
 						type_data_ssh = 'SBU';
@@ -859,65 +860,65 @@ function cekUrl(current_url, nomor=1){
 						});
 
 						var modal = ''
-									+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-										+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
-											+'<div class="modal-content">'
-												+'<div class="modal-header bgpanel-theme">'													
-													+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
-													+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-												+'</div>'
-												+'<div class="modal-body">'
-													+'<table class="table table-bordered table-hover" id="table_duplikat">'
-														+'<thead>'
-															+'<tr>'
-																+'<th class="text-center" style="font-weight: bold;">No</th>'
-																+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
-																+'<th class="text-center" style="font-weight: bold;">ID</th>'
-																+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
-																+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
-																+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
-																+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
-																+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
-															+'</tr>'
-														+'</thead>'
-														+'<tbody></tbody>'
-													+'</table>'
-												+'</div>'
-												+'<div class="modal-footer">'
-													+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
-													+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
-												+'</div>'
-											+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+									+'<div class="modal-content">'
+										+'<div class="modal-header bgpanel-theme">'													
+											+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
+											+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 										+'</div>'
-									+'</div>';;
-								jQuery('body').append(modal);
-								jQuery('#select_all_hapus_ssh').on('click', function(){
-									var cek = jQuery(this).is(':checked');
-									jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
-								});	
-								jQuery('#hapus-duplikat').on('click', function(){
-									hapus_duplikat_ssh();
-								});
+										+'<div class="modal-body">'
+											+'<table class="table table-bordered table-hover" id="table_duplikat">'
+												+'<thead>'
+													+'<tr>'
+														+'<th class="text-center" style="font-weight: bold;">No</th>'
+														+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
+														+'<th class="text-center" style="font-weight: bold;">ID</th>'
+														+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
+														+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
+														+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
+														+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
+														+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
+													+'</tr>'
+												+'</thead>'
+												+'<tbody></tbody>'
+											+'</table>'
+										+'</div>'
+										+'<div class="modal-footer">'
+											+'<button type="button" class="btn btn-danger" id="hapus-duplikat">Hapus Komponen</button>'
+											+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+										+'</div>'
+									+'</div>'
+								+'</div>'
+							+'</div>';;
+						jQuery('body').append(modal);
+						jQuery('#select_all_hapus_ssh').on('click', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
+						});	
+						jQuery('#hapus-duplikat').on('click', function(){
+							hapus_duplikat_ssh();
+						});
 
-								jQuery('#usulan-ssh-sipd').on('click', function(){
-									var list_usulan_selected = [];
-									var nama_usulan = [];
-									jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
-										if(jQuery(b).is(':checked')){
-											var data = data_usulan_ssh[jQuery(b).val()];
-											list_usulan_selected.push(data);
-											nama_usulan.push(data.nama_standar_harga);
-										}
-									});
-									if(list_usulan_selected.length == 0){
-										alert('Pilih dulu item SSH yang akan disimpan!');
-									}else{
-										console.log('list_usulan_selected', list_usulan_selected);
-										if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
-											simpan_usulan_ssh(list_usulan_selected);
-										}
-									}
-								});
+						jQuery('#usulan-ssh-sipd').on('click', function(){
+							var list_usulan_selected = [];
+							var nama_usulan = [];
+							jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
+								if(jQuery(b).is(':checked')){
+									var data = data_usulan_ssh[jQuery(b).val()];
+									list_usulan_selected.push(data);
+									nama_usulan.push(data.nama_standar_harga);
+								}
+							});
+							if(list_usulan_selected.length == 0){
+								alert('Pilih dulu item SSH yang akan disimpan!');
+							}else{
+								console.log('list_usulan_selected', list_usulan_selected);
+								if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
+									simpan_usulan_ssh(list_usulan_selected);
+								}
+							}
+						});
 					}
 				}		
 			}
@@ -944,32 +945,32 @@ function cekUrl(current_url, nomor=1){
 					console.log('halaman Renja SKPD');
 					window.idunitskpd = id_skpd;
 					var modal = ''
-							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
-									+'<div class="modal-content">'
-										+'<div class="modal-header bgpanel-theme">'
-											+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
-											+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-										+'</div>'
-										+'<div class="modal-body">'
-											+'<table class="table table-bordered table-hover" id="table-extension">'
-												+'<thead>'
-													+'<tr>'
-														+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'												
-														+'<th class="text-left" style="font-weight: bold;">Sub Kegiatan</th>'
-														+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'											
-													+'</tr>'
-												+'</thead>'
-												+'<tbody></tbody>'
-											+'</table>'
-										+'</div>'
-										+'<div class="modal-footer">'
-											+'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
-											+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
-										+'</div>'
+						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension">'
+											+'<thead>'
+												+'<tr>'
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'												
+													+'<th class="text-left" style="font-weight: bold;">Sub Kegiatan</th>'
+													+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'											
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
 									+'</div>'
 								+'</div>'
-							+'</div>';
+							+'</div>'
+						+'</div>';
 					jQuery('body').append(modal);			
 					jQuery('#modal_cek_all').on('click', function(){
 						var cek = jQuery(this).is(':checked');

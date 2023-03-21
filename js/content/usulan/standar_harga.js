@@ -751,6 +751,20 @@ function simpan_rekening(idstandarharga, idakun){
 }
 
 function set_mulit_rek(){
+	var toolbar = jQuery('.card-header .card-toolbar.text-end .ng-star-inserted.dropdown');
+	if(toolbar.find('.checkall-ssh').length == 0){
+		toolbar.prepend('<label style="margin-right: 20px;"><input type="checkbox" class="checkall-ssh"> Ceklist All</label>');
+	}
+	jQuery('.sipd-table tbody > tr').map(function(){
+		var td = jQuery(this).find('>td');
+		var uraian = td.eq(1).text().trim();
+		if(uraian){
+			var span = td.eq(0).find('span');
+			if(span.find('input[type="checkbox"]').length == 0){
+				span.prepend('<input class="checkbox_ssh" type="checkbox" value="'+span.text()+'"> ');
+			}
+		}
+	});
 	var data_ssh = [];
 	jQuery('#table_komponen tbody tr').map(function(i, b){
 		if(jQuery(b).find('td input.set_lockKomponen:checked').length > 0){
