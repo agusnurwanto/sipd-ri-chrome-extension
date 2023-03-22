@@ -21,9 +21,9 @@ function singkron_asmas_lokal(){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},			
 			success: function(data){			
-				pesan_loading('Simpan data Usulan ASMAS ke DB Lokal!');
-                var last = data.data.data.length-1;
-                data.data.data.reduce(function(sequence, nextData){
+				pesan_loading('Simpan data Usulan ASMAS ke DB Lokal!');                
+                var last = data.data.length-1;
+                data.data.reduce(function(sequence, nextData){
                     return sequence.then(function(current_data){
                         return new Promise(function(resolve_reduce, reject_reduce){                                                        
                             if(
@@ -351,7 +351,7 @@ function singkron_asmas_lokal(){
                         console.log(e);
                         return Promise.resolve(nextData);
                     });
-                }, Promise.resolve(data.data.data[last]))
+                }, Promise.resolve(data.data[last]))
                 .then(function(data_last){
                     hide_loading();                 
                     alert('Berhasil singkron data ASMAS!');

@@ -21,9 +21,9 @@ function singkron_pokir_lokal(){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},	
 			success: function(data){
-				pesan_loading('Simpan data Usulan POKIR ke DB Lokal!');
-				var last = data.data.data.length-1;
-				data.data.data.reduce(function(sequence, nextData){
+				pesan_loading('Simpan data Usulan POKIR ke DB Lokal!');				
+				var last = data.data.length-1;
+				data.data.reduce(function(sequence, nextData){
 					return sequence.then(function(current_data){
 						return new Promise(function(resolve_reduce, reject_reduce){
 							// if(
