@@ -985,7 +985,7 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
 					});	
 					jQuery('#proses-extension').on('click', function(){
-						singkron_skpd_modal();
+						singkron_subgiat_modal();
 					});
 					jQuery('.aksi-extension').remove();
 					var btn = ''
@@ -995,7 +995,7 @@ function cekUrl(current_url, nomor=1){
 						+'</div>';				
 					jQuery('.page-title').append(btn);
 					jQuery('#open_modal_skpd').on('click', function(){										
-						open_modal_skpd();
+						open_modal_subgiat(id_skpd);
 					});
 				}
 				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
