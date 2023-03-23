@@ -766,20 +766,34 @@ function set_mulit_rek(){
 		}
 	});
 	var data_ssh = [];
-	jQuery('#table_komponen tbody tr').map(function(i, b){
-		if(jQuery(b).find('td input.set_lockKomponen:checked').length > 0){
-			data_ssh.push(i);
+	jQuery('.sipd-table tbody > tr > td input[type="checkbox"]').map(function(i, b){
+		var cek = jQuery(b).is(':checked');
+		if(cek){
+			var id = jQuery(b).val();
+			data_ssh.push([id]);
+			console.log(id);
 		}
 	});
+	// var data_ssh = [];
+	// jQuery('#table_komponen tbody tr').map(function(i, b){
+	// 	if(jQuery(b).find('td input.set_lockKomponen:checked').length > 0){
+	// 		data_ssh.push(i);
+	// 	}
+	// });
 	if(data_ssh.length == 0){
 		alert('Pilih dulu item Standar Harga!');
 	}else{
+		// jQuery('#table_duplikat tbody').html(html_duplikat);		
+		// run_script('show_modal_sm');
+		// hide_loading();
+
 		jQuery('#simpan_addkompakun').hide();
 		jQuery('#simpan_multiaddkompakun').show();
-		run_script("jQuery('#mod-tambah-kompakun').modal('show');");
+		
+		run_script("jQuery('.ngb-modal-window > div > div > app-ssh-form-akun').modal('show');");
 		jQuery('input[name="idkomp"]').val('');
 		run_script('jQuery("select[name=kompakun]").val("").trigger("change");');
-	}
+	} 
 }
 
 jQuery('#simpan_multiaddkompakun').on('click', function(){

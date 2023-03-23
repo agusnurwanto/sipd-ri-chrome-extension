@@ -566,7 +566,7 @@ function cekUrl(current_url, nomor=1){
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
 							+'</div>';
-						jQuery('#aksi-admin').append(btn2);
+						jQuery('#aksi-admin').append(btn2);						
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -585,6 +585,14 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#set_mulit_rek').on('click', function(){
 							set_mulit_rek();
 						});
+						var simpan_multiaddkompakun = ''
+							+'<button type="button" class="btn btn-danger" name="simpan_multiaddkompakun" id="simpan_multiaddkompakun">Simpan</button>';
+						jQuery('app-ssh-form-akun .card-footer').prepend(simpan_multiaddkompakun);
+						run_script("jQuery('.ngb-modal-window > div > div > app-ssh-form-akun').modal('show')').on('hidden.bs.modal', function () {"
+							+"jQuery('#simpan_addkompakun').show();"
+							+"jQuery('#simpan_multiaddkompakun').hide();"
+							+"jQuery('select[name=kompakun]').val('').trigger('change');"
+						+"});");
 						jQuery('#show_id_ssh').on('click', function(){
 							show_id_ssh();
 						});
