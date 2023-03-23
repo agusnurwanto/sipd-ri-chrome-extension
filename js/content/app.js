@@ -997,7 +997,58 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#open_modal_skpd').on('click', function(){										
 						open_modal_skpd();
 					});
-				}		
+				}
+				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
+					console.log('halaman Renja list SKPD oleh admin TAPD');	
+					idunitskpd=0;
+					var modal = ''
+						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Sinkronisasi Renja Unit SKPD</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension">'
+											+'<thead>'
+												+'<tr>'
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
+													+'<th class="text-center" style="font-weight: bold;">SKPD</th>'
+													+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';	
+					jQuery('body').append(modal);			
+					jQuery('#modal_cek_all').on('click', function(){
+						var cek = jQuery(this).is(':checked');
+						jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
+					});	
+					jQuery('#proses-extension').on('click', function(){
+						singkron_skpd_modal();
+					});
+					setTimeout(function(){
+						jQuery('.aksi-extension').remove();
+						var btn = ''
+							+'<div class="aksi-extension">'						
+								+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
+								+singkron_rka
+							+'</div>';				
+						jQuery('.page-title').append(btn);
+						jQuery('#open_modal_skpd').on('click', function(){										
+						open_modal_skpd();
+						});
+					}, 1000);
+				}				
 			}
 			// Pendapatan
 			else if(current_url.indexOf('/pendapatan') != -1){
