@@ -783,10 +783,6 @@ function set_mulit_rek(){
 	if(data_ssh.length == 0){
 		alert('Pilih dulu item Standar Harga!');
 	}else{
-		// jQuery('#table_duplikat tbody').html(html_duplikat);		
-		// run_script('show_modal_sm');
-		// hide_loading();
-
 		jQuery('#simpan_addkompakun').hide();
 		jQuery('#simpan_multiaddkompakun').show();
 		

@@ -192,6 +192,7 @@ function singkron_subgiat_modal(){
 		.then(function(data_last){
 			var opsi = { 
 				action: 'get_cat_url',
+				type: 'ri',
 				api_key: config.api_key,
 				category : cat_wp
 			};
