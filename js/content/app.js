@@ -937,7 +937,7 @@ function cekUrl(current_url, nomor=1){
 					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="open_modal_skpd">'
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
 					+'</button>'
-					+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="open_modal_skpd_import">'
+					+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="get_renja_lokal">'
 						+'<i class="menu-download m-r-5"></i> <span>Tarik RENJA dari DB lokal</span>'
 					+'</button>';
 				// idunit=_token.unit;				
@@ -970,6 +970,35 @@ function cekUrl(current_url, nomor=1){
 									+'</div>'
 								+'</div>'
 							+'</div>'
+						+'</div>'
+						+'<div class="modal fade modal-extension" id="modal-extension-renja-lokal" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja WP-SIPD</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension-renja-lokal">'
+											+'<thead>'
+												+'<tr>'
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
+													+'<th class="text-left" style="font-weight: bold;">Perangkat Daerah</th>'
+													+'<th class="text-left" style="font-weight: bold;">Program</th>'
+													+'<th class="text-left" style="font-weight: bold;">Kegiatan</th>'
+													+'<th class="text-left" style="font-weight: bold;">Sub Kegiatan</th>'
+													+'<th class="text-left" style="font-weight: bold;">Keterangan</th>'											
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses-extension-renja-lokal">Proses</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
 						+'</div>';
 					jQuery('body').append(modal);			
 					jQuery('#modal_cek_all').on('click', function(){
@@ -986,8 +1015,11 @@ function cekUrl(current_url, nomor=1){
 							+singkron_rka
 						+'</div>';				
 					jQuery('.page-title').append(btn);
-					jQuery('#open_modal_skpd').on('click', function(){										
+					jQuery('#open_modal_skpd').on('click', function(){
 						open_modal_skpd();
+					});
+					jQuery('#get_renja_lokal').on('click', function(){
+						get_renja_lokal();
 					});
 				}		
 			}
@@ -1052,6 +1084,7 @@ function cekUrl(current_url, nomor=1){
 
 		// ulangi cek url
 		if(cek_reload){
+			current_url = window.location.href;
 			cekUrl(current_url, nomor+1);
 		}
 	}, 1000);

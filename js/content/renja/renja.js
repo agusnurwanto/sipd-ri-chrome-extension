@@ -54,6 +54,59 @@ function open_modal_skpd(){
 	});
 }
 
+function get_renja_lokal(){
+	show_loading();
+	pesan_loading('Get data RENJA dari WP-SIPD');
+	var data = {
+	    message:{
+	        type: "get-url",
+	        content: {
+			    url: config.url_server_lokal,
+			    type: 'post',
+			    data: { 
+					action: 'get_renja',
+					run: 'open_modal_renja',
+					id_skpd: idunitskpd,
+					tahun_anggaran: _token.tahun,
+					api_key: config.api_key
+				},
+    			return: true
+			}
+	    }
+	};
+	chrome.runtime.sendMessage(data, function(response) {
+	    console.log('responeMessage', response);
+	});
+}
+
+function open_modal_renja(res){
+	if(res.status == 'error'){
+		hide_loading();
+		return alert(res.message);
+	}
+	pesan_loading(res.message+' run open_modal_renja!');
+	window.rka_all = {};
+	var body = '';
+	res.data.map(function(b, i){
+		var keyword = b.kode_sbl;
+		rka_all[keyword] = b;
+		body += ''
+			+'<tr>'								
+				+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+				+'<td>'+b.kode_sub_skpd+' - '+b.nama_sub_skpd+'</td>'
+				+'<td>'+b.nama_program+'</td>'
+				+'<td>'+b.nama_giat+'</td>'
+				+'<td>'+b.nama_sub_giat+'</td>'
+				+'<td>'+formatMoney(b.pagu)+'</td>'								
+			+'</tr>';
+	});
+	jQuery('#table-extension-renja-lokal tbody').html(body);
+	run_script('show_modal', {
+		id: 'modal-extension-renja-lokal'
+	});
+	hide_loading();
+}
+
 function singkron_skpd_modal(){
 	var data_selected = [];
 	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){
