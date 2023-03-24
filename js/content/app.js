@@ -1009,9 +1009,9 @@ function cekUrl(current_url, nomor=1){
 							+'</div>'
 						+'</div>';
 					jQuery('body').append(modal);			
-					jQuery('#modal_cek_all').on('click', function(){
+					jQuery('body').on('click', '#modal_cek_all', function(){
 						var cek = jQuery(this).is(':checked');
-						jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
+						jQuery(this).closest('table').find('tbody tr input[type="checkbox"]').prop('checked', cek);
 					});	
 					jQuery('#proses-extension').on('click', function(){
 						singkron_subgiat_modal();
@@ -1026,8 +1026,11 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#get_renja_lokal').on('click', function(){
 						get_renja_lokal();
 					});
-					jQuery('#open_modal_skpd').on('click', function(){										
+					jQuery('#open_modal_skpd').on('click', function(){
 						open_modal_subgiat(id_skpd);
+					});
+					jQuery('#proses-extension-renja-lokal').on('click', function(){
+						proses_modal_renja();
 					});
 				}
 				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				

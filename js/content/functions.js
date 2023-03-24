@@ -321,7 +321,7 @@ function relayAjaxApiKey(options){
         }
         return xhr;
     };
-    if(options.type == 'post'){
+    if(options.type.toLowerCase() == 'post'){
 		options.cache = true;
 		options.processData = false; 
 		options.contentType = false;
