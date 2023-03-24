@@ -566,7 +566,7 @@ function cekUrl(current_url, nomor=1){
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
 							+'</div>';
-						jQuery('#aksi-admin').append(btn2);
+						jQuery('#aksi-admin').append(btn2);						
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -585,6 +585,14 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#set_mulit_rek').on('click', function(){
 							set_mulit_rek();
 						});
+						var simpan_multiaddkompakun = ''
+							+'<button type="button" class="btn btn-danger" name="simpan_multiaddkompakun" id="simpan_multiaddkompakun">Simpan</button>';
+						jQuery('app-ssh-form-akun .card-footer').prepend(simpan_multiaddkompakun);
+						run_script("jQuery('.ngb-modal-window > div > div > app-ssh-form-akun').modal('show')').on('hidden.bs.modal', function () {"
+							+"jQuery('#simpan_addkompakun').show();"
+							+"jQuery('#simpan_multiaddkompakun').hide();"
+							+"jQuery('select[name=kompakun]').val('').trigger('change');"
+						+"});");
 						jQuery('#show_id_ssh').on('click', function(){
 							show_id_ssh();
 						});
@@ -1006,6 +1014,58 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
 					});	
 					jQuery('#proses-extension').on('click', function(){
+						singkron_subgiat_modal();
+					});
+					jQuery('.aksi-extension').remove();
+					var btn = ''
+						+'<div class="aksi-extension">'						
+							+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
+							+singkron_rka
+						+'</div>';				
+					jQuery('.page-title').append(btn);
+					jQuery('#get_renja_lokal').on('click', function(){
+						get_renja_lokal();
+					});
+					jQuery('#open_modal_skpd').on('click', function(){										
+						open_modal_subgiat(id_skpd);
+					});
+				}
+				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
+					console.log('halaman Renja list SKPD oleh admin TAPD');	
+					idunitskpd=0;
+					var modal = ''
+						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Sinkronisasi Renja Unit SKPD</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension">'
+											+'<thead>'
+												+'<tr>'
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="modal_cek_all"></th>'
+													+'<th class="text-center" style="font-weight: bold;">SKPD</th>'
+													+'<th class="text-center" style="font-weight: bold;">Keterangan</th>'
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';	
+					jQuery('body').append(modal);			
+					jQuery('#modal_cek_all').on('click', function(){
+						var cek = jQuery(this).is(':checked');
+						jQuery('#table-extension tbody tr input[type="checkbox"]').prop('checked', cek);
+					});	
+					jQuery('#proses-extension').on('click', function(){
 						singkron_skpd_modal();
 					});
 					jQuery('.aksi-extension').remove();
@@ -1018,10 +1078,7 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#open_modal_skpd').on('click', function(){
 						open_modal_skpd();
 					});
-					jQuery('#get_renja_lokal').on('click', function(){
-						get_renja_lokal();
-					});
-				}		
+				}
 			}
 			// Pendapatan
 			else if(current_url.indexOf('/pendapatan') != -1){
