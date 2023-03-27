@@ -34,69 +34,60 @@ function singkron_skpd_ke_lokal(tampil_renja){
 				pesan_loading('Simpan data Master Profil SKPD ke DB Lokal!');
 				var sendData = unit.data.data.map(function(b, i){
 					return new Promise(function(resolve, reject){
-                            var idsetupunit;
-                            if (b.setup_unit == 1) {
-                                idsetupunit = b.id_skpd;
-                            }else {
-                                idsetupunit = 0;
-                            }
-							var idskpd = b.id_skpd;
-                            var tahun = b.tahun;
-                            var iddaerah = b.id_daerah;							
-                            var kode_opd2 = b.kode_skpd.split(".");
-		                	relayAjax({
-								url: config.sipd_url+'api/master/skpd/view/'+idskpd+'/'+tahun+'/'+iddaerah,                                    
-								type: 'GET',	      				
-								processData : false,
-								contentType : false,
-								beforeSend: function (xhr) {			    
-									xhr.setRequestHeader("X-API-KEY", x_api_key());
-									xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-								},					          	
-					          	success: function(data){                                                                     
-					          		var data_unit = {
-										id_skpd : b.id_skpd,                            
-										is_skpd : b.is_skpd,
-										kode_skpd : b.kode_skpd,
-										mapping : b.mapping, //baru
-										kunci_skpd : b.kunci_skpd,
-										nama_skpd : b.nama_skpd,
-										posisi : b.posisi,
-										setupunit : b.setup_unit,
-										status : b.status,
-                                        // id_setup_unit : data.data[0].id_unit,
-                                        id_setup_unit : idsetupunit,
-                                        bidur_1 : data.data[0].id_bidang_urusan_1,
-                                        bidur_2 : data.data[0].id_bidang_urusan_2,
-                                        bidur_3 : data.data[0].id_bidang_urusan_3,
-                                        id_kecamatan : data.data[0].id_kecamatan, //baru
-                                        id_strategi : data.data[0].id_strategi, //baru
-                                        id_unit : data.data[0].id_unit,
-                                        is_dpa_khusus : data.data[0].is_dpa_khusus, //baru
-                                        ispendapatan : data.data[0].is_pendapatan,    
-                                        is_ppkd : data.data[0].is_ppkd,  //baru  
-                                        isskpd : data.data[0].is_skpd,
-                                        kode_skpd_1 : kode_opd2[6],
-                                        kode_skpd_2 : kode_opd2[7],
-                                        kodeunit : data.data[0].kode_unit,
-                                        komisi : data.data[0].komisi,
-                                        namabendahara : data.data[0].nama_bendahara,
-                                        namakepala : data.data[0].nama_kepala,
-                                        namaunit : data.data[0].nama_skpd,
-                                        nipbendahara : data.data[0].nip_bendahara,
-                                        nipkepala : data.data[0].nip_kepala,
-                                        pangkatkepala : data.data[0].pangkat_kepala,                            
-                                        set_input : data.data[0].set_input, //baru
-                                        statuskepala : data.data[0].status_kepala,
-                                        idinduk : data.data[0].id_skpd,	
-					          		};
-									return resolve(data_unit);
-								},
-								error: function(e) {
-									console.log(e);
-									return resolve({});
-								}
-					        });
+                        var idsetupunit;
+                        if (b.setup_unit == 1) {
+                            idsetupunit = b.id_skpd;
+                        }else {
+                            idsetupunit = 0;
+                        }
+						var idskpd = b.id_skpd;
+                        var tahun = b.tahun;
+                        var iddaerah = b.id_daerah;							
+                        var kode_opd2 = b.kode_skpd.split(".");
+                        get_detil_skpd({
+                        	idskpd: idskpd,
+                        	tahun: tahun,
+                        	iddaerah: iddaerah
+                        })
+	                	.then(function(data){
+			          		var data_unit = {
+								id_skpd : b.id_skpd,                            
+								is_skpd : b.is_skpd,
+								kode_skpd : b.kode_skpd,
+								mapping : b.mapping, //baru
+								kunci_skpd : b.kunci_skpd,
+								nama_skpd : b.nama_skpd,
+								posisi : b.posisi,
+								setupunit : b.setup_unit,
+								status : b.status,
+                                // id_setup_unit : data.data[0].id_unit,
+                                id_setup_unit : idsetupunit,
+                                bidur_1 : data.data[0].id_bidang_urusan_1,
+                                bidur_2 : data.data[0].id_bidang_urusan_2,
+                                bidur_3 : data.data[0].id_bidang_urusan_3,
+                                id_kecamatan : data.data[0].id_kecamatan, //baru
+                                id_strategi : data.data[0].id_strategi, //baru
+                                id_unit : data.data[0].id_unit,
+                                is_dpa_khusus : data.data[0].is_dpa_khusus, //baru
+                                ispendapatan : data.data[0].is_pendapatan,    
+                                is_ppkd : data.data[0].is_ppkd,  //baru  
+                                isskpd : data.data[0].is_skpd,
+                                kode_skpd_1 : kode_opd2[6],
+                                kode_skpd_2 : kode_opd2[7],
+                                kodeunit : data.data[0].kode_unit,
+                                komisi : data.data[0].komisi,
+                                namabendahara : data.data[0].nama_bendahara,
+                                namakepala : data.data[0].nama_kepala,
+                                namaunit : data.data[0].nama_skpd,
+                                nipbendahara : data.data[0].nip_bendahara,
+                                nipkepala : data.data[0].nip_kepala,
+                                pangkatkepala : data.data[0].pangkat_kepala,                            
+                                set_input : data.data[0].set_input, //baru
+                                statuskepala : data.data[0].status_kepala,
+                                idinduk : data.data[0].id_skpd,	
+			          		};
+							return resolve(data_unit);
+				        });
 	                })
 	                .catch(function(e){
 	                    console.log(e);
@@ -136,4 +127,22 @@ function singkron_skpd_ke_lokal(tampil_renja){
 			}
 		});
 	}
+}
+
+function get_detil_skpd(opsi){
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/master/skpd/view/'+opsi.idskpd+'/'+opsi.tahun+'/'+opsi.iddaerah,
+			type: 'GET',
+			processData : false,
+			contentType : false,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+          	success: function(data){
+          		resolve(data);
+          	}
+        });
+	})
 }
