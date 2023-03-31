@@ -21,7 +21,7 @@ function singkron_asmas_lokal(){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},			
 			success: function(data){			
-				pesan_loading('Simpan data Usulan ASMAS ke DB Lokal!');                
+				pesan_loading('Simpan data Usulan ASMAS ke DB Lokal!');
                 var last = data.data.length-1;
                 data.data.reduce(function(sequence, nextData){
                     return sequence.then(function(current_data){
@@ -97,9 +97,9 @@ function singkron_asmas_lokal(){
                                 // data_asmas.rekom_tapd_anggaran = current_data.rekom_tapd.anggaran;
                                 // data_asmas.rekom_tapd_koefisien = current_data.rekom_tapd.koefisien;
                                 data_asmas.rekom_tapd_rekomendasi = current_data.rekomendasi_tapd;
-                                data_pokir.rekom_teks = current_data.rekom_teks;   
-                                data_pokir.status_usul = current_data.status_usul;
-								data_pokir.status_usul_teks = current_data.nama_status;
+                                data_asmas.rekom_teks = current_data.rekom_teks;   
+                                data_asmas.status_usul = current_data.status_usul;
+								data_asmas.status_usul_teks = current_data.nama_status;
                                 // data_asmas.rev_skpd = current_data.rev_skpd;
                                 // data_asmas.satuan = current_data.satuan;
                                 // data_asmas.tolak_teks = current_data.tolak_teks;
