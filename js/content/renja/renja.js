@@ -139,22 +139,22 @@ function proses_modal_renja() {
 	if(data_selected.length >= 1){
 		console.log('data_selected', data_selected);
 		if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-			// data bidang urusan dipakai untuk sub kegiatan penunjang urusan
-			find_bidang_urusan({
-    			id_sub_skpd: data_skpd.data[0].id_unit.id_skpd,
-    			nama_sub_skpd: data_skpd.data[0].id_unit.nama_skpd,
-				search: ''
-			})
-        	.then(function(data_bidur){
-	            get_detil_skpd({
-	            	idskpd: idunitskpd,
-	            	tahun: _token.tahun,
-	            	iddaerah: _token.daerah_id
-	            })
-	        	.then(function(data_skpd){
+            get_detil_skpd({
+            	idskpd: idunitskpd,
+            	tahun: _token.tahun,
+            	iddaerah: _token.daerah_id
+            })
+        	.then(function(data_skpd){
+				// data bidang urusan dipakai untuk sub kegiatan penunjang urusan
+				find_bidang_urusan({
+	    			id_sub_skpd: data_skpd.data[0].id_skpd,
+	    			nama_sub_skpd: data_skpd.data[0].nama_skpd,
+					search: ''
+				})
+	        	.then(function(data_bidur){
 	        		find_sub_giat({
-	        			id_sub_skpd: data_skpd.data[0].id_unit.id_skpd,
-	        			nama_sub_skpd: data_skpd.data[0].id_unit.nama_skpd,
+	        			id_sub_skpd: data_skpd.data[0].id_skpd,
+	        			nama_sub_skpd: data_skpd.data[0].nama_skpd,
 						search: ''
 	        		})
 	        		.then(function(master_sub_keg_sipd){
@@ -194,7 +194,7 @@ function proses_modal_renja() {
 											var options_sub = {
 												id_unit: data_skpd.data[0].id_unit,
 												id_skpd: data_skpd.data[0].id_unit,
-												id_sub_skpd: data_skpd.data[0].id_unit.id_skpd,
+												id_sub_skpd: data_skpd.data[0].id_skpd,
 												id_urusan: master_sub_keg[nama_sub].id_urusan,
 												id_bidang_urusan: master_sub_keg[nama_sub].id_bidang_urusan,
 												id_program: master_sub_keg[nama_sub].id_program,
@@ -229,14 +229,46 @@ function proses_modal_renja() {
 											return resolve_reduce(); // masih pengembangan
 											
 											simpan_sub_bl(options_sub)
-											.then(function(){
-												var options_label = {};
+											.then(function(id_sub_bl){
+												var options_label = {
+													id_sub_bl: id_sub_bl,
+													tahun: options_sub.tahun,
+													id_daerah: options_sub.id_daerah,
+													id_daerah_log: options_sub.id_daerah_log,
+													id_user_log: options_sub.id_user_log
+												};
 												simpan_label_bl(options_label)
 												.then(function(){
-													var options_lokasi = {};
+													var options_lokasi = {
+														id_sub_bl: id_sub_bl,
+														tahun: options_sub.tahun,
+														id_daerah: options_sub.id_daerah,
+														id_kab_kota: options_sub.id_daerah,
+														id_daerah_log: options_sub.id_daerah_log,
+														id_user_log: options_sub.id_user_log
+													};
 													simpan_detil_lokasi_bl(options_lokasi)
 													.then(function(){
-														var options_output = {};
+														var options_output = {
+															id_sub_bl: id_sub_bl,
+															id_daerah_log: options_sub.id_daerah_log,
+															id_user_log: options_sub.id_user_log,
+															tahun: options_sub.tahun,
+															id_daerah: options_sub.id_daerah,
+															id_unit: options_sub.id_unit,
+															tolak_ukur: '',
+															target: '',
+															satuan: '',
+															id_skpd: options_sub.id_skpd,
+															id_sub_skpd: options_sub.id_sub_skpd,
+															id_program: options_sub.id_program,
+															id_giat: options_sub.id_giat,
+															id_sub_giat: options_sub.id_sub_giat,
+															nama_daerah: options_sub.nama_daerah,
+															nama_unit: options_sub.nama_unit,
+															nama_skpd: options_sub.nama_skpd,
+															nama_sub_skpd: options_sub.nama_sub_skpd,
+														};
 														simpan_output_bl(options_output)
 														.then(function(){
 															resolve_reduce();
@@ -261,9 +293,8 @@ function proses_modal_renja() {
 								});
 							}, Promise.resolve(data_selected[last]))
 							.then(function(data_last){
-								console.log(data_last);
 								hide_loading();        
-								alert('Data berhasil disimpan!');
+								alert('Data berhasil diproses!');
 							})
 							.catch(function(e){
 								console.log(e);
@@ -515,7 +546,7 @@ function simpan_output_bl(opsi) {
 }
 
 function find_sub_giat(opsi){
-	show_loading("Get master sub kegiatan SIPD id unit "+opsi.id_sub_skpd+" "+opsi.nama_sub_skpd);
+	pesan_loading("Get master sub kegiatan SIPD id unit "+opsi.id_sub_skpd+" "+opsi.nama_sub_skpd);
 	return new Promise(function(resolve, reject){
 		relayAjax({
 			url: config.sipd_url+'api/master/sub_giat/find_sub_giat_by_tahun_daerah_unit',
@@ -538,26 +569,34 @@ function find_sub_giat(opsi){
 }
 
 function find_bidang_urusan(opsi){
-	show_loading("Get master sub kegiatan SIPD id unit "+opsi.id_sub_skpd+" "+opsi.nama_sub_skpd);
     return new Promise(function(resolve, reject){
-		relayAjax({	      	
-			url: config.sipd_url+'api/master/bidang_urusan/find_by_id_skpd',
-			type: 'POST',
-			data: {
-				id_daerah: _token.daerah_id,
-				tahun: _token.tahun,
-				id_unit: opsi.id_sub_skpd
-				// search[value]: opsi.nama_bidang_urusan
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},	
-	      	success: function(data){
-	      		get_bidang_urusan_global[key] = data;
-	      		return resolve(data);
-	      	}
-	    });
+		if(typeof get_bidang_urusan_global == 'undefined'){
+			window.get_bidang_urusan_global = {};
+		}
+		var key = opsi.id_sub_skpd+'-'+_token.tahun;
+		if(!get_bidang_urusan_global[key]){
+			pesan_loading("Get master bidang urusan SIPD id unit "+opsi.id_sub_skpd+" "+opsi.nama_sub_skpd);
+			relayAjax({	      	
+				url: config.sipd_url+'api/master/bidang_urusan/find_by_id_skpd',
+				type: 'POST',
+				data: {
+					id_skpd: opsi.id_sub_skpd,
+					tahun: _token.tahun,
+					id_daerah: _token.daerah_id,
+					// search[value]: opsi.nama_bidang_urusan
+				},
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},	
+		      	success: function(data){
+		      		get_bidang_urusan_global[key] = data;
+		      		return resolve(data);
+		      	}
+		    });
+		}else{
+      		return resolve(get_bidang_urusan_global[key]);
+		}
     });
 }
 
