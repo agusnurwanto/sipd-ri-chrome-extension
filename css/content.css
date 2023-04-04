@@ -111,13 +111,14 @@ thead{
     position: fixed;
     height: 64px;
     top: 50vh;
-    left: 50%;
+    left: 55%;
+    line-height: 1.5;
+    width: 90%;
     z-index: 99999;
     margin-top: -90px;
     color: #fff;
     font-size: 26px;
     font-weight: bold;
-    width: 100vw;
     margin-left: -50vw;
 }
 .border-table-sce{

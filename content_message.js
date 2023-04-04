@@ -26,7 +26,11 @@ window.addEventListener('message', function(event) {
 			}
 			break;
     	case 'hide_modal':
-			jQuery('#modal-extension').modal('hide');
+    		if(!opsi){
+				jQuery('#modal-extension').modal('hide');
+			}else{
+				jQuery('#'+opsi.id).modal('hide');
+			}
 			break;
     	case 'show_modal_sm':
     		window.options_datatable = {

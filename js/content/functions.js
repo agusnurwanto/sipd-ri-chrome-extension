@@ -266,6 +266,14 @@ function base64url(source) {
   return encodedSource;
 }
 
+function removeNewlines(str) {
+	//remove line breaks from str
+	str = str.replace(/\s{2,}/g, ' ');
+	str = str.replace(/\t/g, ' ');
+	str = str.toString().trim().replace(/\n/g," ");
+	return str;
+}
+
 function replace_string(text_awal, no_lowercase=false, no_replace=false, recursive=false){
 	if(no_lowercase){
 		var text = jQuery('<textarea />').html(text_awal.trim()).text();
