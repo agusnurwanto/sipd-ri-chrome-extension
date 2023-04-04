@@ -84,6 +84,15 @@ function open_modal_renja(res){
 		hide_loading();
 		return alert(res.message);
 	}
+	// load sumber dana di awal agar tidak memberatkan proses yg lain
+	get_sumber_dana_master()
+	.then(function(data_dana){
+		window.global_all_sumber_dana_obj = {};
+		data_dana.map(function (dana, i) {
+			global_all_sumber_dana_obj[kode_dana] = dana;
+		});
+	});
+
 	pesan_loading(res.message+' run open_modal_renja!');
 	window.rka_all = {};
 	get_sub_bl_sipd({
@@ -256,9 +265,9 @@ function proses_modal_renja() {
 															tahun: options_sub.tahun,
 															id_daerah: options_sub.id_daerah,
 															id_unit: options_sub.id_unit,
-															tolak_ukur: '',
-															target: '',
-															satuan: '',
+															tolak_ukur: current_data.indikator[0].outputteks,
+															target: current_data.indikator[0].targetoutput,
+															satuan: current_data.indikator[0].satuanoutput,
 															id_skpd: options_sub.id_skpd,
 															id_sub_skpd: options_sub.id_sub_skpd,
 															id_program: options_sub.id_program,
@@ -271,7 +280,36 @@ function proses_modal_renja() {
 														};
 														simpan_output_bl(options_output)
 														.then(function(){
-															resolve_reduce();
+															var prom_all = current_data.sumber_dana.map(function(b, i){
+																return new Promise(function(resolve2, reject2){
+																	if(b.kodedana == null){
+																		return resolve2();
+																	}
+																	if(!global_all_sumber_dana_obj[b.kodedana]){
+																		pesan_loading('Sumber dana tidak ditemukan di SIPD! kode='+b.kodedana);
+																		return resolve2();
+																	}
+																	var options_dana = {
+																		id_sub_bl: id_sub_bl,
+																		id_daerah_log: options_sub.id_daerah_log,
+																		id_user_log: options_sub.id_user_log,
+																		tahun: options_sub.tahun,
+																		id_daerah: options_sub.id_daerah,
+																		id_dana: global_all_sumber_dana_obj[b.kodedana].id_dana,
+																		nama_dana: global_all_sumber_dana_obj[b.kodedana].nama_dana,
+																		kode_dana: global_all_sumber_dana_obj[b.kodedana].kode_dana,
+																		pagu_dana: b.pagudana
+																	};
+																	simpan_dana_sub_bl(options_dana)
+																	.then(function(){
+																		resolve2();
+																	});
+																})
+															});
+															Promise.all(prom_all)
+															.then(function(){
+																resolve_reduce();
+															})
 														});
 													});
 												});
@@ -279,6 +317,7 @@ function proses_modal_renja() {
 										// update data
 										}else{
 											pesan_loading("Update Sub Kegiatan '"+current_data.nama_sub_giat+"' OPD "+current_data.nama_sub_skpd);
+											pesan_loading('Update sub keg masih dalam pengembangan!');
 											resolve_reduce();
 										}
 									})
@@ -533,6 +572,41 @@ function simpan_output_bl(opsi) {
 				kode_program: '',
 				kode_giat: '',
 				kode_sub_giat: ''
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			}
+		});
+	});
+}
+
+// simpan 5
+function simpan_dana_sub_bl(opsi) {
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/dana_sub_bl/add',
+			type: 'POST',
+			data: {
+				tahun: opsi.tahun,
+				id_daerah: opsi.id_daerah,
+				id_unit: 0,
+				id_bl: 0,
+				id_sub_bl: opsi.id_sub_bl,
+				id_dana: opsi.id_dana,
+				nama_dana: opsi.nama_dana,
+				kode_dana: opsi.kode_dana,
+				id_skpd: 0,
+				id_sub_skpd: 0,
+				id_program: 0,
+				id_giat: 0,
+				id_sub_giat: 0,
+				pagu_dana: opsi.pagu_dana,
+				id_daerah_log: opsi.id_daerah_log,
+				id_user_log: opsi.id_user_log
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
