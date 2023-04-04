@@ -20,8 +20,7 @@ function singkron_prioritas_kab_lokal(){
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){
-				pesan_loading('Simpan data Master Prioritas Kabupaten/Kota ke DB Lokal!');
-                console.log(data.data.data);
+				pesan_loading('Simpan data Master Prioritas Kabupaten/Kota ke DB Lokal!');                
 				var data_label = { 
 					action: 'singkron_label_kokab',
 					type: 'ri',
@@ -39,7 +38,7 @@ function singkron_prioritas_kab_lokal(){
 					data_label_temp.id_unik = label.id_unik;
                     data_label_temp.is_locked = label.is_locked;
                     data_label_temp.nama_label = label.nama_label;
-                    data_label_temp.teks_prioritas = label.teks_prioritas;
+                    data_label_temp.teks_prioritas = label.nama_label;
                     data_label_temp.status = label.status;
 					data_temp.push(data_label_temp);
 					if((i+1)%_length == 0){
@@ -99,7 +98,6 @@ function singkron_prioritas_prov_lokal(){
 				},
 				success: function(data){
 					pesan_loading('Simpan data Master Prioritas Provinsi ke DB Lokal!');
-					console.log(data.data.data);
 					var data_label = { 
 						action: 'singkron_label_prov',
 						type: 'ri',
@@ -117,7 +115,7 @@ function singkron_prioritas_prov_lokal(){
 						data_label_temp.id_unik = label.id_unik;
 						data_label_temp.is_locked = label.is_locked;
 						data_label_temp.nama_label = label.nama_label;
-						data_label_temp.teks_prioritas = label.teks_prioritas;
+						data_label_temp.teks_prioritas = label.nama_label;
 						data_label_temp.status = label.status;
 						data_temp.push(data_label_temp);
 						if((i+1)%_length == 0){
@@ -178,7 +176,6 @@ function singkron_prioritas_pusat_lokal(){
 				},
 				success: function(data){
 					pesan_loading('Simpan data Master Prioritas Pusat ke DB Lokal!');
-					console.log(data.data.data);
 					var data_label = { 
 						action: 'singkron_label_pusat',
 						type: 'ri',
@@ -196,7 +193,7 @@ function singkron_prioritas_pusat_lokal(){
 						data_label_temp.id_unik = label.id_unik;
 						data_label_temp.is_locked = label.is_locked;
 						data_label_temp.nama_label = label.nama_label;
-						data_label_temp.teks_prioritas = label.teks_prioritas;
+						data_label_temp.teks_prioritas = label.nama_label;
 						data_label_temp.tahun_awal = label.tahun_awal;
 						data_label_temp.tahun_akhir = label.tahun_akhir;
 						data_label_temp.set_urut = label.set_urut;
