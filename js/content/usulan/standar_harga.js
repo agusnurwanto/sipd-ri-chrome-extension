@@ -53,12 +53,15 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 					return sequence.then(function(current_data){
 						return new Promise(function(resolve_redurce, reject_redurce){
 							var sendData = current_data.map(function(val, n){																
-								return new Promise(function(resolve, reject){									
+								return new Promise(function(resolve, reject){		
+									console.log('rekening', val);							
 									relayAjax({
 										url: config.sipd_url+'api/master/d_komponen/listRekening',
 										type: 'POST',
 										data: {
 											id_standar_harga: val.id_standar_harga,
+											kode_standar_harga: val.kode_standar_harga,
+											kelompok: kelompok,
 											tahun: _token.tahun,
 											id_daerah: _token.daerah_id,		
 										},										
