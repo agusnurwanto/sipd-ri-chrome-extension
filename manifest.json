@@ -33,6 +33,7 @@
 				"js/content/master/skpd.js",
 				"js/content/master/user.js",
 				"js/content/master/sub_giat.js",
+				"js/content/master/label_prioritas.js",
 				"js/content/master/akun.js",
 				"js/content/master/sumber_dana.js",	
 				"js/content/usulan/standar_harga.js",

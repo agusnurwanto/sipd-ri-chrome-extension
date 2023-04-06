@@ -428,6 +428,28 @@ function cekUrl(current_url, nomor=1){
 					singkron_data_giat_lokal();
 				});
 			}
+			// Master Prioritas Kabupaten
+			else if(current_url.indexOf('/master/label_kabkot') != -1)
+			{
+				console.log('halaman Master Prioritas Kabupaten');
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_prioritas_kab_lokal">Singkron ke DB Lokal</button>'					
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_prioritas_prov_lokal">Singkron Prioritas Prov ke DB Lokal</button>'					
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_prioritas_pusat_lokal">Singkron Prioritas Pusat ke DB Lokal</button>'					
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_prioritas_kab_lokal').on('click', function(){
+					singkron_prioritas_kab_lokal();
+				});
+				jQuery('#singkron_prioritas_prov_lokal').on('click', function(){
+					singkron_prioritas_prov_lokal();
+				});
+				jQuery('#singkron_prioritas_pusat_lokal').on('click', function(){
+					singkron_prioritas_pusat_lokal();
+				});
+			}
 			// Data Master Akun
 			else if(current_url.indexOf('/master/akun') != -1)
 			{
@@ -588,7 +610,7 @@ function cekUrl(current_url, nomor=1){
 						var simpan_multiaddkompakun = ''
 							+'<button type="button" class="btn btn-danger" name="simpan_multiaddkompakun" id="simpan_multiaddkompakun">Simpan</button>';
 						jQuery('app-ssh-form-akun .card-footer').prepend(simpan_multiaddkompakun);
-						run_script("jQuery('.ngb-modal-window > div > div > app-ssh-form-akun').modal('show')').on('hidden.bs.modal', function () {"
+						run_script("jQuery('.ngb-modal-window .app-ssh-form-akun').modal('show')').on('hidden.bs.modal', function () {"
 							+"jQuery('#simpan_addkompakun').show();"
 							+"jQuery('#simpan_multiaddkompakun').hide();"
 							+"jQuery('select[name=kompakun]').val('').trigger('change');"
@@ -674,6 +696,14 @@ function cekUrl(current_url, nomor=1){
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 							+'</div>';
 						jQuery('.page-title').append(btn);
+						var btn2 = ''
+							+'<div class="aksi-extension">'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
+								//+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
+							+'</div>';
+						jQuery('#aksi-admin').append(btn2);	
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -762,6 +792,14 @@ function cekUrl(current_url, nomor=1){
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 							+'</div>';
 						jQuery('.page-title').append(btn);
+						var btn2 = ''
+							+'<div class="aksi-extension">'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
+								//+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
+							+'</div>';
+						jQuery('#aksi-admin').append(btn2);	
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -851,6 +889,14 @@ function cekUrl(current_url, nomor=1){
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 							+'</div>';
 						jQuery('.page-title').append(btn);
+						var btn2 = ''
+							+'<div class="aksi-extension">'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
+								//+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
+								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
+							+'</div>';
+						jQuery('#aksi-admin').append(btn2);	
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
