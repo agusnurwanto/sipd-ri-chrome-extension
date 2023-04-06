@@ -20,19 +20,45 @@ function open_modal_skpd(){
 			window.units_skpd = units.data;				
 			// jika admin
 			if(idunitskpd == 0){
-				units.data.map(function(b, i){
-					var keyword = b.id_skpd+'-'+b.id_unit;
-					rka_all[keyword] = b;
-					body += ''
-						+'<tr>'								
-							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-							+'<td>'+b.kode_skpd+' - '+b.nama_skpd+'</td>'
-							+'<td>-</td>'								
-						+'</tr>';
-				});
-				jQuery('#table-extension tbody').html(body);
-				run_script('show_modal_sm');
-				hide_loading();
+				var last = units.data.length-1;
+				units.data.reduce(function(sequence, nextData){
+		            return sequence.then(function(b){
+		        		return new Promise(function(resolve_reduce, reject_reduce){
+							get_setup_unit(b)
+							.then(function(unit){
+								var keyword = b.id_skpd+'-'+b.id_unit;
+								rka_all[keyword] = b;
+								body += ''
+									+'<tr>'								
+										+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+										+'<td>'+b.kode_skpd+' - '+b.nama_skpd+'</td>'
+										+'<td>'
+											+'<ul>'
+												+'<li>kunci_tambah_giat: '+unit['data'][0].kunci_tambah_giat+'</li>'
+												+'<li>kunci_skpd: '+unit['data'][0].kunci_skpd+'</li>'
+												+'<li>kunci_input_biaya: '+unit['data'][0].kunci_input_biaya+'</li>'
+												+'<li>kunci_input_penda: '+unit['data'][0].kunci_input_penda+'</li>'
+											+'</ul>'
+										+'</td>'								
+									+'</tr>';
+								resolve_reduce(nextData);
+							});
+		        		})
+		                .catch(function(e){
+		                    console.log(e);
+		                    return Promise.resolve(nextData);
+		                });
+		            })
+		            .catch(function(e){
+		                console.log(e);
+		                return Promise.resolve(nextData);
+		            });
+		        }, Promise.resolve(units.data[last]))
+		        .then(function(data_last){
+					jQuery('#table-extension tbody').html(body);
+					run_script('show_modal_sm');
+					hide_loading();
+		        });
 			}else{
 				var cek_skpd = false;
 				units.data.map(function(b, i){
@@ -2643,4 +2669,131 @@ function getDetailRin(id_unit, kode_sbl, idbelanjarinci, nomor_lampiran, kode_ge
 			});
 		}
 	});
+}
+
+function proses_setting_kegiatan(tipe_task){
+	var data_selected = [];
+	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){
+		var cek = jQuery(b).is(':checked');
+		if(cek){
+			var id = jQuery(b).val();
+			data_selected.push(rka_all[id]);
+		}
+	});
+	if(data_selected.length >= 1){
+		console.log('data_selected', data_selected);
+		if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+			var last = data_selected.length-1;
+			data_selected.reduce(function(sequence, nextData){
+	            return sequence.then(function(current_data){
+	        		return new Promise(function(resolve_reduce, reject_reduce){
+						if(tipe_task == 'kunci-tambah-kegiatan'){
+							update_kunci_tambah_giat(current_data, 1)
+							.then(function(){
+								resolve_reduce(nextData);
+							});
+						}else if(tipe_task == 'buka-tambah-kegiatan'){
+							update_kunci_tambah_giat(current_data, 0)
+							.then(function(){
+								resolve_reduce(nextData);
+							});
+						}else if(tipe_task == 'kunci-kegiatan'){
+							update_kunci_belanja_unit(current_data, 1)
+							.then(function(){
+								resolve_reduce(nextData);
+							});
+						}else if(tipe_task == 'buka-kegiatan'){
+							update_kunci_belanja_unit(current_data, 0)
+							.then(function(){
+								resolve_reduce(nextData);
+							});
+						}
+	        		})
+	                .catch(function(e){
+	                    console.log(e);
+	                    return Promise.resolve(nextData);
+	                });
+	            })
+	            .catch(function(e){
+	                console.log(e);
+	                return Promise.resolve(nextData);
+	            });
+	        }, Promise.resolve(data_selected[last]))
+	        .then(function(data_last){
+	        	alert('Berhasil proses data!');
+				hide_loading();
+	        });
+		}		
+	}else{
+		alert('Pilih data dulu!');
+	}
+}
+
+function update_kunci_tambah_giat(units, kunci_tambah_giat) {
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/setup_unit/update_kunci_tambah_giat_unit',
+			type: 'POST',
+			data: {
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				kunci_tambah_giat: kunci_tambah_giat,
+				id_unit: units.id_skpd,
+				id_user_log: _token.user_id,
+				id_daerah_log: _token.daerah_id
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(html){
+				return resolve();
+			}
+		});
+	})
+}
+
+function update_kunci_belanja_unit(units, kunci_bl) {
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/sub_bl/update_kunci_belanja_unit',
+			type: 'POST',
+			data: {
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				kunci_bl: kunci_bl,
+				id_unit: units.id_skpd,
+				id_user_log: _token.user_id,
+				id_daerah_log: _token.daerah_id
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(html){
+				return resolve();
+			}
+		});
+	})
+}
+
+function get_setup_unit(units) {
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/setup_unit/find_by_id_unit',
+			type: 'POST',
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,				
+				id_unit: units.id_skpd
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			}
+		});
+	})
 }

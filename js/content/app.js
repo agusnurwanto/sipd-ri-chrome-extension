@@ -944,13 +944,14 @@ function cekUrl(current_url, nomor=1){
 				var singkron_rka = ''
 					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="open_modal_skpd">'
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
-					+'</button>'
-					+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="get_renja_lokal">'
-						+'<i class="menu-download m-r-5"></i> <span>Tarik RENJA dari DB lokal</span>'
 					+'</button>';
 				// idunit=_token.unit;				
 				if(current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1){			
 					console.log('halaman Renja SKPD');
+					singkron_rka += ''
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="get_renja_lokal">'
+							+'<i class="menu-download m-r-5"></i> <span>Tarik RENJA dari DB lokal</span>'
+						+'</button>';
 					window.idunitskpd = id_skpd;
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
@@ -1034,7 +1035,7 @@ function cekUrl(current_url, nomor=1){
 					});
 				}
 				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
-					console.log('halaman Renja list SKPD oleh admin TAPD');	
+					console.log('halaman Renja list SKPD oleh admin TAPD');
 					idunitskpd=0;
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
@@ -1057,8 +1058,12 @@ function cekUrl(current_url, nomor=1){
 										+'</table>'
 									+'</div>'
 									+'<div class="modal-footer">'
-										+'<button type="button" class="btn btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
-										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="kunci-tambah-kegiatan">Kunci Tambah Kegiatan</button>'
+										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="buka-tambah-kegiatan">Buka Tambah Kegiatan</button>'
+										+'<button type="button" class="btn btn-sm btn-warning setting-kegiatan" id="kunci-kegiatan">Kunci Kegiatan</button>'
+										+'<button type="button" class="btn btn-sm btn-warning setting-kegiatan" id="buka-kegiatan">Buka Kegiatan</button>'
+										+'<button type="button" class="btn btn-sm btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+										+'<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Tutup</button>'							
 									+'</div>'
 								+'</div>'
 							+'</div>'
@@ -1070,6 +1075,10 @@ function cekUrl(current_url, nomor=1){
 					});	
 					jQuery('#proses-extension').on('click', function(){
 						singkron_skpd_modal();
+					});
+					jQuery('.setting-kegiatan').on('click', function(){
+						var id = jQuery(this).attr('id');
+						proses_setting_kegiatan(id);
 					});
 					jQuery('.aksi-extension').remove();
 					var btn = ''
