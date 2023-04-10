@@ -1082,7 +1082,6 @@ function cekUrl(current_url, nomor=1){
 				}
 				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
 					console.log('halaman Renja list SKPD oleh admin TAPD');
-					idunitskpd=0;
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
@@ -1138,6 +1137,7 @@ function cekUrl(current_url, nomor=1){
 						+'</div>';				
 					jQuery('.page-title').append(btn);
 					jQuery('#open_modal_skpd').on('click', function(){
+						window.idunitskpd=0;
 						open_modal_skpd();
 					});
 				}

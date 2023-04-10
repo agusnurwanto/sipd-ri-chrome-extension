@@ -286,10 +286,26 @@ function proses_modal_renja(data_selected_asli = false) {
 													tahun: _token.tahun,
 													created_user: _token.user_id
 												};
+												if(!_token.skpd){
+													options_sub.nama_unit = data_skpd.data[0].nama_skpd;
+													options_sub.nama_skpd = data_skpd.data[0].nama_skpd;
+												}
 												if(master_sub_keg[nama_sub].kode_sub_giat.indexOf('X.XX.') != -1){
-													options_sub.id_bidang_urusan = data_bidur.data[0].id_bidang_urusan;
-													options_sub.id_urusan = data_bidur.data[0].id_urusan;
-													options_sub.nama_bidang_urusan = data_bidur.data[0].nama_bidang_urusan;
+													var cek_bidang_urusan = false;
+													data_bidur.data.map(function(bb, ii){
+														if(current_data.nama_bidang_urusan.indexOf(bb.nama_bidang_urusan) != -1){
+															cek_bidang_urusan = bb;
+															options_sub.id_bidang_urusan = bb.id_bidang_urusan;
+															options_sub.id_urusan = bb.id_urusan;
+															options_sub.nama_bidang_urusan = bb.nama_bidang_urusan;
+														}
+													});
+													if(!cek_bidang_urusan){
+														pesan_loading('ID bidang urusan tidak ditemukan', current_data);
+														options_sub.id_bidang_urusan = data_bidur.data[0].id_bidang_urusan;
+														options_sub.id_urusan = data_bidur.data[0].id_urusan;
+														options_sub.nama_bidang_urusan = data_bidur.data[0].nama_bidang_urusan;
+													}
 												}
 												if(data_skpd.data[0].is_skpd == 1){
 													options_sub.nama_sub_skpd = data_skpd.data[0].nama_skpd;
@@ -318,6 +334,10 @@ function proses_modal_renja(data_selected_asli = false) {
 														};
 														simpan_detil_lokasi_bl(options_lokasi)
 														.then(function(){
+															var targetoutput = 0
+															if(current_data.indikator.length >= 1){
+																targetoutput = current_data.indikator[0].targetoutput;
+															}
 															var options_output = {
 																id_sub_bl: id_sub_bl,
 																id_daerah_log: options_sub.id_daerah_log,
@@ -326,7 +346,7 @@ function proses_modal_renja(data_selected_asli = false) {
 																id_daerah: options_sub.id_daerah,
 																id_unit: options_sub.id_unit,
 																tolak_ukur: master_sub_keg[nama_sub].indikator,
-																target: current_data.indikator[0].targetoutput,
+																target: targetoutput,
 																satuan: master_sub_keg[nama_sub].satuan,
 																id_skpd: options_sub.id_skpd,
 																id_sub_skpd: options_sub.id_sub_skpd,
