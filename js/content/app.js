@@ -1104,11 +1104,12 @@ function cekUrl(current_url, nomor=1){
 										+'</table>'
 									+'</div>'
 									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-sm btn-success" id="tarik-data-lokal">Tarik Data dari DB Lokal</button>'
 										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="kunci-tambah-kegiatan">Kunci Tambah Kegiatan</button>'
 										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="buka-tambah-kegiatan">Buka Tambah Kegiatan</button>'
 										+'<button type="button" class="btn btn-sm btn-warning setting-kegiatan" id="kunci-kegiatan">Kunci Kegiatan</button>'
 										+'<button type="button" class="btn btn-sm btn-warning setting-kegiatan" id="buka-kegiatan">Buka Kegiatan</button>'
-										+'<button type="button" class="btn btn-sm btn-primary" id="proses-extension">Singkronisasi Data SKPD</button>'
+										+'<button type="button" class="btn btn-sm btn-primary" id="proses-extension">Backup Data ke DB Lokal</button>'
 										+'<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Tutup</button>'							
 									+'</div>'
 								+'</div>'
@@ -1125,6 +1126,9 @@ function cekUrl(current_url, nomor=1){
 					jQuery('.setting-kegiatan').on('click', function(){
 						var id = jQuery(this).attr('id');
 						proses_setting_kegiatan(id);
+					});
+					jQuery('#tarik-data-lokal').on('click', function(){
+						proses_setting_kegiatan('buka-tambah-kegiatan', true);
 					});
 					jQuery('.aksi-extension').remove();
 					var btn = ''

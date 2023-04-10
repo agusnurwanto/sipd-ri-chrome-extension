@@ -61,6 +61,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 			cek_hide_loading = false;
 			if(res.run == "open_modal_renja"){
 				open_modal_renja(res);
+			}else if(res.run == "proses_modal_renja"){
+				open_modal_renja(res, true);
 			};
 		}
 		if(cek_hide_loading){

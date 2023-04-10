@@ -40,6 +40,11 @@ window.addEventListener('message', function(event) {
 			    ],
 				lengthMenu: [[5, 20, 100, -1], [5, 20, 100, "All"]]
 			};
+    		if(opsi){
+    			if(opsi.order){
+    				options_datatable.order = opsi.order;
+    			}
+    		}
 			jQuery('#modal-extension').modal('show');
 			break;
 	}
