@@ -135,15 +135,10 @@ function open_modal_renja(res, run_proses = false){
 	    	iddaerah: _token.daerah_id
 	    })
 		.then(function(data_skpd){
-			get_sub_bl_sipd({
-				id_unit: idunitskpd,
-				id_daerah: _token.daerah_id,
-				nama_sub_skpd: data_skpd.data[0].nama_skpd,
-				tahun: _token.tahun
-			})
+			list_belanja_by_tahun_daerah_unit(idunitskpd)
 			.then(function(sub_keg_exist){
 				var rka_sipd = {};
-				sub_keg_exist.map(function(b, i){
+				sub_keg_exist.data.map(function(b, i){
 					rka_sipd[b.nama_sub_giat] = b;
 				});
 
@@ -229,15 +224,10 @@ function proses_modal_renja(data_selected_asli = false) {
 							master_sub_keg_sipd.map(function(b, i){
 								master_sub_keg[removeNewlines(b.nama_sub_giat)] = b;
 							});
-							get_sub_bl_sipd({
-								id_unit: idunitskpd,
-								id_daerah: _token.daerah_id,
-		        				nama_sub_skpd: data_skpd.data[0].nama_skpd,
-								tahun: _token.tahun
-							})
+							list_belanja_by_tahun_daerah_unit(idunitskpd)
 							.then(function(sub_keg_exist){
 								var rka_sipd = {};
-								sub_keg_exist.map(function(b, i){
+								sub_keg_exist.data.map(function(b, i){
 									rka_sipd[removeNewlines(b.nama_sub_giat)] = b;
 								});
 
@@ -257,148 +247,151 @@ function proses_modal_renja(data_selected_asli = false) {
 												return resolve_reduce(nextData);
 											}
 
+											var options_sub = {
+												id_unit: data_skpd.data[0].id_unit,
+												id_skpd: data_skpd.data[0].id_unit,
+												id_sub_skpd: data_skpd.data[0].id_skpd,
+												id_urusan: master_sub_keg[nama_sub].id_urusan,
+												id_bidang_urusan: master_sub_keg[nama_sub].id_bidang_urusan,
+												id_program: master_sub_keg[nama_sub].id_program,
+												id_giat: master_sub_keg[nama_sub].id_giat,
+												id_sub_giat: master_sub_keg[nama_sub].id_sub_giat,
+												pagu: current_data.pagu,
+												pagu_n_depan: current_data.pagu_n_depan,
+												nama_sub_giat: current_data.nama_sub_giat,
+												id_lokasi: _token.daerah_id,
+												waktu_awal: current_data.waktu_awal,
+												waktu_akhir: current_data.waktu_akhir,
+												nama_daerah: _token.daerah_nama,
+												nama_unit: _token.skpd,
+												nama_skpd: _token.skpd,
+												nama_sub_skpd: data_skpd.data[0].nama_skpd,
+												nama_bidang_urusan: '',
+												kode_sub_giat: master_sub_keg[nama_sub].kode_sub_giat,
+												id_daerah_log: _token.daerah_id,
+												id_user_log: _token.user_id,
+												id_daerah: _token.daerah_id,
+												tahun: _token.tahun,
+												created_user: _token.user_id
+											};
+											if(!_token.skpd){
+												options_sub.nama_unit = data_skpd.data[0].nama_skpd;
+												options_sub.nama_skpd = data_skpd.data[0].nama_skpd;
+											}
+											if(master_sub_keg[nama_sub].kode_sub_giat.indexOf('X.XX.') != -1){
+												var cek_bidang_urusan = false;
+												data_bidur.data.map(function(bb, ii){
+													if(current_data.nama_bidang_urusan.indexOf(bb.nama_bidang_urusan) != -1){
+														cek_bidang_urusan = bb;
+														options_sub.id_bidang_urusan = bb.id_bidang_urusan;
+														options_sub.id_urusan = bb.id_urusan;
+														options_sub.nama_bidang_urusan = bb.nama_bidang_urusan;
+													}
+												});
+												if(!cek_bidang_urusan){
+													pesan_loading('ID bidang urusan tidak ditemukan', current_data);
+													options_sub.id_bidang_urusan = data_bidur.data[0].id_bidang_urusan;
+													options_sub.id_urusan = data_bidur.data[0].id_urusan;
+													options_sub.nama_bidang_urusan = data_bidur.data[0].nama_bidang_urusan;
+												}
+											}
+											if(data_skpd.data[0].is_skpd == 1){
+												options_sub.nama_sub_skpd = data_skpd.data[0].nama_skpd;
+											}
+
+											var options_label = {
+												tahun: options_sub.tahun,
+												id_daerah: options_sub.id_daerah,
+												id_daerah_log: options_sub.id_daerah_log,
+												id_user_log: options_sub.id_user_log
+											};
+											var options_lokasi = {
+												tahun: options_sub.tahun,
+												id_daerah: options_sub.id_daerah,
+												id_kab_kota: options_sub.id_daerah,
+												id_daerah_log: options_sub.id_daerah_log,
+												id_user_log: options_sub.id_user_log
+											};
+											var targetoutput = 0
+											if(current_data.indikator.length >= 1){
+												targetoutput = current_data.indikator[0].targetoutput;
+											}
+											var options_output = {
+												id_daerah_log: options_sub.id_daerah_log,
+												id_user_log: options_sub.id_user_log,
+												tahun: options_sub.tahun,
+												id_daerah: options_sub.id_daerah,
+												id_unit: options_sub.id_unit,
+												tolak_ukur: master_sub_keg[nama_sub].indikator,
+												target: targetoutput,
+												satuan: master_sub_keg[nama_sub].satuan,
+												id_skpd: options_sub.id_skpd,
+												id_sub_skpd: options_sub.id_sub_skpd,
+												id_program: options_sub.id_program,
+												id_giat: options_sub.id_giat,
+												id_sub_giat: options_sub.id_sub_giat,
+												nama_daerah: options_sub.nama_daerah,
+												nama_unit: options_sub.nama_unit,
+												nama_skpd: options_sub.nama_skpd,
+												nama_sub_skpd: options_sub.nama_sub_skpd,
+											};
 											// simpan sub keg baru
 											if(!existing){
-												var options_sub = {
-													id_unit: data_skpd.data[0].id_unit,
-													id_skpd: data_skpd.data[0].id_unit,
-													id_sub_skpd: data_skpd.data[0].id_skpd,
-													id_urusan: master_sub_keg[nama_sub].id_urusan,
-													id_bidang_urusan: master_sub_keg[nama_sub].id_bidang_urusan,
-													id_program: master_sub_keg[nama_sub].id_program,
-													id_giat: master_sub_keg[nama_sub].id_giat,
-													id_sub_giat: master_sub_keg[nama_sub].id_sub_giat,
-													pagu: current_data.pagu,
-													pagu_n_depan: current_data.pagu_n_depan,
-													nama_sub_giat: current_data.nama_sub_giat,
-													id_lokasi: _token.daerah_id,
-													waktu_awal: current_data.waktu_awal,
-													waktu_akhir: current_data.waktu_akhir,
-													nama_daerah: _token.daerah_nama,
-													nama_unit: _token.skpd,
-													nama_skpd: _token.skpd,
-													nama_sub_skpd: data_skpd.data[0].nama_skpd,
-													nama_bidang_urusan: '',
-													kode_sub_giat: master_sub_keg[nama_sub].kode_sub_giat,
-													id_daerah_log: _token.daerah_id,
-													id_user_log: _token.user_id,
-													id_daerah: _token.daerah_id,
-													tahun: _token.tahun,
-													created_user: _token.user_id
-												};
-												if(!_token.skpd){
-													options_sub.nama_unit = data_skpd.data[0].nama_skpd;
-													options_sub.nama_skpd = data_skpd.data[0].nama_skpd;
-												}
-												if(master_sub_keg[nama_sub].kode_sub_giat.indexOf('X.XX.') != -1){
-													var cek_bidang_urusan = false;
-													data_bidur.data.map(function(bb, ii){
-														if(current_data.nama_bidang_urusan.indexOf(bb.nama_bidang_urusan) != -1){
-															cek_bidang_urusan = bb;
-															options_sub.id_bidang_urusan = bb.id_bidang_urusan;
-															options_sub.id_urusan = bb.id_urusan;
-															options_sub.nama_bidang_urusan = bb.nama_bidang_urusan;
-														}
-													});
-													if(!cek_bidang_urusan){
-														pesan_loading('ID bidang urusan tidak ditemukan', current_data);
-														options_sub.id_bidang_urusan = data_bidur.data[0].id_bidang_urusan;
-														options_sub.id_urusan = data_bidur.data[0].id_urusan;
-														options_sub.nama_bidang_urusan = data_bidur.data[0].nama_bidang_urusan;
-													}
-												}
-												if(data_skpd.data[0].is_skpd == 1){
-													options_sub.nama_sub_skpd = data_skpd.data[0].nama_skpd;
-												}
-												console.log('options_sub', options_sub);
-												// return resolve_reduce(); // masih pengembangan
-												
 												simpan_sub_bl(options_sub)
 												.then(function(id_sub_bl){
-													var options_label = {
-														id_sub_bl: id_sub_bl,
-														tahun: options_sub.tahun,
-														id_daerah: options_sub.id_daerah,
-														id_daerah_log: options_sub.id_daerah_log,
-														id_user_log: options_sub.id_user_log
-													};
+													options_label.id_sub_bl = id_sub_bl;
 													simpan_label_bl(options_label)
 													.then(function(){
-														var options_lokasi = {
-															id_sub_bl: id_sub_bl,
-															tahun: options_sub.tahun,
-															id_daerah: options_sub.id_daerah,
-															id_kab_kota: options_sub.id_daerah,
-															id_daerah_log: options_sub.id_daerah_log,
-															id_user_log: options_sub.id_user_log
-														};
+														options_lokasi.id_sub_bl = id_sub_bl;
 														simpan_detil_lokasi_bl(options_lokasi)
 														.then(function(){
-															var targetoutput = 0
-															if(current_data.indikator.length >= 1){
-																targetoutput = current_data.indikator[0].targetoutput;
-															}
-															var options_output = {
-																id_sub_bl: id_sub_bl,
-																id_daerah_log: options_sub.id_daerah_log,
-																id_user_log: options_sub.id_user_log,
-																tahun: options_sub.tahun,
-																id_daerah: options_sub.id_daerah,
-																id_unit: options_sub.id_unit,
-																tolak_ukur: master_sub_keg[nama_sub].indikator,
-																target: targetoutput,
-																satuan: master_sub_keg[nama_sub].satuan,
-																id_skpd: options_sub.id_skpd,
-																id_sub_skpd: options_sub.id_sub_skpd,
-																id_program: options_sub.id_program,
-																id_giat: options_sub.id_giat,
-																id_sub_giat: options_sub.id_sub_giat,
-																nama_daerah: options_sub.nama_daerah,
-																nama_unit: options_sub.nama_unit,
-																nama_skpd: options_sub.nama_skpd,
-																nama_sub_skpd: options_sub.nama_sub_skpd,
-															};
+															options_output.id_sub_bl = id_sub_bl;
 															simpan_output_bl(options_output)
 															.then(function(){
-																var prom_all = current_data.sumber_dana.map(function(b, i){
-																	return new Promise(function(resolve2, reject2){
-																		if(b.kodedana == null){
-																			return resolve2();
-																		}
-																		if(!global_all_sumber_dana_obj[b.kodedana]){
-																			pesan_loading('Sumber dana tidak ditemukan di SIPD! kode='+b.kodedana);
-																			return resolve2();
-																		}
-																		var options_dana = {
-																			id_sub_bl: id_sub_bl,
-																			id_daerah_log: options_sub.id_daerah_log,
-																			id_user_log: options_sub.id_user_log,
-																			tahun: options_sub.tahun,
-																			id_daerah: options_sub.id_daerah,
-																			id_dana: global_all_sumber_dana_obj[b.kodedana].id_dana,
-																			nama_dana: global_all_sumber_dana_obj[b.kodedana].nama_dana,
-																			kode_dana: global_all_sumber_dana_obj[b.kodedana].kode_dana,
-																			pagu_dana: b.pagudana
-																		};
-																		simpan_dana_sub_bl(options_dana)
-																		.then(function(){
-																			resolve2();
-																		});
-																	})
-																});
-																Promise.all(prom_all)
+																var options_dana = {
+																	id_sub_bl: id_sub_bl,
+																	id_daerah_log: options_sub.id_daerah_log,
+																	id_user_log: options_sub.id_user_log,
+																	tahun: options_sub.tahun,
+																	id_daerah: options_sub.id_daerah
+																};
+																simpan_dana_sub_bl(options_dana, current_data)
 																.then(function(){
-																	resolve_reduce(nextData);
-																})
+																	return resolve_reduce(nextData);
+																});
 															});
 														});
 													});
 												});
 											// update data
 											}else{
-												pesan_loading("Update Sub Kegiatan '"+current_data.nama_sub_giat+"' OPD "+current_data.nama_sub_skpd);
-												pesan_loading('Update sub keg masih dalam pengembangan!');
-												resolve_reduce(nextData);
+												options_sub.id_sub_bl = existing.id_sub_bl;
+												update_sub_bl(options_sub)
+												.then(function(){
+													options_label.id_sub_bl = existing.id_sub_bl;
+													update_label_bl(options_label)
+													.then(function(){
+														options_lokasi.id_sub_bl = existing.id_sub_bl;
+														update_detil_lokasi_bl(options_lokasi)
+														.then(function(){
+															options_output.id_sub_bl = existing.id_sub_bl;
+															update_output_bl(options_output)
+															.then(function(){
+																var options_dana = {
+																	id_sub_bl: existing.id_sub_bl,
+																	id_daerah_log: options_sub.id_daerah_log,
+																	id_user_log: options_sub.id_user_log,
+																	tahun: options_sub.tahun,
+																	id_daerah: options_sub.id_daerah,
+																};
+																update_dana_sub_bl(options_dana, current_data)
+																.then(function(){
+																	return resolve_reduce(nextData);
+																});
+															});
+														});
+													});
+												});
 											}
 										})
 										.catch(function(e){
@@ -435,29 +428,6 @@ function proses_modal_renja(data_selected_asli = false) {
 			}
 			return resolve();
 		}
-	});
-}
-
-// get list belanja sipd
-function get_sub_bl_sipd(opsi) {
-	pesan_loading("Get Sub Kegiatan existing dari OPD "+opsi.nama_sub_skpd);
-	return new Promise(function(resolve, reject){
-		relayAjax({
-			url: config.sipd_url+'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',
-			type: 'POST',
-			data: {
-				id_unit: opsi.id_unit,
-				id_daerah: opsi.id_daerah,
-				tahun: opsi.tahun
-			},
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},
-			success: function(res){
-				return resolve(res.data);
-			}
-		});
 	});
 }
 
@@ -542,6 +512,7 @@ function simpan_sub_bl(opsi) {
 // simpan 2
 function simpan_label_bl(opsi) {
 	return new Promise(function(resolve, reject){
+		pesan_loading('Simpan label sub keg! id_sub_bl='+opsi.id_sub_bl);
 		relayAjax({
 			url: config.sipd_url+'api/renja/label_bl/add',
 			type: 'POST',
@@ -586,6 +557,7 @@ function simpan_label_bl(opsi) {
 // simpan 3
 function simpan_detil_lokasi_bl(opsi) {
 	return new Promise(function(resolve, reject){
+		pesan_loading('Simpan lokasi sub keg! id_sub_bl='+opsi.id_sub_bl);
 		relayAjax({
 			url: config.sipd_url+'api/renja/detil_lokasi_bl/add',
 			type: 'POST',
@@ -625,6 +597,7 @@ function simpan_detil_lokasi_bl(opsi) {
 // simpan 4
 function simpan_output_bl(opsi) {
 	return new Promise(function(resolve, reject){
+		pesan_loading('Simpan indikator sub keg! indikator='+opsi.tolak_ukur);
 		relayAjax({
 			url: config.sipd_url+'api/renja/output_bl/add',
 			type: 'POST',
@@ -676,36 +649,429 @@ function simpan_output_bl(opsi) {
 }
 
 // simpan 5
-function simpan_dana_sub_bl(opsi) {
+function simpan_dana_sub_bl(opsi, current_data) {
 	return new Promise(function(resolve, reject){
-		relayAjax({
-			url: config.sipd_url+'api/renja/dana_sub_bl/add',
-			type: 'POST',
-			data: {
-				tahun: opsi.tahun,
-				id_daerah: opsi.id_daerah,
-				id_unit: 0,
-				id_bl: 0,
-				id_sub_bl: opsi.id_sub_bl,
-				id_dana: opsi.id_dana,
-				nama_dana: opsi.nama_dana,
-				kode_dana: opsi.kode_dana,
-				id_skpd: 0,
-				id_sub_skpd: 0,
-				id_program: 0,
-				id_giat: 0,
-				id_sub_giat: 0,
-				pagu_dana: opsi.pagu_dana,
-				id_daerah_log: opsi.id_daerah_log,
-				id_user_log: opsi.id_user_log
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},
-			success: function(res){
-				return resolve(res);
-			}
+		var promise_all = current_data.sumber_dana.map(function(b, i){
+			return new Promise(function(resolve2, reject2){
+				if(b.kodedana == null){
+					return resolve2();
+				}
+				if(!global_all_sumber_dana_obj[b.kodedana]){
+					pesan_loading('Sumber dana tidak ditemukan di SIPD! kode='+b.kodedana);
+					return resolve2();
+				}
+				pesan_loading('Simpan Sumber dana! kode='+b.kodedana);
+				opsi.id_dana = global_all_sumber_dana_obj[b.kodedana].id_dana;
+				opsi.nama_dana = global_all_sumber_dana_obj[b.kodedana].nama_dana;
+				opsi.kode_dana = global_all_sumber_dana_obj[b.kodedana].kode_dana;
+				opsi.pagu_dana = b.pagudana;
+				relayAjax({
+					url: config.sipd_url+'api/renja/dana_sub_bl/add',
+					type: 'POST',
+					data: {
+						tahun: opsi.tahun,
+						id_daerah: opsi.id_daerah,
+						id_unit: 0,
+						id_bl: 0,
+						id_sub_bl: opsi.id_sub_bl,
+						id_dana: opsi.id_dana,
+						nama_dana: opsi.nama_dana,
+						kode_dana: opsi.kode_dana,
+						id_skpd: 0,
+						id_sub_skpd: 0,
+						id_program: 0,
+						id_giat: 0,
+						id_sub_giat: 0,
+						pagu_dana: opsi.pagu_dana,
+						id_daerah_log: opsi.id_daerah_log,
+						id_user_log: opsi.id_user_log
+					},
+					beforeSend: function (xhr) {			    
+						xhr.setRequestHeader("X-API-KEY", x_api_key());
+						xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+					},
+					success: function(res){
+						return resolve2(res);
+					}
+				});
+			})
+		});
+		Promise.all(promise_all)
+		.then(function(){
+			resolve();
+		});
+	});
+}
+
+// update 1
+function update_sub_bl(opsi) {
+	pesan_loading("Update Sub Kegiatan '"+opsi.nama_sub_giat+"' OPD "+opsi.nama_sub_skpd);
+	return new Promise(function(resolve, reject){
+		sub_bl_view(opsi.id_sub_bl)
+		.then(function(data_exist){
+			var promise_all = data_exist.data.map(function(data, i){
+				return new Promise(function(resolve2, reject2){
+					opsi.id_bidang_urusan_pusat = data.id_bidang_urusan_pusat;
+					opsi.id_unik = data.id_unik;
+					opsi.updated_user = _token.user_id;
+					relayAjax({
+						url: config.sipd_url+'api/renja/sub_bl/update',
+						type: 'POST',
+						data: {
+							id_unit: opsi.id_unit,
+							id_skpd: opsi.id_skpd,
+							id_sub_skpd: opsi.id_sub_skpd,
+							id_pptk: 0,
+							id_urusan_pusat: 0,
+							id_bidang_urusan_pusat: opsi.id_bidang_urusan_pusat,
+							id_urusan: opsi.id_urusan,
+							id_bidang_urusan: opsi.id_bidang_urusan,
+							id_program: opsi.id_program,
+							id_giat: opsi.id_giat,
+							id_bl: 0,
+							id_sub_giat: opsi.id_sub_giat,
+							no_sub_giat: '',
+							pagu: opsi.pagu,
+							pagu_n_depan: opsi.pagu_n_depan,
+							id_dana: 0,
+							id_lokasi: opsi.id_lokasi,
+							waktu_awal: opsi.waktu_awal,
+							waktu_akhir: opsi.waktu_akhir,
+							pagu_indikatif: 0,
+							output_teks: '',
+							pagu_n2_lalu: 0,
+							pagu_n_lalu: 0,
+							pagu_n_depan: 0,
+							pagu_n2_depan: 0,
+							rkpd_murni: 0,
+							rkpd_pak: 0,
+							nama_daerah: opsi.nama_daerah,
+							nama_unit: opsi.nama_unit,
+							nama_skpd: opsi.nama_skpd,
+							nama_sub_skpd: opsi.nama_sub_skpd,
+							nama_urusan: '',
+							nama_bidang_urusan: opsi.nama_bidang_urusan,
+							nama_program: '',
+							nama_giat: '',
+							nama_sub_giat: '',
+							nama_dana: '',
+							nama_lokasi: '',
+							nama_jadwal_murni: '',
+							kua_murni: 0,
+							kua_pak: 0,
+							kode_daerah: '',
+							kode_unit: '',
+							kode_skpd: '',
+							kode_sub_skpd: '',
+							kode_urusan_pusat: '',
+							kode_urusan: '',
+							kode_bidang_urusan_pusat: '',
+							kode_bidang_urusan: '',
+							kode_program: '',
+							kode_giat: '',
+							kode_sub_giat: opsi.kode_sub_giat,
+							kode_dana: '',
+							id_daerah_log: opsi.id_daerah_log,
+							id_user_log: opsi.id_user_log,
+							id_sub_bl: opsi.id_sub_bl,
+							id_unik: opsi.id_unik,
+							id_daerah: opsi.id_daerah,
+							tahun: opsi.tahun,
+							updated_user: opsi.updated_user
+						},
+						beforeSend: function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						},
+						success: function(res){
+							return resolve2(res);
+						}
+					});
+				});
+			});
+			Promise.all(promise_all)
+			.then(function(){
+				return resolve();
+			});
+		});
+	});
+}
+
+// update 2
+function update_label_bl(opsi) {
+	return new Promise(function(resolve, reject){
+		pesan_loading('Update label sub kegiatan! id_sub_bl='+opsi.id_sub_bl);
+		label_bl(opsi.id_sub_bl)
+		.then(function(data_exist){
+			var promise_all = data_exist.data.map(function(data, i){
+				return new Promise(function(resolve2, reject2){
+					relayAjax({
+						url: config.sipd_url+'api/renja/label_bl/update',
+						type: 'POST',
+						data: {
+							id_label_bl: data.id_label_bl,
+							id_bl: 0,
+							tahun: opsi.tahun,
+							id_daerah: opsi.id_daerah,
+							id_unit: 0,
+							id_label_pusat: 0,
+							id_label_prov: 0,
+							id_label_kokab: 0,
+							id_sub_bl: opsi.id_sub_bl,
+							id_skpd: 0,
+							id_sub_skpd: 0,
+							id_program: 0,
+							id_giat: 0,
+							id_sub_giat: 0,
+							nama_daerah: '',
+							nama_unit: '',
+							nama_label_pusat: '',
+							nama_label_prov: '',
+							nama_label_kokab: '',
+							nama_skpd: '',
+							nama_sub_skpd: '',
+							nama_program: '',
+							nama_giat: '',
+							nama_sub_giat: '',
+							id_daerah_log: opsi.id_daerah_log,
+							id_user_log: opsi.id_user_log
+						},
+						beforeSend: function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						},
+						success: function(res){
+							return resolve2(res);
+						}
+					});
+				});
+			});
+			Promise.all(promise_all)
+			.then(function(){
+				return resolve();
+			});
+		});
+	});
+}
+
+// update 3
+function update_detil_lokasi_bl(opsi) {
+	return new Promise(function(resolve, reject){
+		pesan_loading('Update lokasi sub kegiatan! id_sub_bl='+opsi.id_sub_bl);
+		detil_lokasi_bl(opsi.id_sub_bl)
+		.then(function(data_exist){
+			var promise_all = data_exist.data.map(function(data, i){
+				return new Promise(function(resolve2, reject2){
+					relayAjax({
+						url: config.sipd_url+'api/renja/detil_lokasi_bl/update',
+						type: 'POST',
+						data: {
+							id_detil_lokasi: data.id_detil_lokasi,
+							tahun: opsi.tahun,
+							id_daerah: opsi.id_daerah,
+							id_unit: 0,
+							id_bl: 0,
+							id_sub_bl: opsi.id_sub_bl,
+							id_kab_kota: opsi.id_kab_kota,
+							id_camat: 0,
+							id_lurah: 0,
+							id_skpd: 0,
+							id_sub_skpd: 0,
+							id_program: 0,
+							id_giat: 0,
+							id_sub_giat: 0,
+							nama_daerah: '',
+							nama_unit: '',
+							nama_kab_kota: '',
+							nama_camat: '',
+							nama_lurah: '',
+							id_daerah_log: opsi.id_daerah_log,
+							id_user_log: opsi.id_user_log
+						},
+						beforeSend: function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						},
+						success: function(res){
+							return resolve2(res);
+						}
+					});
+				});
+			});
+
+			Promise.all(promise_all)
+			.then(function(){
+				return resolve();
+			});
+		});
+	});
+}
+
+// update 4
+function update_output_bl(opsi) {
+	return new Promise(function(resolve, reject){
+		pesan_loading('Update indikator sub kegiatan! id_sub_bl='+opsi.id_sub_bl);
+		output_bl(opsi.id_sub_bl)
+		.then(function(data_exist){
+			var promise_all = data_exist.data.map(function(data, i){
+				return new Promise(function(resolve2, reject2){
+					relayAjax({
+						url: config.sipd_url+'api/renja/output_bl/update',
+						type: 'POST',
+						data: {
+							id_output_bl: data.id_output_bl,
+							id_daerah_log: opsi.id_daerah_log,
+							id_user_log: opsi.id_user_log,
+							id_bl: 0,
+							tahun: opsi.tahun,
+							id_daerah: opsi.id_daerah,
+							id_unit: opsi.id_unit,
+							tolak_ukur: opsi.tolak_ukur,
+							target: opsi.target,
+							satuan: opsi.satuan,
+							target_teks: '',
+							tolok_ukur_sub: '',
+							target_sub: 0,
+							satuan_sub: '',
+							target_sub_teks: '',
+							id_sub_bl: opsi.id_sub_bl,
+							id_skpd: opsi.id_skpd,
+							id_sub_skpd: opsi.id_sub_skpd,
+							id_program: opsi.id_program,
+							id_giat: opsi.id_giat,
+							id_sub_giat: opsi.id_sub_giat,
+							nama_daerah: opsi.nama_daerah,
+							nama_unit: opsi.nama_unit,
+							nama_skpd: opsi.nama_skpd,
+							nama_sub_skpd: opsi.nama_sub_skpd,
+							nama_program: '',
+							nama_giat: '',
+							nama_sub_giat: '',
+							kode_daerah: '',
+							kode_unit: '',
+							kode_skpd: '',
+							kode_sub_skpd: '',
+							kode_program: '',
+							kode_giat: '',
+							kode_sub_giat: ''
+						},
+						beforeSend: function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						},
+						success: function(res){
+							return resolve2(res);
+						}
+					});
+				});
+			});
+
+			Promise.all(promise_all)
+			.then(function(){
+				return resolve();
+			});
+		});
+	});
+}
+
+// update 5
+function update_tag_bl(opsi) {
+	return new Promise(function(resolve, reject){
+		pesan_loading('Update tag sub kegiatan! id_sub_bl='+opsi.id_sub_bl);
+		tag_bl(opsi.id_sub_bl)
+		.then(function(data_exist){
+			var promise_all = data_exist.data.map(function(data, i){
+				return new Promise(function(resolve2, reject2){
+					return resolve2(); // masih pengembangan
+					relayAjax({
+						url: config.sipd_url+'api/renja/tag_bl/update',
+						type: 'POST',
+						data: {
+							// belum dicoba
+						},
+						beforeSend: function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						},
+						success: function(res){
+							return resolve2(res);
+						}
+					});
+				});
+			});
+
+			Promise.all(promise_all)
+			.then(function(){
+				return resolve();
+			});
+		});
+	});
+}
+
+// update 5
+function update_dana_sub_bl(opsi, current_data) {
+	return new Promise(function(resolve, reject){
+		pesan_loading('Update sumber dana sub kegiatan! id_sub_bl='+opsi.id_sub_bl);
+		dana_sub_bl(opsi.id_sub_bl)
+		.then(function(data_exist){
+			var options_dana = {};
+			current_data.sumber_dana.map(function(b, i){
+				if(b.kodedana == null){
+					return;
+				}
+				if(!global_all_sumber_dana_obj[b.kodedana]){
+					pesan_loading('Sumber dana tidak ditemukan di SIPD! kode='+b.kodedana);
+					return;
+				}
+				options_dana[i] = opsi;
+				options_dana[i].id_dana = global_all_sumber_dana_obj[b.kodedana].id_dana;
+				options_dana[i].nama_dana = global_all_sumber_dana_obj[b.kodedana].nama_dana,
+				options_dana[i].kode_dana = global_all_sumber_dana_obj[b.kodedana].kode_dana,
+				options_dana[i].pagu_dana = b.pagudana;
+			});
+			var promise_all = data_exist.data.map(function(data, i){
+				return new Promise(function(resolve2, reject2){
+					if(!options_dana[i]){
+						pesan_loading('Sumber dana tidak ditemukan di WP-SIPD! kode='+data.kode_dana);
+						return resolve2();
+					}
+					relayAjax({
+						url: config.sipd_url+'api/renja/dana_sub_bl/update',
+						type: 'POST',
+						data: {
+							id_dana_sub_bl: data.id_dana_sub_bl,
+							tahun: options_dana[i].tahun,
+							id_daerah: options_dana[i].id_daerah,
+							id_unit: 0,
+							id_bl: 0,
+							id_sub_bl: options_dana[i].id_sub_bl,
+							id_dana: options_dana[i].id_dana,
+							nama_dana: options_dana[i].nama_dana,
+							kode_dana: options_dana[i].kode_dana,
+							id_skpd: 0,
+							id_sub_skpd: 0,
+							id_program: 0,
+							id_giat: 0,
+							id_sub_giat: 0,
+							pagu_dana: options_dana[i].pagu_dana,
+							id_daerah_log: options_dana[i].id_daerah_log,
+							id_user_log: options_dana[i].id_user_log
+						},
+						beforeSend: function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						},
+						success: function(res){
+							return resolve2(res);
+						}
+					});
+				});
+			});
+
+			Promise.all(promise_all)
+			.then(function(){
+				return resolve();
+			});
 		});
 	});
 }
@@ -790,41 +1156,28 @@ function open_modal_subgiat(idunit){
 	// id_unit = opsi_unit.id_skpd ? opsi_unit.id_skpd : _token.unit;
 	id_unit = idunit ? idunit : _token.unit;
 	show_loading();
-	relayAjax({
-		url: config.sipd_url+'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',                                    
-		type: 'POST',	      				
-		data: {            
-				id_daerah: _token.daerah_id,				
-				tahun: _token.tahun,
-				id_unit: id_unit
-			},
-		beforeSend: function (xhr) {			    
-			xhr.setRequestHeader("X-API-KEY", x_api_key());
-			xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-		},
-		success: function(subkeg){
-			console.log('list_belanja_by_tahun_daerah_unit');
-			console.log('list bl', subkeg.data);
-			window.sub_keg_skpd = subkeg.data;
-			subkeg.data.map(function(b, i){
-				if(
-					b.sub_giat_locked == 0
-					&& b.kode_sub_skpd
-				){
-					var keyword = b.kode_sbl;	
-					// kode_sbl_all[keyword] = b;						
-					body += ''
-						+'<tr>'								
-							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-							+'<td>'+b.nama_sub_giat+'</td>'
-							+'<td>-</td>'								
-						+'</tr>';
-				}
-			});
-			jQuery('#table-extension tbody').html(body);
-			run_script('show_modal_sm');
-			hide_loading();
-		}
+	list_belanja_by_tahun_daerah_unit(id_unit)
+	.then(function(subkeg){
+		console.log('list bl', subkeg.data);
+		window.sub_keg_skpd = subkeg.data;
+		subkeg.data.map(function(b, i){
+			if(
+				b.sub_giat_locked == 0
+				&& b.kode_sub_skpd
+			){
+				var keyword = b.kode_sbl;	
+				// kode_sbl_all[keyword] = b;						
+				body += ''
+					+'<tr>'								
+						+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+						+'<td>'+b.nama_sub_giat+'</td>'
+						+'<td>-</td>'								
+					+'</tr>';
+			}
+		});
+		jQuery('#table-extension tbody').html(body);
+		run_script('show_modal_sm');
+		hide_loading();
 	});
 }
 
@@ -1072,167 +1425,155 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 		}
 
 		// get data belanja
-		relayAjax({
-			url: config.sipd_url+'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',                                    
-			type: 'POST',	      				
-			data: {            
-				id_daerah: _token.daerah_id,				
-				tahun: _token.tahun,
-				id_unit: id_unit
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},
-			success: function(subkeg){
-				console.log('list_belanja_by_tahun_daerah_unit', subkeg.data);
-				// ubah status sub_keg_bl jadi tidak aktif semua agar jika ada sub keg yang dihapus, sipd lokal bisa ikut terupdate
-				new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
-					promise_nonactive[id_unit] = resolve_reduce_nonactive;
-					var subkeg_aktif = [];
-					subkeg.data.map(function(b, i){
-						console.log('map',b);
-						if(
-							b.sub_giat_locked == 0
-							&& b.kode_sub_skpd
-						){
-							subkeg_aktif.push({kode_sbl: b.kode_sbl});
+		list_belanja_by_tahun_daerah_unit(id_unit)
+		.then(function(subkeg){
+			console.log('list_belanja_by_tahun_daerah_unit', subkeg.data);
+			// ubah status sub_keg_bl jadi tidak aktif semua agar jika ada sub keg yang dihapus, sipd lokal bisa ikut terupdate
+			new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
+				promise_nonactive[id_unit] = resolve_reduce_nonactive;
+				var subkeg_aktif = [];
+				subkeg.data.map(function(b, i){
+					console.log('map',b);
+					if(
+						b.sub_giat_locked == 0
+						&& b.kode_sub_skpd
+					){
+						subkeg_aktif.push({kode_sbl: b.kode_sbl});
+					}
+				});
+				var data = {
+				    message:{
+				        type: "get-url",
+				        content: {
+						    url: config.url_server_lokal,
+						    type: 'post',
+						    data: {
+						    	action: 'update_nonactive_sub_bl',
+								type: 'ri',
+								api_key: config.api_key,
+								tahun_anggaran: _token.tahun,
+								id_unit: id_unit,
+								subkeg_aktif: subkeg_aktif
+						    },
+			    			return: true
 						}
-					});
-					var data = {
-					    message:{
-					        type: "get-url",
-					        content: {
-							    url: config.url_server_lokal,
-							    type: 'post',
-							    data: {
-							    	action: 'update_nonactive_sub_bl',
-									type: 'ri',
-									api_key: config.api_key,
-									tahun_anggaran: _token.tahun,
-									id_unit: id_unit,
-									subkeg_aktif: subkeg_aktif
-							    },
-				    			return: true
-							}
-					    }
-					};
-					chrome.runtime.sendMessage(data, function(response) {
-					    console.log('responeMessage', response);
-					})
-				}).then(function(){
-					if(opsi_unit && opsi_unit.id_skpd){
-						var cat_wp = '';
-						var last = subkeg.data.length-1;
-						console.log('subkeg', subkeg.data);
-						subkeg.data.reduce(function(sequence, nextData){
-							return sequence.then(function(current_data){
-								return new Promise(function(resolve_reduce, reject_reduce){
-									console.log('current_data subkeg', current_data);
-									if(
-										current_data.sub_giat_locked == 0 
-										&& current_data.kode_sub_skpd
-									){
-										cat_wp = current_data.kode_sub_skpd+' '+current_data.nama_sub_skpd;
-										// var nama_skpd = current_data.nama_skpd.split(' ');
-                                        var nama_skpd = current_data.nama_skpd;
-										// nama_skpd.shift();
-										// nama_skpd = nama_skpd.join(' ');
-										singkron_rka_ke_lokal({
-											id_daerah: current_data.id_daerah,
-											tahun: current_data.tahun,
-											id_unit: current_data.id_unit,
-											id_skpd: current_data.id_skpd,
-											id_sub_skpd: current_data.id_sub_skpd,
-											id_giat: current_data.id_giat,
-											id_program: current_data.id_program,
-											id_sub_giat: current_data.id_sub_giat,
-											id_urusan: current_data.id_urusan,
-											id_bidang_urusan: current_data.id_bidang_urusan,
-											// action: current_data.action,
-											kode_bl: current_data.kode_bl,
-											kode_sbl: current_data.kode_sbl,
-											idbl: current_data.id_bl,
-											idsubbl: current_data.id_sub_bl,
-											kode_skpd: current_data.kode_skpd,
-											nama_skpd: current_data.nama_skpd,
-											kode_sub_skpd: current_data.kode_sub_skpd,
-											nama_sub_skpd: current_data.nama_sub_skpd,
-											pagumurni: current_data.pagumurni,
-											pagu: current_data.pagu,
-											no_return: true
-										}, function(){
-											console.log('next reduce', nextData);
-											resolve_reduce(nextData);
-										});
-									}else{
+				    }
+				};
+				chrome.runtime.sendMessage(data, function(response) {
+				    console.log('responeMessage', response);
+				})
+			}).then(function(){
+				if(opsi_unit && opsi_unit.id_skpd){
+					var cat_wp = '';
+					var last = subkeg.data.length-1;
+					console.log('subkeg', subkeg.data);
+					subkeg.data.reduce(function(sequence, nextData){
+						return sequence.then(function(current_data){
+							return new Promise(function(resolve_reduce, reject_reduce){
+								console.log('current_data subkeg', current_data);
+								if(
+									current_data.sub_giat_locked == 0 
+									&& current_data.kode_sub_skpd
+								){
+									cat_wp = current_data.kode_sub_skpd+' '+current_data.nama_sub_skpd;
+									// var nama_skpd = current_data.nama_skpd.split(' ');
+                                    var nama_skpd = current_data.nama_skpd;
+									// nama_skpd.shift();
+									// nama_skpd = nama_skpd.join(' ');
+									singkron_rka_ke_lokal({
+										id_daerah: current_data.id_daerah,
+										tahun: current_data.tahun,
+										id_unit: current_data.id_unit,
+										id_skpd: current_data.id_skpd,
+										id_sub_skpd: current_data.id_sub_skpd,
+										id_giat: current_data.id_giat,
+										id_program: current_data.id_program,
+										id_sub_giat: current_data.id_sub_giat,
+										id_urusan: current_data.id_urusan,
+										id_bidang_urusan: current_data.id_bidang_urusan,
+										// action: current_data.action,
+										kode_bl: current_data.kode_bl,
+										kode_sbl: current_data.kode_sbl,
+										idbl: current_data.id_bl,
+										idsubbl: current_data.id_sub_bl,
+										kode_skpd: current_data.kode_skpd,
+										nama_skpd: current_data.nama_skpd,
+										kode_sub_skpd: current_data.kode_sub_skpd,
+										nama_sub_skpd: current_data.nama_sub_skpd,
+										pagumurni: current_data.pagumurni,
+										pagu: current_data.pagu,
+										no_return: true
+									}, function(){
+										console.log('next reduce', nextData);
 										resolve_reduce(nextData);
-									}
-								})
-								.catch(function(e){
-									console.log(e);
-									return Promise.resolve(nextData);
-								});
+									});
+								}else{
+									resolve_reduce(nextData);
+								}
 							})
 							.catch(function(e){
 								console.log(e);
 								return Promise.resolve(nextData);
 							});
-						}, Promise.resolve(subkeg.data[last]))
-						.then(function(data_last){
-							if(callback){
-								return callback();
-							}else{
-								var opsi = { 
-									action: 'get_cat_url',
-									api_key: config.api_key,
-									category : cat_wp
-								};
-								var data = {
-									message:{
-										type: "get-url",
-										content: {
-											url: config.url_server_lokal,
-											type: 'post',
-											data: opsi,
-											return: true
-										}
-									}
-								};
-								chrome.runtime.sendMessage(data, function(response) {
-									console.log('responeMessage', response);
-								});
-							}
 						})
 						.catch(function(e){
 							console.log(e);
+							return Promise.resolve(nextData);
 						});
-					}else{
-						console.log('jika tidak ada  muncul data sub giat', subkeg.data);
-						open_modal_subgiat(id_unit);
-						// window.sub_keg_skpd = subkeg.data;
-						// var body = '';
-						// subkeg.data.map(function(b, i){
-						// 	if(
-						// 		b.sub_giat_locked == 0
-						// 		&& b.kode_sub_skpd
-						// 	){
-						// 		var keyword = b.kode_sbl;	
-						// 		rka_all[keyword] = b;						
-						// 		body += ''
-						// 			+'<tr>'								
-						// 				+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-						// 				+'<td>'+b.nama_sub_giat+'</td>'
-						// 				+'<td>-</td>'								
-						// 			+'</tr>';
-						// 	}
-						// });					
-						// jQuery('#table-extension tbody').html(body);
-						// run_script('show_modal_sm');
-						// hide_loading();
-					}
-				});
-			}		
+					}, Promise.resolve(subkeg.data[last]))
+					.then(function(data_last){
+						if(callback){
+							return callback();
+						}else{
+							var opsi = { 
+								action: 'get_cat_url',
+								api_key: config.api_key,
+								category : cat_wp
+							};
+							var data = {
+								message:{
+									type: "get-url",
+									content: {
+										url: config.url_server_lokal,
+										type: 'post',
+										data: opsi,
+										return: true
+									}
+								}
+							};
+							chrome.runtime.sendMessage(data, function(response) {
+								console.log('responeMessage', response);
+							});
+						}
+					})
+					.catch(function(e){
+						console.log(e);
+					});
+				}else{
+					console.log('jika tidak ada  muncul data sub giat', subkeg.data);
+					open_modal_subgiat(id_unit);
+					// window.sub_keg_skpd = subkeg.data;
+					// var body = '';
+					// subkeg.data.map(function(b, i){
+					// 	if(
+					// 		b.sub_giat_locked == 0
+					// 		&& b.kode_sub_skpd
+					// 	){
+					// 		var keyword = b.kode_sbl;	
+					// 		rka_all[keyword] = b;						
+					// 		body += ''
+					// 			+'<tr>'								
+					// 				+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+					// 				+'<td>'+b.nama_sub_giat+'</td>'
+					// 				+'<td>-</td>'								
+					// 			+'</tr>';
+					// 	}
+					// });					
+					// jQuery('#table-extension tbody').html(body);
+					// run_script('show_modal_sm');
+					// hide_loading();
+				}
+			});	
 		});
 	}
 }
@@ -2041,13 +2382,13 @@ function get_skpd(tahun, iddaerah, idskpd){
 function list_belanja_by_tahun_daerah_unit(idskpd){    
     return new Promise(function(resolve, reject){    	
 		relayAjax({
-			url: config.sipd_url+'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',                                    
+			url: config.sipd_url+'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_unit: idskpd
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_unit: idskpd
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2065,10 +2406,10 @@ function setup_unit(idunit){
 			url: config.sipd_url+'api/renja/setup_unit/find_by_id_unit',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_unit: idunit
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_unit: idunit
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2103,10 +2444,10 @@ function total_usul_bantuan(idskpd){
 			url: config.sipd_url+'api/usulan/usul_bantuan/total_approve',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_skpd: idskpd
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_skpd: idskpd
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2124,10 +2465,10 @@ function total_usul_pokir(idskpd){
 			url: config.sipd_url+'api/usulan/usul_pokir/total_approve',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_skpd: idskpd
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_skpd: idskpd
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2145,9 +2486,9 @@ function sub_bl_view(id_sub_bl){
 			url: config.sipd_url+'api/renja/sub_bl/view/'+id_sub_bl,                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2165,9 +2506,9 @@ function master_label_giat(){
 			url: config.sipd_url+'api/master/label_giat/list',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2185,9 +2526,9 @@ function master_lokasi(){
 			url: config.sipd_url+'api/master/daerah/lokasi',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2205,10 +2546,10 @@ function master_sumberdana(){
 			url: config.sipd_url+'api/master/sumber_dana/list',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					length: 1000,
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				length: 1000,
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2226,10 +2567,10 @@ function rinci_sub_bl(idskpd){
 			url: config.sipd_url+'api/renja/rinci_sub_bl/list_by_id_skpd',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_skpd: idskpd
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_skpd: idskpd
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2247,10 +2588,10 @@ function tag_bl(id_sub_bl){
 			url: config.sipd_url+'api/renja/tag_bl/get_by_id_sub_bl',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_sub_bl: id_sub_bl
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_sub_bl: id_sub_bl
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2268,11 +2609,11 @@ function label_bl(id_sub_bl){
 			url: config.sipd_url+'api/renja/label_bl/get_by_id_sub_bl',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					// id_unit: id_unit,
-					id_sub_bl: id_sub_bl
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				// id_unit: id_unit,
+				id_sub_bl: id_sub_bl
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2332,10 +2673,10 @@ function dana_sub_bl(id_sub_bl){
 			url: config.sipd_url+'api/renja/dana_sub_bl/get_by_id_sub_bl',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_sub_bl: id_sub_bl
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_sub_bl: id_sub_bl
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2353,10 +2694,10 @@ function detil_lokasi_bl(id_sub_bl){
 			url: config.sipd_url+'api/renja/detil_lokasi_bl/get_by_id_sub_bl',                                    
 			type: 'POST',	      				
 			data: {            
-					id_daerah: _token.daerah_id,				
-					tahun: _token.tahun,
-					id_sub_bl: id_sub_bl
-				},
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_sub_bl: id_sub_bl
+			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -2466,41 +2807,27 @@ function get_kode_from_rincian_page(opsi, kode_sbl){
 					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 				},
 				success: function(html){
-					// var url_list_sub = html.split('lru8="')[1].split('"')[0];
-					relayAjax({
-						// url: url_list_sub,
-						url: config.sipd_url+'api/renja/sub_bl/list_belanja_by_tahun_daerah_unit',                                    
-						type: 'POST',	      				
-						data: {            
-								id_daerah: _token.daerah_id,				
-								tahun: _token.tahun,
-								id_unit: opsi.id_unit,
-							},
-						beforeSend: function (xhr) {			    
-							xhr.setRequestHeader("X-API-KEY", x_api_key());
-							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-						},
-						success: function(subkeg){
-							var cek = false;
-							// ganti menjadi true jika ingin mengsingkronkan sub keg yang tergembok / nomenklatur lama
-							var allow_lock_subkeg = false;
-							subkeg.data.map(function(b, i){
-								if(
-									(
-										allow_lock_subkeg 
-										|| b.sub_giat_locked == 0
-									)
-									&& b.kode_sub_skpd
-									&& b.kode_sbl == kode_sbl
-								){
-									cek = true;
-									// return resolve({ url: b.action.split("detilGiat('")[1].split("'")[0], data: b });
-									return resolve({ data: b });
-								}
-							});
-							if(!cek){
-								alert('Sub kegiatan ini tidak ditemukan di SIPD. (Sub kegiatan tergembok / sudah dihapus)');
+					list_belanja_by_tahun_daerah_unit(opsi.id_unit)
+					.then(function(subkeg){
+						var cek = false;
+						// ganti menjadi true jika ingin mengsingkronkan sub keg yang tergembok / nomenklatur lama
+						var allow_lock_subkeg = false;
+						subkeg.data.map(function(b, i){
+							if(
+								(
+									allow_lock_subkeg 
+									|| b.sub_giat_locked == 0
+								)
+								&& b.kode_sub_skpd
+								&& b.kode_sbl == kode_sbl
+							){
+								cek = true;
+								// return resolve({ url: b.action.split("detilGiat('")[1].split("'")[0], data: b });
+								return resolve({ data: b });
 							}
+						});
+						if(!cek){
+							alert('Sub kegiatan ini tidak ditemukan di SIPD. (Sub kegiatan tergembok / sudah dihapus)');
 						}
 					});
 				}
