@@ -1966,13 +1966,28 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							// var idsubblbl = d.id_sub_bl;
 							label_bl(d.id_sub_bl).then(function(labelbl){
 								console.log('label_bl singkron_rka_ke_lokal', labelbl.data);	
-								data_rka.dataBl[i].id_label_bl = labelbl.data[0].id_label_bl; //baru
+								data_rka.dataBl[i].id_label_bl = labelbl.data[0].id_label_bl; //baru								
 								data_rka.dataBl[i].id_label_kokab = labelbl.data[0].id_label_kokab;
-								data_rka.dataBl[i].label_kokab = labelbl.data[0].label_kokab;
-								data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
-								data_rka.dataBl[i].label_pusat = labelbl.data[0].label_pusat;
+								if(labelbl.data[0].id_label_kokab.length !=0){
+									get_label_kokab(labelbl.data[0].id_label_kokab).then(function(label_kokab){										
+										data_rka.dataBl[i].label_kokab = label_kokab.data[0].nama_label;
+									});		
+								}
+								//data_rka.dataBl[i].label_kokab = labelbl.data[0].label_kokab;
 								data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
-								data_rka.dataBl[i].label_prov = labelbl.data[0].label_prov;
+								if(labelbl.data[0].id_label_prov.length !=0){
+									get_label_kokab(labelbl.data[0].id_label_prov).then(function(label_prov){										
+										data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
+									});		
+								}
+								// data_rka.dataBl[i].label_prov = labelbl.data[0].label_prov;
+								data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
+								if(labelbl.data[0].id_label_pusat.length !=0){
+									get_label_kokab(labelbl.data[0].id_label_pusat).then(function(label_pusat){										
+										data_rka.dataBl[i].label_pusat = label_pusat.data[0].nama_label;
+									});		
+								}
+								// data_rka.dataBl[i].label_pusat = labelbl.data[0].label_pusat;								
 							});														
 						});
 						
@@ -2066,8 +2081,9 @@ function singkron_rka_ke_lokal(opsi, callback) {
 									var _leng = config.jml_rincian;
 									var _data_all = [];
 									var _data = [];
-									data.data.map(function(rka, i){
+									data.data.map(function(rka, i){										
 										var _rka = {};
+											
 										_rka.action = rka.action;
 										_rka.created_user = rka.created_user;
 										_rka.createddate = rka.createddate;
@@ -2075,9 +2091,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										_rka.harga_satuan = rka.harga_satuan;
 										_rka.harga_satuan_murni = rka.harga_satuan_murni;
 										_rka.id_daerah = rka.id_daerah;
-										_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;
-										_rka.id_subs_sub_bl = rka.id_subs_sub_bl; //baru
-										_rka.id_ket_sub_bl = rka.id_ket_sub_bl; //baru
+										_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;										
 										_rka.id_standar_nfs = rka.id_standar_nfs;
 										_rka.id_standar_harga = rka.id_standar_harga; //baru
 										_rka.id_dana = rka.id_dana; //baru
@@ -2086,20 +2100,41 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										_rka.id_jenis_usul = rka.id_dana; //baru
 										_rka.is_locked = rka.is_locked;
 										_rka.jenis_bl = rka.jenis_bl;
-										_rka.ket_bl_teks = rka.ket_bl_teks;
+										
 										_rka.id_akun = rka.id_akun;
 										_rka.kode_akun = rka.kode_akun;
 										_rka.koefisien = rka.koefisien;
 										_rka.koefisien_murni = rka.koefisien_murni;
 										_rka.lokus_akun_teks = rka.lokus_akun_teks;
 										_rka.nama_akun = rka.nama_akun;
-										if(rka.nama_standar_harga && rka.nama_standar_harga.nama_komponen){
+										_rka.nama_standar_harga = rka.nama_standar_harga;
+										// if(rka.nama_standar_harga && rka.nama_standar_harga.nama_komponen){
+										get_rinci_sub_bl(opsi.id_skpd, rka.id_sub_bl).then(function(rinci_sub_bl){										
+											_rka.nama_komponen = rinci_sub_bl.nama_standar_harga;
+											_rka.spek_komponen = rinci_sub_bl.spek;
+											_rka.id_subs_sub_bl = rinci_sub_bl.id_subs_sub_bl; //baru
+											_rka.id_ket_sub_bl = rinci_sub_bl.id_ket_sub_bl; //baru
+											_rka.idketerangan = rinci_sub_bl.id_ket_sub_bl;
+											_rka.idsubtitle = rinci_sub_bl.id_subs_sub_bl;
+											if(rinci_sub_bl.id_ket_sub_bl !=0){
+												get_ket_sub_bl(rinci_sub_bl.id_ket_sub_bl).then(function(ket_sub_bl){
+													_rka.ket_bl_teks = ket_sub_bl.ket_bl_teks;
+												});	
+											}
+											if(rinci_sub_bl.id_subs_sub_bl !=0){
+												get_subs_sub_bl(rinci_sub_bl.id_subs_sub_bl).then(function(subs_sub_bl){
+													_rka.subs_bl_teks = subs_sub_bl.subs_bl_teks;
+												});	
+											}
+										});	
+										if(rka.nama_standar_harga){
 											_rka.nama_komponen = rka.nama_standar_harga;
-											_rka.spek_komponen = rka.nama_standar_harga;
+											// _rka.spek_komponen = rka.spek_komponen;
 										}else{
 											_rka.nama_komponen = '';
-											_rka.spek_komponen = '';
+											// _rka.spek_komponen = '';
 										}
+										
 										if(rka.satuan){
 											_rka.satuan = rka.satuan;
 										}else{
@@ -2141,8 +2176,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										_rka.id_lurah_penerima = 0;
 										_rka.id_penerima = 0;
 										_rka.idkomponen = 0;
-										_rka.idketerangan = rka.id_ket_sub_bl;
-										_rka.idsubtitle = rka.id_subs_sub_bl;
+										
 										_rka.set_sisa_kontrak = rka.set_sisa_kontrak; //baru
 										_data.push(_rka);
 										if((i+1)%_leng == 0){
@@ -2611,7 +2645,6 @@ function label_bl(id_sub_bl){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				// id_unit: id_unit,
 				id_sub_bl: id_sub_bl
 			},
 			beforeSend: function (xhr) {			    
@@ -3182,4 +3215,144 @@ function get_setup_unit(units) {
 			}
 		});
 	})
+}
+
+function get_label_kokab(id_label_kokab){
+    return new Promise(function(resolve, reject){
+		relayAjax({	      				
+			url: config.sipd_url+'api/master/label_kokab/view/'+id_label_kokab+'/'+_token.tahun+'/'+_token.daerah_id,			
+			type: 'GET',	      				
+			processData: false,
+			contentType : 'application/json',
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},	
+	      	success: function(label_kokab){
+	      		return resolve(label_kokab);
+	      	}
+	    });
+    });
+}
+
+function get_label_prov(id_label_prov){
+	getuserbytoken().then(function(getuserbytoken){
+		return new Promise(function(resolve, reject){
+			relayAjax({	      				
+				url: config.sipd_url+'api/master/label_prov/view/'+id_label_prov+'/'+_token.tahun+'/'+getuserbytoken.id_prop,			
+				type: 'GET',	      				
+				processData: false,
+				contentType : 'application/json',
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},	
+				success: function(label_prov){
+					return resolve(label_prov);
+				}
+			});
+		});
+	});
+}
+
+function get_label_pusat(id_label_pusat){
+	getuserbytoken().then(function(getuserbytoken){
+		return new Promise(function(resolve, reject){
+			relayAjax({	      				
+				url: config.sipd_url+'api/master/label_pusat/view/'+id_label_pusat+'/'+_token.tahun+'/'+getuserbytoken.id_prop,			
+				type: 'GET',	      				
+				processData: false,
+				contentType : 'application/json',
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},	
+				success: function(label_pusat){
+					return resolve(label_pusat);
+				}
+			});
+		});
+	});
+}
+
+function getuserbytoken(){    
+    return new Promise(function(resolve, reject){ 		
+		relayAjax({
+			url: config.sipd_url+'api/master/user/getuserbytoken',                                    
+			type: 'GET',
+			cache: true,
+			beforeSend: function (xhr) {
+			    xhr.setRequestHeader("authorization", "Bearer "+_token.token+'|'+_token.daerah_id+'|'+_token.user_id);
+			    xhr.setRequestHeader("x-api-key", x_api_key());
+			    xhr.setRequestHeader("accept", 'application/json, text/plain, */*');
+			},
+	      	success: function(getuserbytoken){
+	      		return resolve(getuserbytoken);
+	      	}
+	    });
+    });
+}
+
+function get_rinci_sub_bl(idunit, id_sub_bl){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/renja/rinci_sub_bl/get_by_id_sub_bl',                                    
+			type: 'POST',	      				
+			data: {            
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_sub_bl: id_sub_bl,
+				id_unit: idunit
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(rinci_sub_bl){
+	      		return resolve(rinci_sub_bl);
+	      	}
+	    });
+    });
+}
+
+function get_ket_sub_bl(id_ket_sub_bl){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/renja/ket_sub_bl/find_by_id_list',                                    
+			type: 'POST',	      				
+			data: {            
+					id_daerah: _token.daerah_id,				
+					tahun: _token.tahun,
+					__id_ket_sub_bl_list: [id_ket_sub_bl]
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ket_sub_bl){
+	      		return resolve(ket_sub_bl);
+	      	}
+	    });
+    });
+}
+
+function get_subs_sub_bl(id_subs_sub_bl){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/renja/subs_sub_bl/find_by_id_list',                                    
+			type: 'POST',	      				
+			data: {            
+					id_daerah: _token.daerah_id,				
+					tahun: _token.tahun,
+					__id_subs_sub_bl_list: [id_subs_sub_bl]
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(subs_sub_bl){
+	      		return resolve(subs_sub_bl);
+	      	}
+	    });
+    });
 }

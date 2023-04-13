@@ -237,8 +237,7 @@ function getuserbytoken(){
 		var apiKey = x_api_key();  	
 		relayAjax({
 			url: config.sipd_url+'api/master/user/getuserbytoken',                                    
-			type: 'GET',	      				
-			// processData: false,
+			type: 'GET',
 			cache: true,
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader("authorization", "Bearer "+_token.token+'|'+_token.daerah_id+'|'+_token.user_id);
