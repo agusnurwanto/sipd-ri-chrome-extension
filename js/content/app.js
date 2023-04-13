@@ -584,7 +584,7 @@ function cekUrl(current_url, nomor=1){
 						var btn2 = ''
 							+'<div class="aksi-extension">'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
-								+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
 							+'</div>';
@@ -606,24 +606,13 @@ function cekUrl(current_url, nomor=1){
 						});
 						jQuery('#set_mulit_rek').on('click', function(){
 							set_mulit_rek();
-						});
-						var simpan_multiaddkompakun = ''
-							+'<button type="button" class="btn btn-danger" name="simpan_multiaddkompakun" id="simpan_multiaddkompakun">Simpan</button>';
-						jQuery('app-ssh-form-akun .card-footer').prepend(simpan_multiaddkompakun);
-						run_script("jQuery('.ngb-modal-window .app-ssh-form-akun').modal('show')').on('hidden.bs.modal', function () {"
-							+"jQuery('#simpan_addkompakun').show();"
-							+"jQuery('#simpan_multiaddkompakun').hide();"
-							+"jQuery('select[name=kompakun]').val('').trigger('change');"
-						+"});");
+						});						
 						jQuery('#show_id_ssh').on('click', function(){
 							show_id_ssh();
 						});
 						jQuery('#show_akun_ssh').on('click', function(){							
 							show_akun_ssh();
-						});
-						jQuery('body').on('click', '.checkall-ssh', function(){
-							jQuery('.sipd-table tbody > tr > td .checkbox_ssh').prop('checked', jQuery(this).is(':checked'));
-						});
+						});						
 						var modal = ''
 							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
@@ -655,7 +644,34 @@ function cekUrl(current_url, nomor=1){
 										+'</div>'
 									+'</div>'
 								+'</div>'
-							+'</div>';
+							+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension-rekening" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Tambah Rekening</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension-rekening">'											
+											+'<thead>'
+												+'<tr>'													
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_akun"></th>'												
+													+'<th class="text-center" style="font-weight: bold;">ID</th>'
+													+'<th class="text-left" style="font-weight: bold;">Kode Rekening</th>'
+													+'<th class="text-left" style="font-weight: bold;">Uraian</th>'							
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses_simpan_multirek">Simpan</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';
 						jQuery('body').append(modal);
 						jQuery('#select_all_hapus_ssh').on('click', function(){
 							var cek = jQuery(this).is(':checked');
@@ -664,7 +680,13 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#hapus-duplikat').on('click', function(){
 							hapus_duplikat_ssh();
 						});
-
+						jQuery('body').on('click', '#select_all_akun', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery(this).closest('table').find('tbody tr input[type="checkbox"]').prop('checked', cek);
+						});
+						jQuery('#proses_simpan_multirek').on('click', function(){
+							proses_simpan_multirek();
+						});
 						jQuery('#usulan-ssh-sipd').on('click', function(){
 							var list_usulan_selected = [];
 							var nama_usulan = [];
@@ -698,7 +720,7 @@ function cekUrl(current_url, nomor=1){
 						var btn2 = ''
 							+'<div class="aksi-extension">'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
-								//+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
 							+'</div>';
@@ -749,7 +771,34 @@ function cekUrl(current_url, nomor=1){
 										+'</div>'
 									+'</div>'
 								+'</div>'
-							+'</div>';;
+							+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension-rekening" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Tambah Rekening</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension-rekening">'											
+											+'<thead>'
+												+'<tr>'													
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_akun"></th>'												
+													+'<th class="text-center" style="font-weight: bold;">ID</th>'
+													+'<th class="text-left" style="font-weight: bold;">Kode Rekening</th>'
+													+'<th class="text-left" style="font-weight: bold;">Uraian</th>'							
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses_simpan_multirek">Simpan</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';
 						jQuery('body').append(modal);
 						jQuery('#select_all_hapus_ssh').on('click', function(){
 							var cek = jQuery(this).is(':checked');
@@ -758,7 +807,16 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#hapus-duplikat').on('click', function(){
 							hapus_duplikat_ssh();
 						});
-
+						jQuery('#set_mulit_rek').on('click', function(){
+							set_mulit_rek();
+						});
+						jQuery('body').on('click', '#select_all_akun', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery(this).closest('table').find('tbody tr input[type="checkbox"]').prop('checked', cek);
+						});
+						jQuery('#proses_simpan_multirek').on('click', function(){
+							proses_simpan_multirek();
+						});
 						jQuery('#usulan-ssh-sipd').on('click', function(){
 							var list_usulan_selected = [];
 							var nama_usulan = [];
@@ -793,7 +851,7 @@ function cekUrl(current_url, nomor=1){
 						var btn2 = ''
 							+'<div class="aksi-extension">'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
-								//+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
 							+'</div>';
@@ -845,7 +903,34 @@ function cekUrl(current_url, nomor=1){
 										+'</div>'
 									+'</div>'
 								+'</div>'
-							+'</div>';;
+							+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension-rekening" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Tambah Rekening</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension-rekening">'											
+											+'<thead>'
+												+'<tr>'													
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_akun"></th>'												
+													+'<th class="text-center" style="font-weight: bold;">ID</th>'
+													+'<th class="text-left" style="font-weight: bold;">Kode Rekening</th>'
+													+'<th class="text-left" style="font-weight: bold;">Uraian</th>'							
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses_simpan_multirek">Simpan</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';
 						jQuery('body').append(modal);
 						jQuery('#select_all_hapus_ssh').on('click', function(){
 							var cek = jQuery(this).is(':checked');
@@ -854,7 +939,16 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#hapus-duplikat').on('click', function(){
 							hapus_duplikat_ssh();
 						});
-
+						jQuery('#set_mulit_rek').on('click', function(){
+							set_mulit_rek();
+						});
+						jQuery('body').on('click', '#select_all_akun', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery(this).closest('table').find('tbody tr input[type="checkbox"]').prop('checked', cek);
+						});
+						jQuery('#proses_simpan_multirek').on('click', function(){
+							proses_simpan_multirek();
+						});
 						jQuery('#usulan-ssh-sipd').on('click', function(){
 							var list_usulan_selected = [];
 							var nama_usulan = [];
@@ -889,7 +983,7 @@ function cekUrl(current_url, nomor=1){
 						var btn2 = ''
 							+'<div class="aksi-extension">'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
-								//+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="set_mulit_rek">Set Multi Kode SH dan Rek. Belanja '+type_data_ssh+'</button>'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
 								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
 							+'</div>';
@@ -941,7 +1035,34 @@ function cekUrl(current_url, nomor=1){
 										+'</div>'
 									+'</div>'
 								+'</div>'
-							+'</div>';;
+							+'</div>'
+							+'<div class="modal fade modal-extension" id="modal-extension-rekening" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Tambah Rekening</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension-rekening">'											
+											+'<thead>'
+												+'<tr>'													
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_akun"></th>'												
+													+'<th class="text-center" style="font-weight: bold;">ID</th>'
+													+'<th class="text-left" style="font-weight: bold;">Kode Rekening</th>'
+													+'<th class="text-left" style="font-weight: bold;">Uraian</th>'							
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses_simpan_multirek">Simpan</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';
 						jQuery('body').append(modal);
 						jQuery('#select_all_hapus_ssh').on('click', function(){
 							var cek = jQuery(this).is(':checked');
@@ -950,7 +1071,16 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#hapus-duplikat').on('click', function(){
 							hapus_duplikat_ssh();
 						});
-
+						jQuery('#set_mulit_rek').on('click', function(){
+							set_mulit_rek();
+						});
+						jQuery('body').on('click', '#select_all_akun', function(){
+							var cek = jQuery(this).is(':checked');
+							jQuery(this).closest('table').find('tbody tr input[type="checkbox"]').prop('checked', cek);
+						});
+						jQuery('#proses_simpan_multirek').on('click', function(){
+							proses_simpan_multirek();
+						});
 						jQuery('#usulan-ssh-sipd').on('click', function(){
 							var list_usulan_selected = [];
 							var nama_usulan = [];
