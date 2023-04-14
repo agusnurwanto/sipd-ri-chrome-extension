@@ -1883,7 +1883,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							tag_bl_res.data.map(function(d, i){
 								data_rka.dataTag[i] = {};
 								data_rka.dataTag[i].idlabelgiat = d.idlabelgiat;
-								data_rka.dataTag[i].namalabel = d.namalabel;
+								data_rka.dataTag[i].namalabel = d.nama_bl;
 								data_rka.dataTag[i].idtagbl = d.id_tag_bl;
 							});
 						}
@@ -1976,14 +1976,14 @@ function singkron_rka_ke_lokal(opsi, callback) {
 								//data_rka.dataBl[i].label_kokab = labelbl.data[0].label_kokab;
 								data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
 								if(labelbl.data[0].id_label_prov.length !=0){
-									get_label_kokab(labelbl.data[0].id_label_prov).then(function(label_prov){										
+									get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){										
 										data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
 									});		
 								}
 								// data_rka.dataBl[i].label_prov = labelbl.data[0].label_prov;
 								data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
 								if(labelbl.data[0].id_label_pusat.length !=0){
-									get_label_kokab(labelbl.data[0].id_label_pusat).then(function(label_pusat){										
+									get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){										
 										data_rka.dataBl[i].label_pusat = label_pusat.data[0].nama_label;
 									});		
 								}
