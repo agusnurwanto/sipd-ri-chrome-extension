@@ -450,6 +450,20 @@ function cekUrl(current_url, nomor=1){
 					singkron_prioritas_pusat_lokal();
 				});
 			}
+			// Master Label Giat
+			else if(current_url.indexOf('/master/label_kegiatan') != -1)
+			{
+				console.log('halaman Master Label Kegiatan');
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_giat">Singkron ke DB Lokal</button>'											
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_label_giat').on('click', function(){
+					singkron_label_giat();
+				});
+			}
 			// Data Master Akun
 			else if(current_url.indexOf('/master/akun') != -1)
 			{
