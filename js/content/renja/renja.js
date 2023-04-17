@@ -18,22 +18,8 @@ function list_skpd_sub_bl(){
 				units.data.reduce(function(sequence, nextData){
 		            return sequence.then(function(current_data){
 		        		return new Promise(function(resolve_reduce, reject_reduce){
-							list_belanja_by_tahun_daerah_unit(current_data.id_skpd)
-							.then(function(sub_keg_exist){
-								current_data.id_daerah = _token.daerah_id;
-								current_data.id_level = _token.level_id;
-								current_data.id_user = _token.user_id;
-								current_data.nilairincian = 0;
-								current_data.rinci_giat = 0;
-								current_data.nilaipagu = 0;
-								sub_keg_exist.data.map(function(b, i){
-									current_data.nilaipagu += b.pagu;
-									current_data.nilairincian += b.rincian;
-									current_data.rinci_giat += b.rinci_giat;
-								});
-								data_all.data.push(current_data);
-								return resolve_reduce(nextData);
-							});
+							data_all.data.push(current_data);
+							return resolve_reduce(nextData);
 		        		})
 		                .catch(function(e){
 		                    console.log(e);
@@ -1065,39 +1051,44 @@ function update_dana_sub_bl(opsi, current_data) {
 					pesan_loading('Sumber dana tidak ditemukan di SIPD! kode='+b.kodedana);
 					return;
 				}
-				options_dana[i] = opsi;
-				options_dana[i].id_dana = global_all_sumber_dana_obj[b.kodedana].id_dana;
-				options_dana[i].nama_dana = global_all_sumber_dana_obj[b.kodedana].nama_dana,
-				options_dana[i].kode_dana = global_all_sumber_dana_obj[b.kodedana].kode_dana,
-				options_dana[i].pagu_dana = b.pagudana;
+				options_dana[b.kodedana] = {};
+				for(var n in opsi){
+					options_dana[b.kodedana][n] = opsi[n];
+				}
+				options_dana[b.kodedana].id_dana = global_all_sumber_dana_obj[b.kodedana].id_dana;
+				options_dana[b.kodedana].nama_dana = global_all_sumber_dana_obj[b.kodedana].nama_dana,
+				options_dana[b.kodedana].kode_dana = global_all_sumber_dana_obj[b.kodedana].kode_dana,
+				options_dana[b.kodedana].pagu_dana = b.pagudana;
 			});
 			var promise_all = data_exist.data.map(function(data, i){
+				let no = i;
 				return new Promise(function(resolve2, reject2){
-					if(!options_dana[i]){
+					if(!options_dana[data.kode_dana]){
 						pesan_loading('Sumber dana tidak ditemukan di WP-SIPD! kode='+data.kode_dana);
 						return resolve2();
 					}
+					options_dana[data.kode_dana].singkron = 1;
 					relayAjax({
 						url: config.sipd_url+'api/renja/dana_sub_bl/update',
 						type: 'POST',
 						data: {
 							id_dana_sub_bl: data.id_dana_sub_bl,
-							tahun: options_dana[i].tahun,
-							id_daerah: options_dana[i].id_daerah,
+							tahun: options_dana[data.kode_dana].tahun,
+							id_daerah: options_dana[data.kode_dana].id_daerah,
 							id_unit: 0,
 							id_bl: 0,
-							id_sub_bl: options_dana[i].id_sub_bl,
-							id_dana: options_dana[i].id_dana,
-							nama_dana: options_dana[i].nama_dana,
-							kode_dana: options_dana[i].kode_dana,
+							id_sub_bl: options_dana[data.kode_dana].id_sub_bl,
+							id_dana: options_dana[data.kode_dana].id_dana,
+							nama_dana: options_dana[data.kode_dana].nama_dana,
+							kode_dana: options_dana[data.kode_dana].kode_dana,
 							id_skpd: 0,
 							id_sub_skpd: 0,
 							id_program: 0,
 							id_giat: 0,
 							id_sub_giat: 0,
-							pagu_dana: options_dana[i].pagu_dana,
-							id_daerah_log: options_dana[i].id_daerah_log,
-							id_user_log: options_dana[i].id_user_log
+							pagu_dana: options_dana[data.kode_dana].pagu_dana,
+							id_daerah_log: options_dana[data.kode_dana].id_daerah_log,
+							id_user_log: options_dana[data.kode_dana].id_user_log
 						},
 						beforeSend: function (xhr) {			    
 							xhr.setRequestHeader("X-API-KEY", x_api_key());
@@ -1112,7 +1103,22 @@ function update_dana_sub_bl(opsi, current_data) {
 
 			Promise.all(promise_all)
 			.then(function(){
-				return resolve();
+				var promise_all = [];
+				var new_data = {sumber_dana: []};
+				for(var kode in options_dana){
+					if(!options_dana[kode].singkron){
+						current_data.sumber_dana.map(function(b, i){
+							if(b.kodedana == kode){
+								new_data.sumber_dana.push(b);
+							}
+						});
+						promise_all.push(simpan_dana_sub_bl(options_dana[kode], new_data));
+					}
+				}
+				Promise.all(promise_all)
+				.then(function(){
+					return resolve();
+				});
 			});
 		});
 	});
@@ -1401,59 +1407,69 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 			// script singkron pagu SKPD
 			get_skpd(_token.tahun, _token.daerah_id, id_unit).then(function(skpd){
 				get_pagu_validasi(_token.tahun, _token.daerah_id, id_unit).then(function(paguvalidasi){
-					var opsi = { 
-						action: 'set_unit_pagu',
-						type: 'ri',
-						api_key: config.api_key,
-						tahun_anggaran: _token.tahun,
-						data : {
-							batasanpagu : paguvalidasi.data,
-							id_daerah : _token.daerah_id,
-							id_level : opsi_unit.id_level,
-							id_skpd : opsi_unit.id_skpd,
-							id_unit : opsi_unit.id_unit,
-							id_user : opsi_unit.id_user,
-							is_anggaran : opsi_unit.is_anggaran,
-							is_deleted : opsi_unit.is_deleted,
-							is_komponen : opsi_unit.is_komponen,
-							is_locked : skpd.data[0].is_locked,
-							is_skpd : skpd.data[0].is_skpd,
-							kode_skpd : opsi_unit.kode_skpd,
-							kunci_bl : opsi_unit.kunci_bl,
-							kunci_bl_rinci : opsi_unit.kunci_bl_rinci,
-							kuncibl : opsi_unit.kuncibl,
-							kunciblrinci : opsi_unit.kunciblrinci,
-							nilaipagu : opsi_unit.nilaipagu,
-							nilaipagumurni : opsi_unit.nilaipagumurni,
-							// nilairincian : opsi_unit.nilairincian,
-							nilairincian : opsi_unit.rinci_giat,
-							pagu_giat : opsi_unit.pagu_giat,
-							realisasi : opsi_unit.realisasi,
-							rinci_giat : opsi_unit.rinci_giat,
-							set_pagu_giat : opsi_unit.set_pagu_giat,
-							set_pagu_skpd : opsi_unit.set_pagu_skpd,
-							tahun : opsi_unit.tahun,
-							total_giat : opsi_unit.total_giat,					
-							totalgiat : opsi_unit.totalgiat
-						}
-					};
-					var data = {
-						message:{
-							type: "get-url",
-							content: {
-								url: config.url_server_lokal,
-								type: 'post',
-								data: opsi,
-								return: false
+					list_belanja_by_tahun_daerah_unit(current_data.id_skpd)
+					.then(function(sub_keg_exist){
+						var nilairincian = 0;
+						var rinci_giat = 0;
+						var nilaipagu = 0;
+						sub_keg_exist.data.map(function(b, i){
+							nilaipagu += b.pagu;
+							nilairincian += b.rincian;
+							rinci_giat += b.rinci_giat;
+						});
+						var opsi = { 
+							action: 'set_unit_pagu',
+							type: 'ri',
+							api_key: config.api_key,
+							tahun_anggaran: _token.tahun,
+							data : {
+								batasanpagu : paguvalidasi.data,
+								id_daerah : _token.daerah_id,
+								id_level : _token.id_level,
+								id_skpd : opsi_unit.id_skpd,
+								id_unit : opsi_unit.id_unit,
+								id_user : _token.user_id,
+								is_anggaran : opsi_unit.is_anggaran,
+								is_deleted : opsi_unit.is_deleted,
+								is_komponen : opsi_unit.is_komponen,
+								is_locked : skpd.data[0].is_locked,
+								is_skpd : skpd.data[0].is_skpd,
+								kode_skpd : opsi_unit.kode_skpd,
+								kunci_bl : opsi_unit.kunci_bl,
+								kunci_bl_rinci : opsi_unit.kunci_bl_rinci,
+								kuncibl : opsi_unit.kuncibl,
+								kunciblrinci : opsi_unit.kunciblrinci,
+								nilaipagu : nilaipagu,
+								nilaipagumurni : opsi_unit.nilaipagumurni,
+								nilairincian : nilairincian,
+								pagu_giat : opsi_unit.pagu_giat,
+								realisasi : opsi_unit.realisasi,
+								rinci_giat : rinci_giat,
+								set_pagu_giat : opsi_unit.set_pagu_giat,
+								set_pagu_skpd : opsi_unit.set_pagu_skpd,
+								tahun : opsi_unit.tahun,
+								total_giat : opsi_unit.total_giat,					
+								totalgiat : opsi_unit.totalgiat
 							}
+						};
+						var data = {
+							message:{
+								type: "get-url",
+								content: {
+									url: config.url_server_lokal,
+									type: 'post',
+									data: opsi,
+									return: false
+								}
+							}
+						};
+						chrome.runtime.sendMessage(data, function(response) {
+							console.log('responeMessage', response);
+						});
+						if(jQuery('#only_pagu').is(':checked')){
+							return callback();
 						}
-					};
-					chrome.runtime.sendMessage(data, function(response) {
-						console.log('responeMessage', response);
 					});
-					if(jQuery('#only_pagu').is(':checked')){
-						return callback();
-					}
 				})
 			})
 		}
