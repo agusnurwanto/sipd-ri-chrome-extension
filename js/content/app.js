@@ -428,7 +428,24 @@ function cekUrl(current_url, nomor=1){
 					singkron_data_giat_lokal();
 				});
 			}
-			// Master Prioritas Kabupaten
+			// Master Prioritas Provinsi
+			else if(current_url.indexOf('/master/label_prov') != -1)
+			{
+				console.log('halaman Master Prioritas Provinsi');
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_prioritas_kab_lokal">Singkron ke DB Lokal</button>'					
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_prioritas_prov_lokal">Singkron Prioritas Prov ke DB Lokal</button>'											
+					+'</div>';
+				jQuery('.page-title').append(btn);				
+				jQuery('#singkron_prioritas_prov_lokal').on('click', function(){
+					singkron_prioritas_prov_lokal();
+				});
+				jQuery('#singkron_prioritas_pusat_lokal').on('click', function(){
+					singkron_prioritas_pusat_lokal();
+				});
+			}
 			else if(current_url.indexOf('/master/label_kabkot') != -1)
 			{
 				console.log('halaman Master Prioritas Kabupaten');
