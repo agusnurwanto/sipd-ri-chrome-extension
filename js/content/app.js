@@ -1356,6 +1356,40 @@ function cekUrl(current_url, nomor=1){
 			if(password.length >= 1){
 				password.after(lihat_pass);
 				cek_reload = false;
+				jQuery('#prov-autocomplete').after('<span style="color: red; font-weight: bold" id="id_prov"></span>')
+				jQuery('#prov-autocomplete').on('change paste keyup', function(){
+					var prov = jQuery(this).val();
+					console.log('get_prov_login', prov);
+					if(prov == ''){
+						return;
+					}
+					get_prov_login()
+					.then(function(prov_all){
+						prov_all.map(function(b, i){
+							if(b.nama_daerah == prov){
+								jQuery('#id_prov').html('id_prov = '+b.id_daerah+' | kode = '+b.kode_ddn+' | '+b.nama_daerah);
+								jQuery('#id_prov').attr('id_prov', b.id_daerah);
+							}
+						});
+					});
+				});
+				jQuery('#kabkot-autocomplete').after('<span style="color: red; font-weight: bold" id="id_kab"></span>')
+				jQuery('#kabkot-autocomplete').on('change paste keyup', function(){
+					var id_prov = jQuery('#id_prov').attr('id_prov');
+					var kab = jQuery(this).val();
+					console.log('get_kab_login', kab, id_prov);
+					if(kab == '' || typeof id_prov == 'undefined' || id_prov == ''){
+						return;
+					}
+					get_kab_login(id_prov)
+					.then(function(kab_all){
+						kab_all.map(function(b, i){
+							if(b.nama_daerah == kab){
+								jQuery('#id_kab').html('id_kab = '+b.id_daerah+' | kode = '+b.kode_ddn+' | '+b.nama_daerah);
+							}
+						});
+					});
+				});
 			}
 		}
 
