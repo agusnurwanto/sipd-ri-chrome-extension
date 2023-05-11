@@ -1244,11 +1244,11 @@ function cekUrl(current_url, nomor=1){
 							+'<option value="penerima_bantuan">Master Data Penerima Bantuan</option>'
 							+'<option value="alamat">Master Data Provinsi, Kabupaten/Kota, Kecamatan, Desa/Kelurahan</option>'
 						+'</select>';
-					if(jQuery('#aksi-admin .col-sm-6').eq(1).length >= 1){
-						jQuery('#aksi-admin .col-sm-6').eq(1).prepend(master_html);
-					}else{
+					// if(jQuery('#aksi-admin .col-sm-6').eq(1).length >= 1){
+					// 	jQuery('#aksi-admin .col-sm-6').eq(1).prepend(master_html);
+					// }else{
 						jQuery('#aksi-admin').append(master_html);
-					}
+					// }
 					//jQuery('#aksi-admin').append(btn2);	
 					jQuery('#singkron_master_cse').on('click', function(){
 						var val = jQuery('#data_master_cse').val();
