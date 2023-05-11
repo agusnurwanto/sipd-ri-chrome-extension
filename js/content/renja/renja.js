@@ -3433,7 +3433,7 @@ function singkron_master_cse(val){
 			var data_prov_map = [];
 			console.log('data prov', prov.data);
 			for(var i in prov.data){				
-					//if(prov.data[i].id_daerah == _token.daerah_id){
+					
 						if(i != 'kab'){
 							data_alamat.alamat[i] = {};
 							data_alamat.alamat[i].nama = prov.data[i].nama_daerah;
@@ -3450,7 +3450,7 @@ function singkron_master_cse(val){
 								check_id_daerah_is_prov = _token.daerah_id;
 							}
 						}
-					//}									
+													
 			}
 			var data_prov = {
 			    message:{
@@ -3527,14 +3527,7 @@ function singkron_master_cse(val){
 							var last2 = data_kab_map.length-1;
 							data_kab_map.reduce(function(sequence2, nextData2){
 	                			return sequence2.then(function(current_data2){
-                					return new Promise(function(resolve_reduce2, reject_reduce2){
-                						// if(
-                						// 	!check_id_daerah_is_prov
-                						// 	&& (
-                						// 		!check_id_daerah_is_kab
-                						// 		|| check_id_daerah_is_kab != current_data2.id_alamat
-                						// 	)
-                						// ){
+                					return new Promise(function(resolve_reduce2, reject_reduce2){                						
 										if(
                 							!check_id_daerah_is_prov
                 							&& (
