@@ -3380,29 +3380,23 @@ function singkron_master_cse(val){
 	if(typeof rincsub == 'undefined'){
 		window.rincsub = {};
 	}
-	// rincsub[kodesbl] = {
-	// 	lru1: lru1,
-	// 	lru3: lru3,
-	// 	lru4: lru4,
-	// 	lru5: lru5,
-	// 	lru6: lru6,
-	// 	lru7: lru7,
-	// 	lru13: lru13
-	// };
+	
 	if(val == 'penerima_bantuan'){
-		getDetailPenerima(kodesbl, false, 0).then(function(_data){
+		getDetailPenerima().then(function(_data){
 			var data_profile = { 
 				action: 'singkron_penerima_bantuan',
-				tahun_anggaran: config.tahun_anggaran,
+				tahun_anggaran: _token.tahun,
+				type: 'ri',
 				api_key: config.api_key,
 				profile : {}
 			};
-			_data.map(function(profile, i){
+			console.log('data penerima', _data.data);
+			_data.data.map(function(profile, i){
 				data_profile.profile[i] = {};
 				data_profile.profile[i].alamat_teks = profile.alamat_teks;
 				data_profile.profile[i].id_profil = profile.id_profil;
 				data_profile.profile[i].jenis_penerima = profile.jenis_penerima;
-				data_profile.profile[i].nama_teks = jQuery('<textarea>'+profile.nama_teks+'</textarea>').val();
+				data_profile.profile[i].nama_teks = profile.nama_teks;
 			});
 			var data = {
 			    message:{
@@ -3666,6 +3660,26 @@ function singkron_master_cse(val){
 	}else{
 		jQuery('#wrap-loading').hide();
 	}
+}
+
+function getDetailPenerima(){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/profil_user/list_for_penerima_bantuan',                               
+			type: 'POST',	      				
+			data: {				
+				id_daerah: _token.daerah_id,
+				tahun: _token.tahun
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(prov){
+	      		return resolve(prov);
+	      	}
+	    });
+    });
 }
 
 function getProv(){    
