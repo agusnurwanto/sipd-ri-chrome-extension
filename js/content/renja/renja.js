@@ -167,7 +167,7 @@ function open_modal_renja(res, run_proses = false){
 			.then(function(sub_keg_exist){
 				var rka_sipd = {};
 				sub_keg_exist.data.map(function(b, i){
-					rka_sipd[b.nama_sub_giat] = b;
+					rka_sipd[b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
 				});
 
 				var body = '';
@@ -176,10 +176,11 @@ function open_modal_renja(res, run_proses = false){
 					rka_all[keyword] = b;
 
 					var nama_sub = b.nama_sub_giat.split(' ');
-					nama_sub.shift();
+					var kode_sub = nama_sub.shift();
+					kode_sub = kode_sub.replace('X.XX', b.kode_bidang_urusan);
 					nama_sub = nama_sub.join(' ');
 					var existing = "";
-					if(rka_sipd[nama_sub]){
+					if(rka_sipd[kode_sub+' '+removeNewlines(nama_sub)]){
 						existing = " <b>Existing</b>";
 					}
 					body += ''
@@ -250,13 +251,13 @@ function proses_modal_renja(data_selected_asli = false) {
 		        		.then(function(master_sub_keg_sipd){
 							var master_sub_keg = {};
 							master_sub_keg_sipd.map(function(b, i){
-								master_sub_keg[removeNewlines(b.nama_sub_giat)] = b;
+								master_sub_keg[b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
 							});
 							list_belanja_by_tahun_daerah_unit(idunitskpd)
 							.then(function(sub_keg_exist){
 								var rka_sipd = {};
 								sub_keg_exist.data.map(function(b, i){
-									rka_sipd[removeNewlines(b.nama_sub_giat)] = b;
+									rka_sipd[b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
 								});
 
 								var last = data_selected.length-1;
@@ -264,8 +265,9 @@ function proses_modal_renja(data_selected_asli = false) {
 									return sequence.then(function(current_data){
 										return new Promise(function(resolve_reduce, reject_reduce){
 											var nama_sub = current_data.nama_sub_giat.split(' ');
-											nama_sub.shift();
-											nama_sub = removeNewlines(nama_sub.join(' '));
+											var kode_sub = nama_sub.shift();
+											kode_sub = kode_sub.replace('X.XX', current_data.kode_bidang_urusan);
+											nama_sub = kode_sub+' '+removeNewlines(nama_sub.join(' '));
 											var existing = false;
 											if(rka_sipd[nama_sub]){
 												existing = rka_sipd[nama_sub];
@@ -1982,25 +1984,31 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							// var idsubblbl = d.id_sub_bl;
 							label_bl(d.id_sub_bl).then(function(labelbl){
 								console.log('label_bl singkron_rka_ke_lokal', labelbl.data);	
-								data_rka.dataBl[i].id_label_bl = labelbl.data[0].id_label_bl; //baru								
+								data_rka.dataBl[i].id_label_bl = labelbl.data[0].id_label_bl; //baru
 								data_rka.dataBl[i].id_label_kokab = labelbl.data[0].id_label_kokab;
-								if(labelbl.data[0].id_label_kokab.length !=0){
-									get_label_kokab(labelbl.data[0].id_label_kokab).then(function(label_kokab){										
-										data_rka.dataBl[i].label_kokab = label_kokab.data[0].nama_label;
+								if(labelbl.data[0].id_label_kokab != 0){
+									get_label_kokab(labelbl.data[0].id_label_kokab).then(function(label_kokab){
+										if(label_kokab.length >= 1){
+											data_rka.dataBl[i].label_kokab = label_kokab.data[0].nama_label;
+										}
 									});		
 								}
 								//data_rka.dataBl[i].label_kokab = labelbl.data[0].label_kokab;
 								data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
-								if(labelbl.data[0].id_label_prov.length !=0){
-									get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){										
-										data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
+								if(labelbl.data[0].id_label_prov != 0){
+									get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
+										if(label_prov.length >= 1){
+											data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
+										}
 									});		
 								}
 								// data_rka.dataBl[i].label_prov = labelbl.data[0].label_prov;
 								data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
-								if(labelbl.data[0].id_label_pusat.length !=0){
-									get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){										
-										data_rka.dataBl[i].label_pusat = label_pusat.data[0].nama_label;
+								if(labelbl.data[0].id_label_pusat != 0){
+									get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){
+										if(label_pusat.length >= 1){
+											data_rka.dataBl[i].label_pusat = label_pusat.data[0].nama_label;
+										}
 									});		
 								}
 								// data_rka.dataBl[i].label_pusat = labelbl.data[0].label_pusat;								
@@ -3252,41 +3260,37 @@ function get_label_kokab(id_label_kokab){
 }
 
 function get_label_prov(id_label_prov){
-	getuserbytoken().then(function(getuserbytoken){
-		return new Promise(function(resolve, reject){
-			relayAjax({	      				
-				url: config.sipd_url+'api/master/label_prov/view/'+id_label_prov+'/'+_token.tahun+'/'+getuserbytoken.id_prop,			
-				type: 'GET',	      				
-				processData: false,
-				contentType : 'application/json',
-				beforeSend: function (xhr) {			    
-					xhr.setRequestHeader("X-API-KEY", x_api_key());
-					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-				},	
-				success: function(label_prov){
-					return resolve(label_prov);
-				}
-			});
+	return new Promise(function(resolve, reject){
+		relayAjax({	      				
+			url: config.sipd_url+'api/master/label_prov/view/'+id_label_prov+'/'+_token.tahun+'/'+_token.id_prop,
+			type: 'GET',			
+			processData: false,
+			contentType : 'application/json',
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},	
+			success: function(label_prov){
+				return resolve(label_prov);
+			}
 		});
 	});
 }
 
 function get_label_pusat(id_label_pusat){
-	getuserbytoken().then(function(getuserbytoken){
-		return new Promise(function(resolve, reject){
-			relayAjax({	      				
-				url: config.sipd_url+'api/master/label_pusat/view/'+id_label_pusat+'/'+_token.tahun+'/'+getuserbytoken.id_prop,			
-				type: 'GET',	      				
-				processData: false,
-				contentType : 'application/json',
-				beforeSend: function (xhr) {			    
-					xhr.setRequestHeader("X-API-KEY", x_api_key());
-					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-				},	
-				success: function(label_pusat){
-					return resolve(label_pusat);
-				}
-			});
+	return new Promise(function(resolve, reject){
+		relayAjax({	      				
+			url: config.sipd_url+'api/master/label_pusat/view/'+id_label_pusat+'/'+_token.tahun+'/'+_token.id_prop,
+			type: 'GET',	      				
+			processData: false,
+			contentType : 'application/json',
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},	
+			success: function(label_pusat){
+				return resolve(label_pusat);
+			}
 		});
 	});
 }

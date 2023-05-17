@@ -1390,6 +1390,13 @@ function cekUrl(current_url, nomor=1){
 						});
 					});
 				});
+
+				var lihat_id = ''
+					+'<span style="margin-top: 15px; margin-bottom: 15px;" class="btn btn-sm btn-info" id="lihat_id_daerah"> Lihat ID daerah</span>';
+				jQuery('label[for="prov-autocomplete"]').before(lihat_id);
+				jQuery('#lihat_id_daerah').on('click', function(){
+					lihat_id_daerah();
+				});
 			}
 		}
 
