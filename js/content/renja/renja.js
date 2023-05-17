@@ -3376,3 +3376,393 @@ function get_subs_sub_bl(id_subs_sub_bl){
 	    });
     });
 }
+
+
+function singkron_master_cse(val){
+	jQuery('#wrap-loading').show();
+	console.log('val', val);
+	if(typeof rincsub == 'undefined'){
+		window.rincsub = {};
+	}
+	
+	if(val == 'penerima_bantuan'){
+		getDetailPenerima().then(function(_data){
+			var data_profile = { 
+				action: 'singkron_penerima_bantuan',
+				tahun_anggaran: _token.tahun,
+				type: 'ri',
+				api_key: config.api_key,
+				profile : {}
+			};
+			console.log('data penerima', _data.data);
+			_data.data.map(function(profile, i){
+				data_profile.profile[i] = {};
+				data_profile.profile[i].alamat_teks = profile.alamat_teks;
+				data_profile.profile[i].id_profil = profile.id_profil;
+				data_profile.profile[i].jenis_penerima = profile.jenis_penerima;
+				data_profile.profile[i].nama_teks = profile.nama_teks;
+			});
+			var data = {
+			    message:{
+			        type: "get-url",
+			        content: {
+					    url: config.url_server_lokal,
+					    type: 'post',
+					    data: data_profile,
+		    			return: true
+					}
+			    }
+			};
+			chrome.runtime.sendMessage(data, function(response) {
+			    console.log('responeMessage', response);
+			});
+		});
+	}else if(val == 'alamat'){		
+		// var id_unit = 0;
+		getProv().then(function(prov){
+			var data_alamat = { 
+				action: 'singkron_alamat',
+				tahun_anggaran: _token.tahun,
+				type: 'ri',
+				api_key: config.api_key,
+				alamat : {}
+			};
+			var check_id_daerah_is_prov = false;
+			var data_prov_map = [];
+			console.log('data prov', prov.data);
+			for(var i in prov.data){				
+					
+						if(i != 'kab'){
+							data_alamat.alamat[i] = {};
+							data_alamat.alamat[i].nama = prov.data[i].nama_daerah;
+							data_alamat.alamat[i].id_alamat = prov.data[i].id_daerah;
+							data_alamat.alamat[i].id_prov = '';
+							data_alamat.alamat[i].id_kab = '';
+							data_alamat.alamat[i].id_kec = '';
+							data_alamat.alamat[i].is_prov = 1;
+							data_alamat.alamat[i].is_kab = '';
+							data_alamat.alamat[i].is_kec = '';
+							data_alamat.alamat[i].is_kel = '';
+							data_prov_map.push(data_alamat.alamat[i]);
+							if(_token.daerah_id == prov.data[i].id_daerah){
+								check_id_daerah_is_prov = _token.daerah_id;
+							}
+						}
+													
+			}
+			var data_prov = {
+			    message:{
+			        type: "get-url",
+			        content: {
+					    url: config.url_server_lokal,
+					    type: 'post',
+					    data: data_alamat,
+		    			return: false
+					}
+			    }
+			};
+			chrome.runtime.sendMessage(data_prov, function(response) {
+			    console.log('responeMessage', response);
+			});
+			var last = data_prov_map.length-1;
+			data_prov_map.reduce(function(sequence, nextData){
+                return sequence.then(function(current_data){
+                	return new Promise(function(resolve_reduce, reject_reduce){
+                		if(
+                			check_id_daerah_is_prov
+                			&& check_id_daerah_is_prov != current_data.id_alamat
+                		){
+                			return resolve_reduce(nextData);
+                		}
+                		console.log('current_data', current_data);
+						getKab(current_data.id_alamat).then(function(kab){
+							console.log('kab', kab.data);
+							var check_id_daerah_is_kab = false;
+							var data_alamat_kab = { 
+								action: 'singkron_alamat',
+								tahun_anggaran: _token.tahun,
+								type: 'ri',
+								api_key: config.api_key,
+								alamat : {}
+							};
+							var data_kab_map = [];
+							for(var j in kab.data){
+								if(j != 'kec' && j != 0){
+									data_alamat_kab.alamat[j] = {};
+									data_alamat_kab.alamat[j].nama = kab.data[j].nama_daerah;
+									data_alamat_kab.alamat[j].id_alamat = kab.data[j].id_daerah;
+									data_alamat_kab.alamat[j].id_prov = current_data.id_alamat;
+									data_alamat_kab.alamat[j].id_kab = '';
+									data_alamat_kab.alamat[j].id_kec = '';
+									data_alamat_kab.alamat[j].is_prov = '';
+									data_alamat_kab.alamat[j].is_kab = 1;
+									data_alamat_kab.alamat[j].is_kec = '';
+									data_alamat_kab.alamat[j].is_kel = '';
+									data_kab_map.push(data_alamat_kab.alamat[j]);
+			                		if(
+			                			!check_id_daerah_is_prov
+			                			&& _token.daerah_id == kab.data[j].id_daerah
+			                		){
+			                			check_id_daerah_is_kab = kab.data[j].id_daerah;
+			                		}
+								}
+							}
+							var data_kab = {
+							    message:{
+							        type: "get-url",
+							        content: {
+									    url: config.url_server_lokal,
+									    type: 'post',
+									    data: data_alamat_kab,
+						    			return: false
+									}
+							    }
+							};
+							chrome.runtime.sendMessage(data_kab, function(response) {
+							    console.log('responeMessage', response);
+							});
+							console.log('check_id_daerah_is_kab, check_id_daerah_is_prov', check_id_daerah_is_kab, check_id_daerah_is_prov);
+							var last2 = data_kab_map.length-1;
+							data_kab_map.reduce(function(sequence2, nextData2){
+	                			return sequence2.then(function(current_data2){
+                					return new Promise(function(resolve_reduce2, reject_reduce2){                						
+										if(
+                							!check_id_daerah_is_prov
+                							&& (
+                								!check_id_daerah_is_kab
+                								|| check_id_daerah_is_kab != current_data2.id_alamat
+                							)
+                						){
+                							return resolve_reduce2(nextData2);
+                						}
+										
+                						console.log('current_data2', current_data2);
+										getKec(current_data2.id_alamat).then(function(kec){
+											var data_alamat_kec = { 
+												action: 'singkron_alamat',
+												tahun_anggaran: _token.tahun,
+												type: 'ri',
+												api_key: config.api_key,
+												alamat : {}
+											};
+											console.log('data_kec_map', kec);
+											var data_kec_map = [];
+											for(var k in kec.data){
+												if(k != 'kel' && k != 0){
+													data_alamat_kec.alamat[k] = {};
+													data_alamat_kec.alamat[k].nama = kec.data[k].camat_teks;
+													data_alamat_kec.alamat[k].id_alamat = kec.data[k].id_camat;
+													data_alamat_kec.alamat[k].id_prov = current_data2.id_prov;
+													data_alamat_kec.alamat[k].id_kab = current_data2.id_alamat;
+													data_alamat_kec.alamat[k].id_kec = '';
+													data_alamat_kec.alamat[k].is_prov = '';
+													data_alamat_kec.alamat[k].is_kab = '';
+													data_alamat_kec.alamat[k].is_kec = 1;
+													data_alamat_kec.alamat[k].is_kel = '';
+													data_kec_map.push(data_alamat_kec.alamat[k]);
+												}
+											}
+											var data_kec = {
+											    message:{
+											        type: "get-url",
+											        content: {
+													    url: config.url_server_lokal,
+													    type: 'post',
+													    data: data_alamat_kec,
+										    			return: false
+													}
+											    }
+											};
+											chrome.runtime.sendMessage(data_kec, function(response) {
+											    console.log('responeMessage', response);
+											});
+											var last3 = data_kec_map.length-1;
+											data_kec_map.reduce(function(sequence3, nextData3){
+					                			return sequence3.then(function(current_data3){
+				                					return new Promise(function(resolve_reduce3, reject_reduce3){
+                										console.log('current_data3', current_data3);
+														getKel(current_data3.id_alamat).then(function(kel){
+															var data_alamat_kel = { 
+																action: 'singkron_alamat',
+																tahun_anggaran: _token.tahun,
+																type: 'ri',
+																api_key: config.api_key,	
+																alamat : {}
+															};
+															for(var l in kel.data){
+																if(l != 0){
+																	data_alamat_kel.alamat[l] = {};
+																	data_alamat_kel.alamat[l].nama = kel.data[l].lurah_teks;
+																	data_alamat_kel.alamat[l].id_alamat = kel.data[l].id_lurah;
+																	data_alamat_kel.alamat[l].id_prov = current_data3.id_prov;
+																	data_alamat_kel.alamat[l].id_kab = current_data3.id_kab;
+																	data_alamat_kel.alamat[l].id_kec = current_data3.id_alamat;
+																	data_alamat_kel.alamat[l].is_prov = '';
+																	data_alamat_kel.alamat[l].is_kab = '';
+																	data_alamat_kel.alamat[l].is_kec = '';
+																	data_alamat_kel.alamat[l].is_kel = 1;
+																}
+															}
+															var data_kel = {
+															    message:{
+															        type: "get-url",
+															        content: {
+																	    url: config.url_server_lokal,
+																	    type: 'post',
+																	    data: data_alamat_kel,
+														    			return: false
+																	}
+															    }
+															};
+															chrome.runtime.sendMessage(data_kel, function(response) {
+															    console.log('responeMessage', response);
+															});
+															resolve_reduce3(nextData3);
+														});
+													});
+												})
+								                .catch(function(e){
+								                    console.log(e);
+								                    return Promise.resolve(nextData3);
+								                });
+							                }, Promise.resolve(data_kec_map[last3]))
+								            .then(function(data_last){
+								            	return resolve_reduce2(nextData2);
+								            });
+										});
+									})
+					                .catch(function(e){
+					                    console.log(e);
+					                    return Promise.resolve(nextData2);
+					                });
+								})
+				                .catch(function(e){
+				                    console.log(e);
+				                    return Promise.resolve(nextData2);
+				                });
+				            }, Promise.resolve(data_kab_map[last2]))
+				            .then(function(data_last){
+				            	return resolve_reduce(nextData);
+				            });
+						});
+					})
+                    .catch(function(e){
+                        console.log(e);
+                        return Promise.resolve(nextData);
+                    });
+                })
+                .catch(function(e){
+                    console.log(e);
+                    return Promise.resolve(nextData);
+                });
+            }, Promise.resolve(data_prov_map[last]))
+            .then(function(data_last){
+            	alert('Berhasil simpan data master Alamat!');
+				jQuery('#wrap-loading').hide();
+            });
+		});
+	}else{
+		jQuery('#wrap-loading').hide();
+	}
+}
+
+function getDetailPenerima(){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/profil_user/list_for_penerima_bantuan',                               
+			type: 'POST',	      				
+			data: {				
+				id_daerah: _token.daerah_id,
+				tahun: _token.tahun
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(prov){
+	      		return resolve(prov);
+	      	}
+	    });
+    });
+}
+
+function getProv(){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/provinsi/findlistpusat',                               
+			type: 'POST',	      				
+			data: {				
+				tipe: 'prov'
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(prov){
+	      		return resolve(prov);
+	      	}
+	    });
+    });
+}
+
+function getKab(iddaerah){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/kabkot/findlist ',                               
+			type: 'POST',	      				
+			data: {				
+				id_daerah: iddaerah,
+				tahun: _token.tahun
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(kab){
+	      		return resolve(kab);
+	      	}
+	    });
+    });
+}
+
+function getKec(iddaerah){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/kecamatan/list_by_kotkab_and_tahun',                               
+			type: 'POST',	      				
+			data: {				
+				id_kab_kota: iddaerah,
+				tahun: _token.tahun,
+				length: 1000
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(kab){
+	      		return resolve(kab);
+	      	}
+	    });
+    });
+}
+
+function getKel(iddaerah){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/master/kelurahan/list_by_kecamatan_and_tahun',                               
+			type: 'POST',	      				
+			data: {				
+				id_camat: iddaerah,
+				tahun: _token.tahun,
+				length: 1000
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(kab){
+	      		return resolve(kab);
+	      	}
+	    });
+    });
+}
