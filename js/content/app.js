@@ -1238,8 +1238,8 @@ function cekUrl(current_url, nomor=1){
 						proses_modal_renja();
 					});
 					var master_html = ''
-						+'<button onclick="return false;" class="btn btn-sm btn-primary" id="singkron_master_cse" style="float:right; margin-left: 10px;">Singkron Data Master ke DB Lokal</button>'						
-						+'<select class="form-control" style="width: 300px; float: right;" id="data_master_cse">'						
+						+'<button onclick="return false;" class="btn btn-sm btn-primary" id="singkron_master_cse" style="margin-left: 10px;">Singkron Data Master ke DB Lokal</button>'
+						+'<select class="form-control" style="width: 300px; margin-left: 10px;" id="data_master_cse">'
 							+'<option value="">Pilih Data Master</option>'
 							+'<option value="penerima_bantuan">Master Data Penerima Bantuan</option>'
 							+'<option value="alamat">Master Data Provinsi, Kabupaten/Kota, Kecamatan, Desa/Kelurahan</option>'

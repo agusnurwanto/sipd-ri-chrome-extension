@@ -1,4 +1,4 @@
-function list_skpd_sub_bl(){
+function list_skpd_sub_bl(offset=0){
 	return new Promise(function(resolve, reject){
 		relayAjax({
 			url: config.sipd_url+'api/renja/sub_bl/list_skpd',
@@ -6,7 +6,11 @@ function list_skpd_sub_bl(){
 			data: {
 				id_daerah: _token.daerah_id,
 				tahun: _token.tahun,
-				limit: 10000
+				id_user: _token.user_id,
+				id_unit: 0,
+				id_level: _token.level_id,
+				limit: 100,
+				offset: offset
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
@@ -32,7 +36,19 @@ function list_skpd_sub_bl(){
 		            });
 		        }, Promise.resolve(units.data[last]))
 		        .then(function(data_last){
-					return resolve(data_all);
+					if(
+						units.recordsTotal > (data_all.data.length + (100*offset))
+					){
+						offset += 100;
+						list_skpd_sub_bl(offset).then(function(data){
+							data.data.map(function(b, i){
+								data_all.data.push(b);
+							})
+							return resolve(data_all);
+						});
+					}else{
+						return resolve(data_all);
+					}
 		        });
 			}
 		});
@@ -300,16 +316,17 @@ function proses_modal_renja(data_selected_asli = false) {
 										data_selected.reduce(function(sequence, nextData){
 											return sequence.then(function(current_data){
 												return new Promise(function(resolve_reduce, reject_reduce){
-													var nama_sub = current_data.nama_sub_giat.split(' ');
-													var kode_sub = nama_sub.shift();
-													kode_sub = kode_sub.replace('X.XX', current_data.kode_bidang_urusan);
-													nama_sub = kode_sub+' '+removeNewlines(nama_sub.join(' '));
+													var nama_sub_asli = current_data.nama_sub_giat.split(' ');
+													var kode_sub_asli = nama_sub_asli.shift();
+													var kode_sub = kode_sub_asli.replace('X.XX', current_data.kode_bidang_urusan);
+													var nama_sub = kode_sub+' '+removeNewlines(nama_sub_asli.join(' '));
+													nama_sub_asli = kode_sub_asli+' '+removeNewlines(nama_sub_asli.join(' '));
 													var existing = false;
 													if(rka_sipd[current_data.kode_sub_skpd+' '+nama_sub]){
 														existing = rka_sipd[current_data.kode_sub_skpd+' '+nama_sub];
 													}
-													if(!master_sub_keg[nama_sub]){
-														pesan_loading('Sub kegiatan tidak ditemukan di master SIPD. "'+nama_sub+'"');
+													if(!master_sub_keg[nama_sub_asli]){
+														pesan_loading('Sub kegiatan tidak ditemukan di master SIPD. "'+nama_sub_asli+'"');
 														return resolve_reduce(nextData);
 													}
 													if(!master_skpd[current_data.kode_sub_skpd]){
@@ -321,11 +338,11 @@ function proses_modal_renja(data_selected_asli = false) {
 														id_unit: master_skpd[current_data.kode_sub_skpd].id_unit,
 														id_skpd: master_skpd[current_data.kode_sub_skpd].id_unit,
 														id_sub_skpd: master_skpd[current_data.kode_sub_skpd].id_skpd,
-														id_urusan: master_sub_keg[nama_sub].id_urusan,
-														id_bidang_urusan: master_sub_keg[nama_sub].id_bidang_urusan,
-														id_program: master_sub_keg[nama_sub].id_program,
-														id_giat: master_sub_keg[nama_sub].id_giat,
-														id_sub_giat: master_sub_keg[nama_sub].id_sub_giat,
+														id_urusan: master_sub_keg[nama_sub_asli].id_urusan,
+														id_bidang_urusan: master_sub_keg[nama_sub_asli].id_bidang_urusan,
+														id_program: master_sub_keg[nama_sub_asli].id_program,
+														id_giat: master_sub_keg[nama_sub_asli].id_giat,
+														id_sub_giat: master_sub_keg[nama_sub_asli].id_sub_giat,
 														pagu: current_data.pagu,
 														pagu_n_depan: current_data.pagu_n_depan,
 														nama_sub_giat: current_data.nama_sub_giat,
@@ -337,7 +354,7 @@ function proses_modal_renja(data_selected_asli = false) {
 														nama_skpd: master_skpd[current_data.kode_sub_skpd].nama_skpd,
 														nama_sub_skpd: master_skpd[current_data.kode_sub_skpd].nama_skpd,
 														nama_bidang_urusan: '',
-														kode_sub_giat: master_sub_keg[nama_sub].kode_sub_giat,
+														kode_sub_giat: master_sub_keg[nama_sub_asli].kode_sub_giat,
 														id_daerah_log: _token.daerah_id,
 														id_user_log: _token.user_id,
 														id_daerah: _token.daerah_id,
@@ -350,7 +367,7 @@ function proses_modal_renja(data_selected_asli = false) {
 													options_sub.token = token_sub_keg(options_sub);
 													console.log('token', options_sub);
 
-													if(master_sub_keg[nama_sub].kode_sub_giat.indexOf('X.XX.') != -1){
+													if(master_sub_keg[nama_sub_asli].kode_sub_giat.indexOf('X.XX.') != -1){
 														var cek_bidang_urusan = false;
 														data_bidur.data.map(function(bb, ii){
 															if(current_data.nama_bidang_urusan.indexOf(bb.nama_bidang_urusan) != -1){
@@ -391,9 +408,9 @@ function proses_modal_renja(data_selected_asli = false) {
 														tahun: options_sub.tahun,
 														id_daerah: options_sub.id_daerah,
 														id_unit: options_sub.id_unit,
-														tolak_ukur: master_sub_keg[nama_sub].indikator,
+														tolak_ukur: master_sub_keg[nama_sub_asli].indikator,
 														target: targetoutput,
-														satuan: master_sub_keg[nama_sub].satuan,
+														satuan: master_sub_keg[nama_sub_asli].satuan,
 														id_skpd: options_sub.id_skpd,
 														id_sub_skpd: options_sub.id_sub_skpd,
 														id_program: options_sub.id_program,
@@ -1250,7 +1267,6 @@ function singkron_skpd_modal(){
 
 function open_modal_subgiat(idunit){	
 	var body = '';
-	// id_unit = opsi_unit.id_skpd ? opsi_unit.id_skpd : _token.unit;
 	id_unit = idunit ? idunit : _token.unit;
 	show_loading();
 	list_belanja_by_tahun_daerah_unit(id_unit)
@@ -1259,11 +1275,9 @@ function open_modal_subgiat(idunit){
 		window.sub_keg_skpd = subkeg.data;
 		subkeg.data.map(function(b, i){
 			if(
-				b.sub_giat_locked == 0
-				&& b.kode_sub_skpd
+				b.kode_sub_skpd
 			){
-				var keyword = b.kode_sbl;	
-				// kode_sbl_all[keyword] = b;						
+				var keyword = b.kode_sbl;
 				body += ''
 					+'<tr>'								
 						+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
@@ -1302,8 +1316,7 @@ function singkron_subgiat_modal(){
 				console.log('current_data data_sub_keg_selected', current_data);
 				return new Promise(function(resolve_reduce, reject_reduce){
 					if(
-						current_data.sub_giat_locked == 0 
-						&& current_data.kode_sub_skpd
+						current_data.kode_sub_skpd
 					){
 						cat_wp = current_data.kode_sub_skpd+' '+current_data.nama_sub_skpd;
 						var nama_skpd = current_data.nama_skpd.split(' ');
@@ -1370,6 +1383,8 @@ function singkron_subgiat_modal(){
 			};
 			chrome.runtime.sendMessage(data, function(response) {
 				console.log('responeMessage', response);
+				run_script('hide_modal');
+				hide_loading();
 			});
 		})
 		.catch(function(e){
@@ -1402,8 +1417,6 @@ function singkron_all_unit(units) {
                     },
 					success: function(html){
                         console.log('html singkron_all_unit', html);
-						// var kode_get = html.split('lru8="')[1].split('"')[0];
-						// current_data.kode_get = kode_get;
             			singkron_rka_ke_lokal_all(current_data, function(){
             				console.log('next reduce singkron_all_unit', nextData);
 							resolve_reduce(nextData);
@@ -1457,7 +1470,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 			// script singkron pagu SKPD
 			get_skpd(_token.tahun, _token.daerah_id, id_unit).then(function(skpd){
 				get_pagu_validasi(_token.tahun, _token.daerah_id, id_unit).then(function(paguvalidasi){
-					list_belanja_by_tahun_daerah_unit(current_data.id_skpd)
+					list_belanja_by_tahun_daerah_unit(id_unit)
 					.then(function(sub_keg_exist){
 						var nilairincian = 0;
 						var rinci_giat = 0;
@@ -1542,8 +1555,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 				subkeg.data.map(function(b, i){
 					console.log('map',b);
 					if(
-						b.sub_giat_locked == 0
-						&& b.kode_sub_skpd
+						b.kode_sub_skpd
 					){
 						subkeg_aktif.push({kode_sbl: b.kode_sbl});
 					}
@@ -1579,14 +1591,10 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 							return new Promise(function(resolve_reduce, reject_reduce){
 								console.log('current_data subkeg', current_data);
 								if(
-									current_data.sub_giat_locked == 0 
-									&& current_data.kode_sub_skpd
+									current_data.kode_sub_skpd
 								){
 									cat_wp = current_data.kode_sub_skpd+' '+current_data.nama_sub_skpd;
-									// var nama_skpd = current_data.nama_skpd.split(' ');
                                     var nama_skpd = current_data.nama_skpd;
-									// nama_skpd.shift();
-									// nama_skpd = nama_skpd.join(' ');
 									singkron_rka_ke_lokal({
 										id_daerah: current_data.id_daerah,
 										tahun: current_data.tahun,
@@ -1598,7 +1606,6 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 										id_sub_giat: current_data.id_sub_giat,
 										id_urusan: current_data.id_urusan,
 										id_bidang_urusan: current_data.id_bidang_urusan,
-										// action: current_data.action,
 										kode_bl: current_data.kode_bl,
 										kode_sbl: current_data.kode_sbl,
 										idbl: current_data.id_bl,
