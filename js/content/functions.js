@@ -364,3 +364,26 @@ function getUrlVars(param=null)
 		return null;
 	}
 }
+
+function token_sub_keg(sub_giat) {
+	let key1 = Math.floor(1e6 * Math.random());
+	let key2 = Math.floor(1e6 * Math.random())
+	let token1 = Number(key1) + Number(_token.user_id) + Number(sub_giat.id_sub_giat) + Number(_token.tahun)
+	let token2 = Number(sub_giat.id_sub_giat) + Number(sub_giat.id_sub_giat) + Number(sub_giat.id_sub_skpd)
+	let token3 = Number(sub_giat.id_sub_giat) + Number(sub_giat.id_sub_skpd) + Number(sub_giat.id_sub_skpd)
+	let token4 = String(makeid(15) + "." + String(token1) + "." + String(key1) + "." + String(token2) + "." + String(key2) + "." + String(token3) + "." + String(key1 + key2));
+
+	console.log('token_sub_keg', _token.user_id, sub_giat.id_sub_giat, _token.tahun, sub_giat.id_sub_skpd);
+	return token4;
+}
+
+function makeid(t) {
+    let e = "";
+    const n = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+      , s = n.length;
+    let o = 0;
+    for (; o < t; )
+        e += n.charAt(Math.floor(Math.random() * s)),
+        o += 1;
+    return e;
+}

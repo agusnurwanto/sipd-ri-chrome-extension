@@ -46,7 +46,7 @@ function login_sipd(){
 function ganti_tahun(){
     localStorage.removeItem("sipd-konfigurasi-tahun");
     localStorage.removeItem("sipd-konfigurasi");
-	window.location.href = config.sipd_url;
+	window.location.href = config.sipd_url+'tahun/list';
 }
 
 function logout(){
