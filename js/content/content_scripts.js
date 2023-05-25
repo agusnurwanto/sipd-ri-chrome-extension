@@ -66,6 +66,12 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 			_alert = false;
 			cek_hide_loading = false;
 			promise_nonactive[res.id_unit]();
+		}else if(res.action == 'cek_lisensi_ext'){
+			_alert = false;
+			cek_hide_loading = false;
+			if(res.run == 'afterCekLisensi'){
+				afterCekLisensi(res);
+			}
 		}else if(res.action == 'get_renja'){
 			_alert = false;
 			cek_hide_loading = false;

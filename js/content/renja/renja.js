@@ -452,6 +452,12 @@ function proses_modal_renja(data_selected_asli = false) {
 													// update data
 													}else{
 														options_sub.id_sub_bl = existing.id_sub_bl;
+														options_sub.created_date = existing.created_date;
+														options_sub.created_time = existing.created_time;
+														options_sub.updated_date = existing.updated_date;
+														options_sub.updated_time = existing.updated_time;
+														options_sub.user_created = existing.user_created;
+														options_sub.user_updated = existing.user_updated;
 														update_sub_bl(options_sub)
 														.then(function(){
 															options_label.id_sub_bl = existing.id_sub_bl;
@@ -807,73 +813,84 @@ function update_sub_bl(opsi) {
 					opsi.id_bidang_urusan_pusat = data.id_bidang_urusan_pusat;
 					opsi.id_unik = data.id_unik;
 					opsi.updated_user = _token.user_id;
+					var opsi_data = {
+						id_unit: opsi.id_unit,
+						id_skpd: opsi.id_skpd,
+						id_sub_skpd: opsi.id_sub_skpd,
+						id_pptk: 0,
+						id_urusan_pusat: 0,
+						id_bidang_urusan_pusat: opsi.id_bidang_urusan_pusat,
+						id_urusan: opsi.id_urusan,
+						id_bidang_urusan: opsi.id_bidang_urusan,
+						id_program: opsi.id_program,
+						id_giat: opsi.id_giat,
+						id_bl: 0,
+						id_sub_giat: opsi.id_sub_giat,
+						no_sub_giat: '',
+						pagu: opsi.pagu,
+						pagu_n_depan: opsi.pagu_n_depan,
+						id_dana: 0,
+						id_lokasi: opsi.id_lokasi,
+						waktu_awal: opsi.waktu_awal,
+						waktu_akhir: opsi.waktu_akhir,
+						pagu_indikatif: 0,
+						output_teks: '',
+						pagu_n2_lalu: 0,
+						pagu_n_lalu: 0,
+						pagu_n_depan: 0,
+						pagu_n2_depan: 0,
+						rkpd_murni: 0,
+						rkpd_pak: 0,
+						nama_daerah: opsi.nama_daerah,
+						nama_unit: opsi.nama_unit,
+						nama_skpd: opsi.nama_skpd,
+						nama_sub_skpd: opsi.nama_sub_skpd,
+						nama_urusan: '',
+						nama_bidang_urusan: opsi.nama_bidang_urusan,
+						nama_program: '',
+						nama_giat: '',
+						nama_sub_giat: '',
+						nama_dana: '',
+						nama_lokasi: '',
+						nama_jadwal_murni: '',
+						kua_murni: 0,
+						kua_pak: 0,
+						kode_daerah: '',
+						kode_unit: '',
+						kode_skpd: '',
+						kode_sub_skpd: '',
+						kode_urusan_pusat: '',
+						kode_urusan: '',
+						kode_bidang_urusan_pusat: '',
+						kode_bidang_urusan: '',
+						kode_program: '',
+						kode_giat: '',
+						kode_sub_giat: opsi.kode_sub_giat,
+						kode_dana: '',
+						id_daerah_log: opsi.id_daerah_log,
+						id_user_log: opsi.id_user_log,
+						id_sub_bl: opsi.id_sub_bl,
+						id_unik: opsi.id_unik,
+						id_daerah: opsi.id_daerah,
+						tahun: opsi.tahun,
+						token: opsi.token,
+						level_id: opsi.level_id,
+						updated_user: opsi.updated_user
+					};
+					// untuk hapus data sub kegiatan
+					// opsi_data.kunci_bl = 3;
+					// opsi_data.kunci_bl_rinci = 0;
+					// opsi_data.user_created = opsi.user_created;
+					// opsi_data.created_date = opsi.created_date;
+					// opsi_data.created_time = opsi.created_time;
+					// opsi_data.user_updated = opsi.user_updated;
+					// opsi_data.updated_date = opsi.updated_date;
+					// opsi_data.updated_time = opsi.updated_time;
+					// opsi_data.aktivitas = 'delete';
 					relayAjax({
 						url: config.sipd_url+'api/renja/sub_bl/update',
 						type: 'POST',
-						data: {
-							id_unit: opsi.id_unit,
-							id_skpd: opsi.id_skpd,
-							id_sub_skpd: opsi.id_sub_skpd,
-							id_pptk: 0,
-							id_urusan_pusat: 0,
-							id_bidang_urusan_pusat: opsi.id_bidang_urusan_pusat,
-							id_urusan: opsi.id_urusan,
-							id_bidang_urusan: opsi.id_bidang_urusan,
-							id_program: opsi.id_program,
-							id_giat: opsi.id_giat,
-							id_bl: 0,
-							id_sub_giat: opsi.id_sub_giat,
-							no_sub_giat: '',
-							pagu: opsi.pagu,
-							pagu_n_depan: opsi.pagu_n_depan,
-							id_dana: 0,
-							id_lokasi: opsi.id_lokasi,
-							waktu_awal: opsi.waktu_awal,
-							waktu_akhir: opsi.waktu_akhir,
-							pagu_indikatif: 0,
-							output_teks: '',
-							pagu_n2_lalu: 0,
-							pagu_n_lalu: 0,
-							pagu_n_depan: 0,
-							pagu_n2_depan: 0,
-							rkpd_murni: 0,
-							rkpd_pak: 0,
-							nama_daerah: opsi.nama_daerah,
-							nama_unit: opsi.nama_unit,
-							nama_skpd: opsi.nama_skpd,
-							nama_sub_skpd: opsi.nama_sub_skpd,
-							nama_urusan: '',
-							nama_bidang_urusan: opsi.nama_bidang_urusan,
-							nama_program: '',
-							nama_giat: '',
-							nama_sub_giat: '',
-							nama_dana: '',
-							nama_lokasi: '',
-							nama_jadwal_murni: '',
-							kua_murni: 0,
-							kua_pak: 0,
-							kode_daerah: '',
-							kode_unit: '',
-							kode_skpd: '',
-							kode_sub_skpd: '',
-							kode_urusan_pusat: '',
-							kode_urusan: '',
-							kode_bidang_urusan_pusat: '',
-							kode_bidang_urusan: '',
-							kode_program: '',
-							kode_giat: '',
-							kode_sub_giat: opsi.kode_sub_giat,
-							kode_dana: '',
-							id_daerah_log: opsi.id_daerah_log,
-							id_user_log: opsi.id_user_log,
-							id_sub_bl: opsi.id_sub_bl,
-							id_unik: opsi.id_unik,
-							id_daerah: opsi.id_daerah,
-							tahun: opsi.tahun,
-							token: opsi.token,
-							level_id: opsi.level_id,
-							updated_user: opsi.updated_user
-						},
+						data: opsi_data,
 						beforeSend: function (xhr) {			    
 							xhr.setRequestHeader("X-API-KEY", x_api_key());
 							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
@@ -1271,24 +1288,63 @@ function open_modal_subgiat(idunit){
 	show_loading();
 	list_belanja_by_tahun_daerah_unit(id_unit)
 	.then(function(subkeg){
-		console.log('list bl', subkeg.data);
-		window.sub_keg_skpd = subkeg.data;
-		subkeg.data.map(function(b, i){
-			if(
-				b.kode_sub_skpd
-			){
-				var keyword = b.kode_sbl;
-				body += ''
-					+'<tr>'								
-						+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-						+'<td>'+b.nama_sub_giat+'</td>'
-						+'<td>-</td>'								
-					+'</tr>';
+		console.log('list_belanja_by_tahun_daerah_unit', subkeg.data);
+		// ubah status sub_keg_bl jadi tidak aktif semua agar jika ada sub keg yang dihapus, sipd lokal bisa ikut terupdate
+		new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
+			if(typeof promise_nonactive == 'undefined'){
+				window.promise_nonactive = {};
 			}
+			promise_nonactive[id_unit] = resolve_reduce_nonactive;
+			var subkeg_aktif = [];
+			subkeg.data.map(function(b, i){
+				console.log('map',b);
+				if(
+					b.kode_sub_skpd
+				){
+					subkeg_aktif.push({kode_sbl: b.kode_sbl});
+				}
+			});
+			var data = {
+			    message:{
+			        type: "get-url",
+			        content: {
+					    url: config.url_server_lokal,
+					    type: 'post',
+					    data: {
+					    	action: 'update_nonactive_sub_bl',
+							type: 'ri',
+							api_key: config.api_key,
+							tahun_anggaran: _token.tahun,
+							id_unit: id_unit,
+							subkeg_aktif: subkeg_aktif
+					    },
+		    			return: true
+					}
+			    }
+			};
+			chrome.runtime.sendMessage(data, function(response) {
+			    console.log('responeMessage', response);
+			})
+		}).then(function(){
+			console.log('list bl', subkeg.data);
+			window.sub_keg_skpd = subkeg.data;
+			subkeg.data.map(function(b, i){
+				if(
+					b.kode_sub_skpd
+				){
+					var keyword = b.kode_sbl;
+					body += ''
+						+'<tr>'								
+							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
+							+'<td>'+b.nama_sub_giat+'</td>'
+							+'<td>-</td>'								
+						+'</tr>';
+				}
+			});
+			jQuery('#table-extension tbody').html(body);
+			run_script('show_modal_sm');
+			hide_loading();
 		});
-		jQuery('#table-extension tbody').html(body);
-		run_script('show_modal_sm');
-		hide_loading();
 	});
 }
 

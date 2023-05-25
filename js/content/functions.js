@@ -1,3 +1,43 @@
+function cekLisensi(){
+	var data = {
+		message: {
+			type: "get-url",
+			content: {
+				url: config.url_server_lokal,
+				type: 'post',
+				data: {
+					action: 'cek_lisensi_ext',
+					run: 'afterCekLisensi',
+                    api_key: config.api_key
+				},
+				return: true
+			}
+		}
+	};
+	chrome.runtime.sendMessage(data, function (response) {
+		console.log('responeMessage', response);
+	});
+}
+
+function afterCekLisensi(res){
+	if(res.status != 'success'){
+		config.sipd_url = res.sipd_url;
+		run_script('config', config);
+		alert(res.message);
+	}else{
+		relayAjax({
+			url: chrome.runtime.getURL('/config.js'),
+			cache: true,
+			success: function(ret){
+				var sipd_url = ret.split('sipd_url')[1];
+				sipd_url = sipd_url.split('"')[1];
+				config.sipd_url = sipd_url;
+				run_script('config', config);
+			}
+		});
+	}
+}
+
 function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
   try {
     decimalCount = Math.abs(decimalCount);

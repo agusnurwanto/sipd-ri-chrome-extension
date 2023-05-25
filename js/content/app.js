@@ -15,6 +15,7 @@ function cekUrl(current_url, nomor=1){
 	if(nomor > 1){
 		console.log('Run ulang cekUrl() ke '+nomor+' URL: '+current_url);
 	}
+	cekLisensi();
 
 	getToken();
 
@@ -1237,27 +1238,24 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#proses-extension-renja-lokal').on('click', function(){
 						proses_modal_renja();
 					});
-					var master_html = ''
-						+'<button onclick="return false;" class="btn btn-sm btn-primary" id="singkron_master_cse" style="margin-left: 10px;">Singkron Data Master ke DB Lokal</button>'
-						+'<select class="form-control" style="width: 300px; margin-left: 10px;" id="data_master_cse">'
-							+'<option value="">Pilih Data Master</option>'
-							+'<option value="penerima_bantuan">Master Data Penerima Bantuan</option>'
-							+'<option value="alamat">Master Data Provinsi, Kabupaten/Kota, Kecamatan, Desa/Kelurahan</option>'
-						+'</select>';
-					// if(jQuery('#aksi-admin .col-sm-6').eq(1).length >= 1){
-					// 	jQuery('#aksi-admin .col-sm-6').eq(1).prepend(master_html);
-					// }else{
+					if(jQuery('#singkron_master_cse').length == 0){
+						var master_html = ''
+							+'<button onclick="return false;" class="btn btn-sm btn-primary" id="singkron_master_cse" style="margin-left: 5px;">Singkron Data Master ke DB Lokal</button>'
+							+'<select class="form-control" style="width: 300px; margin-left: 5px;" id="data_master_cse">'
+								+'<option value="">Pilih Data Master</option>'
+								+'<option value="penerima_bantuan">Master Data Penerima Bantuan</option>'
+								+'<option value="alamat">Master Data Provinsi, Kabupaten/Kota, Kecamatan, Desa/Kelurahan</option>'
+							+'</select>';
 						jQuery('#aksi-admin').append(master_html);
-					// }
-					//jQuery('#aksi-admin').append(btn2);	
-					jQuery('#singkron_master_cse').on('click', function(){
-						var val = jQuery('#data_master_cse').val();
-						if(val == ''){
-							alert('Data Master tidak boleh kosong!');
-						}else{
-							singkron_master_cse(val);
-						}
-					});
+						jQuery('#singkron_master_cse').on('click', function(){
+							var val = jQuery('#data_master_cse').val();
+							if(val == ''){
+								alert('Data Master tidak boleh kosong!');
+							}else{
+								singkron_master_cse(val);
+							}
+						});
+					}
 				}
 				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
 					console.log('halaman Renja list SKPD oleh admin TAPD');

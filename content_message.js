@@ -32,6 +32,14 @@ window.addEventListener('message', function(event) {
 				jQuery('#'+opsi.id).modal('hide');
 			}
 			break;
+    	case 'config':
+    		// merubah settingan config
+    		for(var i in config){
+    			if(opsi[i]){
+    				config[i] = opsi[i];
+    			}
+    		}
+			break;
     	case 'show_modal_sm':
     		window.options_datatable = {
 				"aoColumnDefs": [
