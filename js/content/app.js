@@ -628,7 +628,12 @@ function cekUrl(current_url, nomor=1){
 							singkron_satuan_ke_lokal();
 						});
 						jQuery('#singkron_kategori_ke_lokal').on('click', function(){
-							singkron_kategori_ke_lokal();
+							show_loading();
+							singkron_kategori_ke_lokal()
+							.then(function(){
+								alert('Berhasil singkron kategori standar harga!');
+								hide_loading();
+							})
 						});
 						jQuery('#hapus_arsip_ssh').on('click', function(){
 							hapus_arsip_ssh(type_data_ssh);

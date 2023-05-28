@@ -66,6 +66,10 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 			_alert = false;
 			cek_hide_loading = false;
 			promise_nonactive[res.id_unit]();
+		}else if(res.action == 'singkron_kategori_ssh'){
+			_alert = false;
+			cek_hide_loading = false;
+			continue_kategori();
 		}else if(res.action == 'cek_lisensi_ext'){
 			_alert = false;
 			cek_hide_loading = false;
