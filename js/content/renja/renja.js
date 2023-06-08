@@ -2415,107 +2415,109 @@ function singkron_rka_ke_lokal(opsi, callback) {
 								var _leng = config.jml_rincian;
 								var _data_all = [];
 								var _data = [];
-								data.data.map(function(rka, i){										
-									var _rka = {};
+								data.data.map(function(rka, i){	
+									if(rka.id_sub_bl === kode_go_hal_rinci.kode){									
+										var _rka = {};
+											
+										_rka.action = rka.action;
+										_rka.created_user = rka.created_user;
+										_rka.createddate = rka.createddate;
+										_rka.createdtime = rka.createdtime;
+										_rka.harga_satuan = rka.harga_satuan;
+										_rka.harga_satuan_murni = rka.harga_satuan_murni;
+										_rka.id_daerah = rka.id_daerah;
+										_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;										
+										_rka.id_standar_nfs = rka.id_standar_nfs;
+										_rka.id_standar_harga = rka.id_standar_harga; //baru
+										_rka.id_dana = rka.id_dana; //baru
+										_rka.id_blt = rka.id_blt; //baru
+										_rka.id_usulan = rka.id_usulan; //baru
+										_rka.id_jenis_usul = rka.id_dana; //baru
+										_rka.is_locked = rka.is_locked;
+										_rka.jenis_bl = rka.jenis_bl;
 										
-									_rka.action = rka.action;
-									_rka.created_user = rka.created_user;
-									_rka.createddate = rka.createddate;
-									_rka.createdtime = rka.createdtime;
-									_rka.harga_satuan = rka.harga_satuan;
-									_rka.harga_satuan_murni = rka.harga_satuan_murni;
-									_rka.id_daerah = rka.id_daerah;
-									_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;										
-									_rka.id_standar_nfs = rka.id_standar_nfs;
-									_rka.id_standar_harga = rka.id_standar_harga; //baru
-									_rka.id_dana = rka.id_dana; //baru
-									_rka.id_blt = rka.id_blt; //baru
-									_rka.id_usulan = rka.id_usulan; //baru
-									_rka.id_jenis_usul = rka.id_dana; //baru
-									_rka.is_locked = rka.is_locked;
-									_rka.jenis_bl = rka.jenis_bl;
-									
-									_rka.id_akun = rka.id_akun;
-									_rka.kode_akun = rka.kode_akun;
-									_rka.koefisien = rka.koefisien;
-									_rka.koefisien_murni = rka.koefisien_murni;
-									_rka.lokus_akun_teks = rka.lokus_akun_teks;
-									_rka.nama_akun = rka.nama_akun;
-									_rka.nama_standar_harga = rka.nama_standar_harga;
-									// if(rka.nama_standar_harga && rka.nama_standar_harga.nama_komponen){
-									get_rinci_sub_bl(opsi.id_skpd, rka.id_sub_bl).then(function(rinci_sub_bl){										
-										_rka.nama_komponen = rinci_sub_bl.nama_standar_harga;
-										_rka.spek_komponen = rinci_sub_bl.spek;
-										_rka.id_subs_sub_bl = rinci_sub_bl.id_subs_sub_bl; //baru
-										_rka.id_ket_sub_bl = rinci_sub_bl.id_ket_sub_bl; //baru
-										_rka.idketerangan = rinci_sub_bl.id_ket_sub_bl;
-										_rka.idsubtitle = rinci_sub_bl.id_subs_sub_bl;
-										if(rinci_sub_bl.id_ket_sub_bl !=0){
-											get_ket_sub_bl(rinci_sub_bl.id_ket_sub_bl).then(function(ket_sub_bl){
-												_rka.ket_bl_teks = ket_sub_bl.ket_bl_teks;
-											});	
+										_rka.id_akun = rka.id_akun;
+										_rka.kode_akun = rka.kode_akun;
+										_rka.koefisien = rka.koefisien;
+										_rka.koefisien_murni = rka.koefisien_murni;
+										_rka.lokus_akun_teks = rka.lokus_akun_teks;
+										_rka.nama_akun = rka.nama_akun;
+										_rka.nama_standar_harga = rka.nama_standar_harga;
+										// if(rka.nama_standar_harga && rka.nama_standar_harga.nama_komponen){
+										get_rinci_sub_bl(opsi.id_skpd, rka.id_sub_bl).then(function(rinci_sub_bl){										
+											_rka.nama_komponen = rinci_sub_bl.nama_standar_harga;
+											_rka.spek_komponen = rinci_sub_bl.spek;
+											_rka.id_subs_sub_bl = rinci_sub_bl.id_subs_sub_bl; //baru
+											_rka.id_ket_sub_bl = rinci_sub_bl.id_ket_sub_bl; //baru
+											_rka.idketerangan = rinci_sub_bl.id_ket_sub_bl;
+											_rka.idsubtitle = rinci_sub_bl.id_subs_sub_bl;
+											if(rinci_sub_bl.id_ket_sub_bl !=0){
+												get_ket_sub_bl(rinci_sub_bl.id_ket_sub_bl).then(function(ket_sub_bl){
+													_rka.ket_bl_teks = ket_sub_bl.ket_bl_teks;
+												});	
+											}
+											if(rinci_sub_bl.id_subs_sub_bl !=0){
+												get_subs_sub_bl(rinci_sub_bl.id_subs_sub_bl).then(function(subs_sub_bl){
+													_rka.subs_bl_teks = subs_sub_bl.subs_bl_teks;
+												});	
+											}
+										});	
+										if(rka.nama_standar_harga){
+											_rka.nama_komponen = rka.nama_standar_harga;
+											// _rka.spek_komponen = rka.spek_komponen;
+										}else{
+											_rka.nama_komponen = '';
+											// _rka.spek_komponen = '';
 										}
-										if(rinci_sub_bl.id_subs_sub_bl !=0){
-											get_subs_sub_bl(rinci_sub_bl.id_subs_sub_bl).then(function(subs_sub_bl){
-												_rka.subs_bl_teks = subs_sub_bl.subs_bl_teks;
-											});	
+										
+										if(rka.satuan){
+											_rka.satuan = rka.satuan;
+										}else{
+											if(_rka.koefisien){
+												_rka.satuan = rka.koefisien.split(' ');
+												_rka.satuan.shift();
+												_rka.satuan = _rka.satuan.join(' ');
+											}
 										}
-									});	
-									if(rka.nama_standar_harga){
-										_rka.nama_komponen = rka.nama_standar_harga;
-										// _rka.spek_komponen = rka.spek_komponen;
-									}else{
-										_rka.nama_komponen = '';
-										// _rka.spek_komponen = '';
-									}
-									
-									if(rka.satuan){
-										_rka.satuan = rka.satuan;
-									}else{
-										if(_rka.koefisien){
-											_rka.satuan = rka.koefisien.split(' ');
-											_rka.satuan.shift();
-											_rka.satuan = _rka.satuan.join(' ');
+										_rka.sat1 = rka.sat_1;
+										_rka.sat2 = rka.sat_2;
+										_rka.sat3 = rka.sat_3;
+										_rka.sat4 = rka.sat_4;
+										_rka.spek = rka.spek;
+										_rka.volum1 = rka.vol_1;
+										_rka.volum2 = rka.vol_2;
+										_rka.volum3 = rka.vol_3;
+										_rka.volum4 = rka.vol_4;
+										_rka.volume = rka.volume;
+										_rka.volume_murni = rka.volume_murni;
+										// _rka.subs_bl_teks = substeks_all[rka.subs_bl_teks.substeks];
+										// _rka.total_harga = rka.rincian;
+										_rka.total_harga = rka.total_harga;
+										_rka.rincian = rka.total_harga;
+										// _rka.rincian = rka.rincian;
+										// _rka.rincian_murni = rka.rincian_murni;
+										_rka.rincian_murni = rka.rkpd_murni; //baru
+										_rka.pajak = rka.pajak;
+										_rka.pajak_murni = rka.pajak_murni;
+										_rka.totalpajak = rka.totalpajak;
+										_rka.updated_user = rka.updated_user;
+										_rka.updateddate = rka.updateddate;
+										_rka.updatedtime = rka.updatedtime;
+										_rka.user1 = rka.user1;
+										_rka.user2 = rka.user2;
+										_rka.id_prop_penerima = 0;
+										_rka.id_camat_penerima = 0;
+										_rka.id_kokab_penerima = 0;
+										_rka.id_lurah_penerima = 0;
+										_rka.id_penerima = 0;
+										_rka.idkomponen = 0;
+										
+										_rka.set_sisa_kontrak = rka.set_sisa_kontrak; //baru
+										_data.push(_rka);
+										if((i+1)%_leng == 0){
+											_data_all.push(_data);
+											_data = [];
 										}
-									}
-									_rka.sat1 = rka.sat_1;
-									_rka.sat2 = rka.sat_2;
-									_rka.sat3 = rka.sat_3;
-									_rka.sat4 = rka.sat_4;
-									_rka.spek = rka.spek;
-									_rka.volum1 = rka.vol_1;
-									_rka.volum2 = rka.vol_2;
-									_rka.volum3 = rka.vol_3;
-									_rka.volum4 = rka.vol_4;
-									_rka.volume = rka.volume;
-									_rka.volume_murni = rka.volume_murni;
-									// _rka.subs_bl_teks = substeks_all[rka.subs_bl_teks.substeks];
-									// _rka.total_harga = rka.rincian;
-									_rka.total_harga = rka.total_harga;
-									_rka.rincian = rka.total_harga;
-									// _rka.rincian = rka.rincian;
-									// _rka.rincian_murni = rka.rincian_murni;
-									_rka.rincian_murni = rka.rkpd_murni; //baru
-									_rka.pajak = rka.pajak;
-									_rka.pajak_murni = rka.pajak_murni;
-									_rka.totalpajak = rka.totalpajak;
-									_rka.updated_user = rka.updated_user;
-									_rka.updateddate = rka.updateddate;
-									_rka.updatedtime = rka.updatedtime;
-									_rka.user1 = rka.user1;
-									_rka.user2 = rka.user2;
-									_rka.id_prop_penerima = 0;
-									_rka.id_camat_penerima = 0;
-									_rka.id_kokab_penerima = 0;
-									_rka.id_lurah_penerima = 0;
-									_rka.id_penerima = 0;
-									_rka.idkomponen = 0;
-									
-									_rka.set_sisa_kontrak = rka.set_sisa_kontrak; //baru
-									_data.push(_rka);
-									if((i+1)%_leng == 0){
-										_data_all.push(_data);
-										_data = [];
 									}
 								});
 								if(_data.length > 0){
