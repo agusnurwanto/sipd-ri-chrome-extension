@@ -44,6 +44,7 @@
 				"js/content/renja/renja.js",
 				"js/content/renja/pendapatan/pendapatan.js",
 				"js/content/renja/pembiayaan/pembiayaan.js",
+				"js/content/renstra/renstra.js",
 				"js/content/app.js"
 			],
 			"run_at": "document_end"
