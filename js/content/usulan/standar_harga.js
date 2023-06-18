@@ -917,7 +917,8 @@ function get_usulan_ssh_dari_lokal(){
 	var data_post = { 
 		action: 'get_usulan_ssh_sipd',
 		tahun_anggaran: _token.tahun,
-		api_key: config.api_key
+		api_key: config.api_key,
+		tipe: type_data_ssh
 	};
 	var data = {
 	    message:{
