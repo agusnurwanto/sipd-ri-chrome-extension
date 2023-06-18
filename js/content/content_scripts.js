@@ -76,6 +76,10 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 			if(res.run == 'afterCekLisensi'){
 				afterCekLisensi(res);
 			}
+		}else if(res.action == 'get_usulan_ssh_sipd'){
+			_alert = false;
+			cek_hide_loading = false;
+			singkron_ssh_dari_lokal(res);
 		}else if(res.action == 'get_renja'){
 			_alert = false;
 			cek_hide_loading = false;

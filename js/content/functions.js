@@ -54,14 +54,14 @@ function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
   }
 };
 
-function show_loading(){
+const show_loading = function(){
 	jQuery('#wrap-loading').show();
 	jQuery('#persen-loading').html('');
 	jQuery('#persen-loading').attr('persen', '');
 	jQuery('#persen-loading').attr('total', '');
 }
 
-function hide_loading(){
+const hide_loading = function(){
 	jQuery('#wrap-loading').hide();
 	jQuery('#persen-loading').html('');
 	jQuery('#persen-loading').attr('persen', '');

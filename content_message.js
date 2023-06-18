@@ -55,5 +55,16 @@ window.addEventListener('message', function(event) {
     		}
 			jQuery('#modal-extension').modal('show');
 			break;
+    	case 'show_modal_usulan_ssh':
+    		window.options_datatable = {
+    			'columnDefs': [
+    				{ 'width': '300px', 'targets': 6 }, 
+    				{ orderable: false, targets: 1 }], 
+    				lengthMenu: [ [10, 250, 500, -1], [10, 250, 500, 'All'] 
+    			]
+    		};
+    		jQuery("#usulan-ssh").modal("show");
+    		console.log('tampilkan popup usulan ssh');
+			break;
 	}
 });

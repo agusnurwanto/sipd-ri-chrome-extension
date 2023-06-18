@@ -1,4 +1,4 @@
-_interval = false;
+window._interval = false;
 
 let previousUrl = "";
 const observer = new MutationObserver(() => {
@@ -14,8 +14,9 @@ observer.observe(document, { subtree: true, childList: true });
 function cekUrl(current_url, nomor=1){
 	if(nomor > 1){
 		console.log('Run ulang cekUrl() ke '+nomor+' URL: '+current_url);
+	}else{
+		cekLisensi();
 	}
-	cekLisensi();
 
 	getToken();
 
@@ -617,10 +618,12 @@ function cekUrl(current_url, nomor=1){
 							+'<div class="aksi-extension">'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 								+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
-								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="show_id_ssh">Tampilkan ID Standar Harga</button>'
-								// +'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="show_akun_ssh">Tampilkan Link Akun</button>'
+								+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_dari_db_lokal">Singkron '+type_data_ssh.toUpperCase()+' dari Lokal</button>'
 							+'</div>';
-						jQuery('#aksi-admin').append(btn2);						
+						jQuery('#aksi-admin').append(btn2);				
+						jQuery('#singkron_dari_db_lokal').on('click', function(){
+							get_usulan_ssh_dari_lokal(type_data_ssh);
+						});	
 						jQuery('#singkron_ssh_ke_lokal').on('click', function(){
 							singkron_ssh_ke_lokal(type_data_ssh);
 						});
@@ -651,6 +654,37 @@ function cekUrl(current_url, nomor=1){
 							show_akun_ssh();
 						});						
 						var modal = ''
+							+'<div class="modal fade modal-extension" id="usulan-ssh" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999">'
+						        +'<div class="modal-dialog" style="width: 90%; min-width: 1100px;" role="document">'
+						            +'<div class="modal-content">'
+						                +'<div class="modal-header bgpanel-theme">'
+						                    +'<h4 class="modal-title" id="">Daftar Usulan Satuan Harga <span class="info-title"></span></h4>'
+											+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+						                +'</div>'
+						                +'<div class="modal-body">'
+						                  	+'<table class="table table-hover table-striped" id="usulan-ssh-table" style="width: 100%;">'
+						                      	+'<thead>'
+						                        	+'<tr>'
+						                          		+'<th class="text-center"><input type="checkbox" id="select-all-usulan-ssh"></th>'
+						                          		+'<th class="text-center">Kode Standar Harga Lokal</th>'
+						                          		+'<th class="text-center">Jenis Usulan</th>'
+						                          		+'<th class="text-center">Nama</th>'
+						                          		+'<th class="text-center">Spesifikasi</th>'
+						                          		+'<th class="text-center">Satuan</th>'
+						                          		+'<th class="text-center">Harga</th>'
+						                          		+'<th class="text-center">Akun</th>'
+						                        	+'</tr>'
+						                      	+'</thead>'
+						                      	+'<tbody></tbody>'
+						                  	+'</table>'
+						                +'</div>'
+						                +'<div class="modal-footer">'
+						                    +'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+						                    +'<button type="button" class="btn btn-danger" id="usulan-ssh-sipd">Simpan</button>'
+						                +'</div>'
+						            +'</div>'
+						        +'</div>'
+						    +'</div>'
 							+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 								+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
 									+'<div class="modal-content">'
@@ -713,7 +747,17 @@ function cekUrl(current_url, nomor=1){
 						jQuery('#select_all_hapus_ssh').on('click', function(){
 							var cek = jQuery(this).is(':checked');
 							jQuery('#table_duplikat tbody tr input[type="checkbox"]').prop('checked', cek);
-						});	
+						});
+						jQuery('#select-all-usulan-ssh').on('click', function(){
+							if(jQuery(this).is(':checked')){
+								jQuery('#usulan-ssh tbody input[type="checkbox"]').prop('checked', true);
+							}else{
+								jQuery('#usulan-ssh tbody input[type="checkbox"]').prop('checked', false);
+							}
+						});
+						jQuery('#usulan-ssh-sipd').on('click', function(){
+							singkron_usulan_ssh_dari_lokal_modal();
+						});
 						jQuery('#hapus-duplikat').on('click', function(){
 							hapus_duplikat_ssh();
 						});

@@ -81,6 +81,14 @@ function relayAjax(options, retries=20, delay=10000, timeout=9000000){
     });
 }
 
+const signal_all = {};
+
+// https://stackoverflow.com/questions/31061838/how-do-i-cancel-an-http-fetch-request
+function abortFetching(controller, url, action='') {
+    console.log('abortFetching!', url, action);
+    controller.abort()
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 function postData(url = '', data = {}) {
     var formdata = new FormData();
@@ -92,8 +100,25 @@ function postData(url = '', data = {}) {
         }
         formdata.append(i, val);
     }
+    if(!signal_all[url+data.action]){
+        signal_all[url+data.action] = [];
+    }else{
+        var controller = new AbortController();
+        signal_all[url+data.action].push({
+            controller: controller,
+            signal: controller.signal
+        });
+
+        // untuk mengcancel request sebelumnya agar tidak menumpuk di background
+        if(data.action == 'cek_lisensi_ext'){
+            signal_all[url+data.action].map(function(b, i){
+                abortFetching(b.controller, url, data.action);
+            });
+        }
+    }
     var parameter = {
         method: 'POST',
+        signal: signal_all[url+data.action].signal,
         mode: 'no-cors',
         cache: 'no-cache',
         credentials: 'include',

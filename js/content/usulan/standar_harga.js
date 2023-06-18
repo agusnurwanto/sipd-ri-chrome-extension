@@ -87,12 +87,14 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 
 							Promise.all(sendData)
 							.then(function(val_all){								
-									send_to_lokal(val_all);								
+								send_to_lokal(val_all);								
 								var c_persen = +jQuery('#persen-loading').attr('persen');
 								c_persen++;
 								jQuery('#persen-loading').attr('persen', c_persen);
 								jQuery('#persen-loading').html(((c_persen/data_all.length)*100).toFixed(2)+'%');
-								return resolve_redurce(nextData);
+								setTimeout(function(){
+									return resolve_redurce(nextData);
+								}, 1000);
 							})
 							.catch(function(err){
 								console.log('err', err);
@@ -123,7 +125,6 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 }
 
 function send_to_lokal(val){
-	
 	var data_ssh = { 
 		action: 'singkron_ssh',
 		type: 'ri',		
@@ -131,47 +132,46 @@ function send_to_lokal(val){
 		api_key: config.api_key,
 		ssh : {}
 	};
-	
 	val.map(function(b, i){		
-			var kelompok;
-			if (b.tipe_standar_harga == 'SSH') {
-				kelompok = 1;
-			}else if (b.tipe_standar_harga == 'HSPK') {
-				kelompok = 2;
-			}else if (b.tipe_standar_harga == 'ASB') {
-				kelompok = 3;
-			}else if (b.tipe_standar_harga == 'SBU') {
-				kelompok = 4;
-			}
-			data_ssh.ssh[i] = {};
-			data_ssh.ssh[i].kode_kel_standar_harga	= b.kode_kel_standar_harga;
-			data_ssh.ssh[i].nama_kel_standar_harga	= b.nama_kel_standar_harga;
-			data_ssh.ssh[i].id_standar_harga	= b.id_standar_harga;
-			data_ssh.ssh[i].kode_standar_harga	= b.kode_standar_harga;
-			data_ssh.ssh[i].nama_standar_harga	= b.nama_standar_harga;
-			data_ssh.ssh[i].spek	= b.spek;
-			data_ssh.ssh[i].satuan	= b.satuan;
-			data_ssh.ssh[i].harga	= b.harga;
-			data_ssh.ssh[i].harga_2	= b.harga_2;
-			data_ssh.ssh[i].harga_3	= b.harga_3;
-			data_ssh.ssh[i].is_locked	= b.is_locked;
-			data_ssh.ssh[i].is_deleted	= b.is_deleted;
-			data_ssh.ssh[i].created_user	= b.created_user;
-			data_ssh.ssh[i].created_at	= b.created_at;
-			data_ssh.ssh[i].updated_user	= b.updated_user;
-			data_ssh.ssh[i].updated_at	= b.updated_at;			
-			data_ssh.ssh[i].kelompok	= kelompok;
-			data_ssh.ssh[i].tipe_standar_harga	= b.tipe_standar_harga;
-			data_ssh.ssh[i].ket_teks	= b.ket_teks;
-			data_ssh.ssh[i].nilai_tkdn	= b.nilai_tkdn;
-			data_ssh.ssh[i].is_pdn	= b.is_pdn;
-			data_ssh.ssh[i].kd_belanja	= {};
-			b.rek_belanja.map(function(d, c){
-				data_ssh.ssh[i].kd_belanja[c]	= {};
-				data_ssh.ssh[i].kd_belanja[c].id_akun	= d.id_akun;
-				data_ssh.ssh[i].kd_belanja[c].kode_akun	= d.kode_akun;
-				data_ssh.ssh[i].kd_belanja[c].nama_akun	= d.nama_akun;
-			});		
+		var kelompok;
+		if (b.tipe_standar_harga == 'SSH') {
+			kelompok = 1;
+		}else if (b.tipe_standar_harga == 'HSPK') {
+			kelompok = 2;
+		}else if (b.tipe_standar_harga == 'ASB') {
+			kelompok = 3;
+		}else if (b.tipe_standar_harga == 'SBU') {
+			kelompok = 4;
+		}
+		data_ssh.ssh[i] = {};
+		data_ssh.ssh[i].kode_kel_standar_harga	= b.kode_kel_standar_harga;
+		data_ssh.ssh[i].nama_kel_standar_harga	= b.nama_kel_standar_harga;
+		data_ssh.ssh[i].id_standar_harga	= b.id_standar_harga;
+		data_ssh.ssh[i].kode_standar_harga	= b.kode_standar_harga;
+		data_ssh.ssh[i].nama_standar_harga	= b.nama_standar_harga;
+		data_ssh.ssh[i].spek	= b.spek;
+		data_ssh.ssh[i].satuan	= b.satuan;
+		data_ssh.ssh[i].harga	= b.harga;
+		data_ssh.ssh[i].harga_2	= b.harga_2;
+		data_ssh.ssh[i].harga_3	= b.harga_3;
+		data_ssh.ssh[i].is_locked	= b.is_locked;
+		data_ssh.ssh[i].is_deleted	= b.is_deleted;
+		data_ssh.ssh[i].created_user	= b.created_user;
+		data_ssh.ssh[i].created_at	= b.created_at;
+		data_ssh.ssh[i].updated_user	= b.updated_user;
+		data_ssh.ssh[i].updated_at	= b.updated_at;			
+		data_ssh.ssh[i].kelompok	= kelompok;
+		data_ssh.ssh[i].tipe_standar_harga	= b.tipe_standar_harga;
+		data_ssh.ssh[i].ket_teks	= b.ket_teks;
+		data_ssh.ssh[i].nilai_tkdn	= b.nilai_tkdn;
+		data_ssh.ssh[i].is_pdn	= b.is_pdn;
+		data_ssh.ssh[i].kd_belanja	= {};
+		b.rek_belanja.map(function(d, c){
+			data_ssh.ssh[i].kd_belanja[c]	= {};
+			data_ssh.ssh[i].kd_belanja[c].id_akun	= d.id_akun;
+			data_ssh.ssh[i].kd_belanja[c].kode_akun	= d.kode_akun;
+			data_ssh.ssh[i].kd_belanja[c].nama_akun	= d.nama_akun;
+		});		
 	});
 	
 	var data = {
@@ -910,4 +910,77 @@ function get_rekening_all(){
 			}
 		});
 	});
+}
+
+function get_usulan_ssh_dari_lokal(){
+	show_loading();
+	var data_post = { 
+		action: 'get_usulan_ssh_sipd',
+		tahun_anggaran: _token.tahun,
+		api_key: config.api_key
+	};
+	var data = {
+	    message:{
+	        type: "get-url",
+	        content: {
+			    url: config.url_server_lokal,
+			    type: 'post',
+			    data: data_post,
+			    return: true
+			}
+	    }
+	};
+	chrome.runtime.sendMessage(data, function(response) {
+	    console.log('responeMessage', response);
+	});
+}
+
+function singkron_ssh_dari_lokal(usulan){
+	var body = '';
+	window.data_usulan_ssh = {};
+	usulan.data.map(function(b, i){
+		data_usulan_ssh[b.id] = b;
+		var akun_all = [];
+		b.akun.map(function(bb, ii){
+			akun_all.push(bb.nama_akun);
+		});
+		var kode_standar_harga = b.kode_standar_harga;
+		if(b.kode_standar_harga_sipd){
+			kode_standar_harga += '<br>(Kode SIPD : '+b.kode_standar_harga_sipd+')';
+		}
+		body += ''
+			+'<tr>'
+				+'<td><input type="checkbox" value="'+b.id+'"></td>'
+				+'<td>'+kode_standar_harga+'</td>'
+				+'<td>'+b.status_jenis_usulan+'</td>'
+				+'<td>'+b.nama_standar_harga+'</td>'
+				+'<td>'+b.spek+'</td>'
+				+'<td>'+b.satuan+' (Jenis Produk: '+b.jenis_produk+') (TKDN: '+b.tkdn+')</td>'
+				+'<td>'+formatMoney(b.harga)+'</td>'
+				+'<td>'+akun_all.join('<br>')+'</td>'
+			+'</tr>';
+	});
+	jQuery('#usulan-ssh tbody').html(body);
+	run_script("show_modal_usulan_ssh");
+	hide_loading();
+}
+
+function singkron_usulan_ssh_dari_lokal_modal() {
+	var list_usulan_selected = [];
+	var nama_usulan = [];
+	jQuery('#usulan-ssh-table tbody input[type="checkbox"]').map(function(i, b){
+		if(jQuery(b).is(':checked')){
+			var data = data_usulan_ssh[jQuery(b).val()];
+			list_usulan_selected.push(data);
+			nama_usulan.push(data.nama_standar_harga);
+		}
+	});
+	if(list_usulan_selected.length == 0){
+		alert('Pilih dulu item SSH yang akan disimpan!');
+	}else{
+		console.log('list_usulan_selected', list_usulan_selected);
+		if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
+			// simpan_usulan_ssh(list_usulan_selected);
+		}
+	}
 }
