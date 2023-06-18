@@ -1,3 +1,42 @@
+function get_all_ssh_sipd(type_data_ssh, search_value=false){
+	return new Promise(function(resolve, reject){
+		var kelompok;
+		if (type_data_ssh =='SSH') {
+			kelompok = 1;
+		}else if (type_data_ssh =='HSPK') {
+			kelompok = 2;
+		}else if (type_data_ssh =='ASB') {
+			kelompok = 3;
+		}else if (type_data_ssh =='SBU') {
+			kelompok = 4;
+		}
+		console.log('Get data All SSH!');
+		var param = {
+			tahun: _token.tahun,
+			id_daerah: _token.daerah_id,
+			kelompok: kelompok,
+			tipe: type_data_ssh,
+			length: 100000,
+			start: 0
+		};
+		if(search_value){
+			param['search[value]'] = search_value;
+		}
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/listAll',
+			type: 'POST',
+			data: param,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("x-api-key", x_api_key());
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(data){
+				resolve(data);
+			}
+		});
+	})
+}
+
 function singkron_ssh_ke_lokal(type_data_ssh){
 	console.log('type_data_ssh', type_data_ssh);
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
@@ -5,134 +44,118 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 		jQuery('#persen-loading').attr('persen', 0);
 		jQuery('#persen-loading').html('0%');
 		var kelompok;
-			if (type_data_ssh =='SSH') {
-				kelompok = 1;
-			}else if (type_data_ssh =='HSPK') {
-				kelompok = 2;
-			}else if (type_data_ssh =='ASB') {
-				kelompok = 3;
-			}else if (type_data_ssh =='SBU') {
-				kelompok = 4;
-			}		
-		relayAjax({
-			url: config.sipd_url+'api/master/d_komponen/listAll',
-			type: 'POST',
-			data: {
-				tahun: _token.tahun,
-				id_daerah: _token.daerah_id,				
-				kelompok: kelompok,				
-				tipe: type_data_ssh,				
-				//search[value]:'',
-				length: 100000,
-				start: 0,				
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("x-api-key", x_api_key());
-				xhr.setRequestHeader("x-access-token", _token.token);
-			},			
-			success: function(data){			
-				pesan_loading('Simpan data '+type_data_ssh+' ke DB Lokal!');
-				var data_all = [];
-				var data_sementara = [];
-				data.data.data.map(function(b, i){
-					data_sementara.push(b);
-					var n = i+1;
-					if(n%50 == 0){
-						data_all.push(data_sementara);
-						data_sementara = [];
-					}
-				});
-
-				if(data_sementara.length > 0){
+		if (type_data_ssh =='SSH') {
+			kelompok = 1;
+		}else if (type_data_ssh =='HSPK') {
+			kelompok = 2;
+		}else if (type_data_ssh =='ASB') {
+			kelompok = 3;
+		}else if (type_data_ssh =='SBU') {
+			kelompok = 4;
+		}		
+		get_all_ssh_sipd(type_data_ssh)
+		.then(function(data){
+			pesan_loading('Simpan data '+type_data_ssh+' ke DB Lokal!');
+			var data_all = [];
+			var data_sementara = [];
+			data.data.data.map(function(b, i){
+				data_sementara.push(b);
+				var n = i+1;
+				if(n%50 == 0){
 					data_all.push(data_sementara);
+					data_sementara = [];
 				}
+			});
 
-				var i = 0;
-				var last = data_all.length-1;
-				data_all.reduce(function(sequence, nextData){
-					return sequence.then(function(current_data){
-						return new Promise(function(resolve_redurce, reject_redurce){
-							var sendData = current_data.map(function(val, n){																
-								return new Promise(function(resolve, reject){		
-									console.log('rekening', val);							
-									relayAjax({
-										url: config.sipd_url+'api/master/d_komponen/listRekening',
-										type: 'POST',
-										data: {
-											id_standar_harga: val.id_standar_harga,
-											kode_standar_harga: val.kode_standar_harga,
-											kelompok: kelompok,
-											tahun: _token.tahun,
-											id_daerah: _token.daerah_id,		
-										},										
-										beforeSend: function (xhr) {			    
-											xhr.setRequestHeader("x-api-key", x_api_key());
-											xhr.setRequestHeader("x-access-token", _token.token);
-										},
-										success: function(ret){
-											val.rek_belanja = ret.data;
-											return resolve(val);
-										},
-										error: function(e) {
-											console.log(e);
-											return resolve(val);
-										}
-									});
-								})
-								.catch(function(e){
-									console.log(e);
-									return Promise.resolve(val);
+			if(data_sementara.length > 0){
+				data_all.push(data_sementara);
+			}
+
+			var i = 0;
+			var last = data_all.length-1;
+			data_all.reduce(function(sequence, nextData){
+				return sequence.then(function(current_data){
+					return new Promise(function(resolve_redurce, reject_redurce){
+						var sendData = current_data.map(function(val, n){
+							return new Promise(function(resolve, reject){
+								console.log('rekening', val);
+								relayAjax({
+									url: config.sipd_url+'api/master/d_komponen/listRekening',
+									type: 'POST',
+									data: {
+										id_standar_harga: val.id_standar_harga,
+										kode_standar_harga: val.kode_standar_harga,
+										kelompok: kelompok,
+										tahun: _token.tahun,
+										id_daerah: _token.daerah_id
+									},
+									beforeSend: function (xhr) {
+										xhr.setRequestHeader("x-api-key", x_api_key());
+										xhr.setRequestHeader("x-access-token", _token.token);
+									},
+									success: function(ret){
+										val.rek_belanja = ret.data;
+										return resolve(val);
+									},
+									error: function(e) {
+										console.log(e);
+										return resolve(val);
+									}
 								});
-							});
-
-							Promise.all(sendData)
-							.then(function(val_all){								
-								send_to_lokal(val_all);								
-								var c_persen = +jQuery('#persen-loading').attr('persen');
-								c_persen++;
-								jQuery('#persen-loading').attr('persen', c_persen);
-								jQuery('#persen-loading').html(((c_persen/data_all.length)*100).toFixed(2)+'%');
-								setTimeout(function(){
-									return resolve_redurce(nextData);
-								}, 1000);
 							})
-							.catch(function(err){
-								console.log('err', err);
-								return resolve_redurce(nextData);
+							.catch(function(e){
+								console.log(e);
+								return Promise.resolve(val);
 							});
+						});
+
+						Promise.all(sendData)
+						.then(function(val_all){								
+							send_to_lokal(val_all);								
+							var c_persen = +jQuery('#persen-loading').attr('persen');
+							c_persen++;
+							jQuery('#persen-loading').attr('persen', c_persen);
+							jQuery('#persen-loading').html(((c_persen/data_all.length)*100).toFixed(2)+'%');
+							setTimeout(function(){
+								return resolve_redurce(nextData);
+							}, 1000);
 						})
-						.catch(function(e){
-							console.log(e);
-							return Promise.resolve(nextData);
+						.catch(function(err){
+							console.log('err', err);
+							return resolve_redurce(nextData);
 						});
 					})
 					.catch(function(e){
 						console.log(e);
 						return Promise.resolve(nextData);
 					});
-				}, Promise.resolve(data_all[last]))
-				.then(function(data_last){
-					console.log(data_last);
-					hide_loading();        
-					alert('Data berhasil disimpan di database lokal!');
 				})
 				.catch(function(e){
 					console.log(e);
-				});							
-			}
+					return Promise.resolve(nextData);
+				});
+			}, Promise.resolve(data_all[last]))
+			.then(function(data_last){
+				console.log(data_last);
+				hide_loading();        
+				alert('Data berhasil disimpan di database lokal!');
+			})
+			.catch(function(e){
+				console.log(e);
+			});
 		});
 	}
 }
 
 function send_to_lokal(val){
-	var data_ssh = { 
+	var data_ssh = {
 		action: 'singkron_ssh',
-		type: 'ri',		
+		type: 'ri',
 		tahun_anggaran: _token.tahun,
 		api_key: config.api_key,
 		ssh : {}
 	};
-	val.map(function(b, i){		
+	val.map(function(b, i){
 		var kelompok;
 		if (b.tipe_standar_harga == 'SSH') {
 			kelompok = 1;
@@ -179,8 +202,8 @@ function send_to_lokal(val){
 			type: "get-url",
 			content: {
 				url: config.url_server_lokal,
-				type: 'post',								
-				data: data_ssh,				
+				type: 'post',
+				data: data_ssh,
 				return: false
 			}
 		}
@@ -212,7 +235,7 @@ function singkron_satuan_ke_lokal(){
 					action: 'singkron_satuan',
 					type: 'ri',
 					tahun_anggaran: _token.tahun,
-					api_key: config.api_key,					
+					api_key: config.api_key,
 					satuan : {}
 				};
 				var last =  data.data.data.length-1;
@@ -493,8 +516,8 @@ function hapus_komponen_arsip(idstandarharga){
 			data: {            
 					tahun: _token.tahun,				
 					id_daerah: _token.daerah_id,	
-					id_user_log: 1,	
-					id_daerah_log: _token.daerah_id,	
+					id_user_log: _token.user_id,
+					id_daerah_log: _token.daerah_id,
 					id_standar_harga: idstandarharga
 				},
 			beforeSend: function (xhr) {			    
@@ -516,7 +539,7 @@ function hapus_komponen(idstandarharga){
 			data: {            
 					tahun: _token.tahun,				
 					id_daerah: _token.daerah_id,	
-					id_user_log: 1,	
+					id_user_log: _token.user_id,
 					id_daerah_log: _token.daerah_id,
 					is_locked: 3,	
 					id_standar_harga: idstandarharga
@@ -671,7 +694,7 @@ function hapus_duplikat_ssh(){
 	}
 }
 
-function find_rekening(){
+function find_rekening(opsi){
 	pesan_loading("Get master Rekening");
 	return new Promise(function(resolve, reject){
 		relayAjax({
@@ -713,7 +736,7 @@ function set_mulit_rek(){
 		var cek = jQuery(b).is(':checked');
 		if(cek){
 			var id = jQuery(b).val();
-			data_ssh.push([id]);
+			data_ssh.push(id);
 			console.log(id);
 		}
 	});
@@ -721,22 +744,24 @@ function set_mulit_rek(){
 	if(data_ssh.length == 0){
 		alert('Pilih dulu item Standar Harga!');
 	}else{
+		show_loading();
 		get_rekening_all()
 		.then(function(akun){
-			var akun_all = {};			
+			var akun_all = {};
 			var body = '';
-			akun.data.map(function(b, i){				
-				var keyword = data_ssh+'='+b.id_akun;
-				akun_all[keyword] = b;							
-				var existing = data_ssh;
-				
-				body += ''
-					+'<tr>'								
-						+'<td class="text-center"><input type="checkbox" value="'+keyword+'">'+existing+'</td>'
-						+'<td>'+b.id_akun+'</td>'
-						+'<td>'+b.kode_akun+'</td>'
-						+'<td>'+b.nama_akun+'</td>'						
-					+'</tr>';
+			data_ssh = data_ssh.join(',');
+			akun.data.map(function(b, i){
+				if(b.kode_akun.split(',') >= 6){
+					var keyword = data_ssh+'='+b.id_akun;
+					akun_all[keyword] = b;
+					body += ''
+						+'<tr>'
+							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"/><br>'+data_ssh+'</td>'
+							+'<td>'+b.id_akun+'</td>'
+							+'<td>'+b.kode_akun+'</td>'
+							+'<td>'+b.nama_akun+'</td>'
+						+'</tr>';
+				}
 			});
 			jQuery('#table-extension-rekening tbody').html(body);
 			run_script('show_modal', {
@@ -753,7 +778,7 @@ function proses_simpan_multirek(){
 		var cek = jQuery(b).is(':checked');
 		if(cek){
 			var id = jQuery(b).val();
-			data_multirek_selected.push([id]);
+			data_multirek_selected.push(id);
 		}
 	});
 	if(data_multirek_selected.length == 0){
@@ -766,8 +791,8 @@ function proses_simpan_multirek(){
 			return sequence.then(function(current_data){
 				console.log('current_data data_multirek_selected', current_data);
 				return new Promise(function(resolve_reduce, reject_reduce){
-					console.log(current_data[0]);
-					var data = current_data[0].split('=');					
+					console.log(current_data);
+					var data = current_data.split('=');					
 					var ssh = data[0].split(',');										
 					var rek = data[1];					
 					var lastssh = ssh.length-1;
@@ -822,15 +847,16 @@ function proses_simpan_multirek(){
 }
 
 function simpan_rekening(idstandarharga, idakun){    
-    return new Promise(function(resolve, reject){    	
+    return new Promise(function(resolve, reject){
+    	console.log('SIMPAN Rekening');
 		relayAjax({
 			url: config.sipd_url+'api/master/d_komponen_akun/add',                                    
 			type: 'POST',	      				
 			data: {            
 					tahun: _token.tahun,				
 					id_daerah: _token.daerah_id,	
-					id_user_log: 1,	
-					id_daerah_log: 1,					
+					id_user_log: _token.user_id,
+					id_daerah_log: _token.daerah_id,
 					id_standar_harga: idstandarharga,
 					id_akun: idakun
 				},
@@ -888,27 +914,28 @@ function show_akun_ssh(){
 function get_rekening_all(){
 	pesan_loading("Get master Rekening");
 	return new Promise(function(resolve, reject){
-		relayAjax({
-			url: config.sipd_url+'api/master/akun/listNew',
-			type: 'POST',
-			data: {
-				tahun: _token.tahun,
-				id_daerah: _token.daerah_id,				
-                // deleted_data: true,
-                // order[0][column]: 0,
-                // order[0][dir]: asc,
-                // search[value]: '',
-                length: 21307,
-                start: 0,
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},
-			success: function(res){
-				return resolve(res.data);
-			}
-		});
+		if(typeof global_all_rekening == 'undefined'){
+			relayAjax({
+				url: config.sipd_url+'api/master/akun/listNew',
+				type: 'POST',
+				data: {
+					tahun: _token.tahun,
+					id_daerah: _token.daerah_id,
+	                length: 213070,
+	                start: 0,
+				},
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},
+				success: function(res){
+					window.global_all_rekening = res.data;
+					return resolve(res.data);
+				}
+			});
+		}else{
+			resolve(global_all_rekening);
+		}
 	});
 }
 
@@ -981,7 +1008,191 @@ function singkron_usulan_ssh_dari_lokal_modal() {
 	}else{
 		console.log('list_usulan_selected', list_usulan_selected);
 		if (confirm('Apakah anda yakin menyimpan data ini? '+nama_usulan.join(','))) {
-			// simpan_usulan_ssh(list_usulan_selected);
+			simpan_usulan_ssh(list_usulan_selected);
 		}
 	}
+}
+
+function get_ssh_unik(){
+	return new Promise(function(resolve, reject){
+		get_all_ssh_sipd(type_data_ssh)
+		.then(function(data_ssh){
+			var data_all_ssh = {};
+			data_ssh.data.data.map(function(b, i){
+				var id_duplikat = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
+				data_all_ssh[id_duplikat] = b;
+			});
+			resolve(data_all_ssh);
+		});
+	});
+}
+
+function simpan_usulan_ssh(list_usulan_selected){
+	show_loading();
+	get_rekening_all()
+	.then(function(akun){
+		var akun_all = {};
+		akun.data.map(function(b, i){
+			akun_all[b.kode_akun] = b;
+		});
+		get_ssh_unik()
+		.then(function(ssh_unik){
+			var kelompok_id = {};
+			jQuery('select[name="kategori_komponen"] option').map(function(i, b){
+				var opsi = jQuery(b);
+				var kode = opsi.html().trim().split('&nbsp;')[0];
+				var val = opsi.val();
+				kelompok_id[kode] = val;
+			});
+			var id_all = [];
+			var last = list_usulan_selected.length - 1;
+			list_usulan_selected.reduce(function(sequence, nextData){
+		        return sequence.then(function(current_data){
+		    		return new Promise(function(resolve_reduce, reject_reduce){
+		    			if(current_data.akun.length == 0){
+		    				console.log('Data akun tidak boleh kosong!', current_data);
+		    				return resolve_reduce();
+		    			}
+	    				var id_duplikat = current_data.kode_kel_standar_harga+''+current_data.nama_standar_harga+''+current_data.spek+''+current_data.satuan+''+current_data.harga;
+	    				if(!ssh_unik[id_duplikat]){
+	    					if(kelompok_id[current_data.kode_kel_standar_harga]){
+	    						var param_ssh = {
+	    							tahun: _token.tahun,
+									id_daerah: _token.daerah_id,
+									id_kel_standar_harga: kelompok_id[current_data.kode_kel_standar_harga],
+									kode_kel_standar_harga: current_data.kelompok,
+									nama_standar_harga: current_data.nama_standar_harga,
+									spek: current_data.spek,
+									satuan: current_data.satuan,
+									id_satuan: '',
+									harga: current_data.harga,
+									is_pdn: current_data.jenis_produk,
+									nilai_tkdn: current_data.tkdn,
+									kelompok: current_data.kelompok,
+									tipe_standar_harga: type_data_ssh,
+									id_user_log: _token.user_id,
+									id_daerah_log: _token.daerah_id,
+									created_user: _token.user_id,
+									id_akun: ''
+	    						};
+					    		if(current_data.akun.length >= 1){
+					    			var lokal_akun = current_data.akun.shift();
+					    			if(akun_all[lokal_akun.kode_akun]){
+					    				param_ssh['id_akun'] = akun_all[lokal_akun.kode_akun].id_akun;
+					    			}else{
+					    				console.log('Data akun tidak ditemukan di SIPD!', lokal_akun);
+					    			}
+					    		}
+								console.log('SIMPAN SSH', current_data);
+					    		relayAjax({
+									url: config.sipd_url+'api/master/d_komponen/add',
+									type: 'post',
+									data: param_ssh,
+									beforeSend: function (xhr) {			    
+										xhr.setRequestHeader("X-API-KEY", x_api_key());
+										xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+									},
+									success: function(html){
+										id_all.push(current_data.id);
+										get_all_ssh_sipd(type_data_ssh, current_data.nama_standar_harga)
+										.then(function(data_ssh){
+				    						var promise_all = [];
+											if(current_data.akun.length >= 1){
+												var cek_id = false;
+												data_ssh.data.data.map(function(b, i){
+													var id_sipd = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
+													if(id_sipd == id_duplikat){
+														cek_id = b.id_standar_harga;
+													}
+												});
+												if(cek_id){
+									    			promise_all = current_data.akun.map(function(b, i){
+									    				return new Promise(function(resolve2, reject2){
+									    					simpan_rekening(cek_id, b.id_akun)
+									    					.then(function(){
+									    						resolve2();
+									    					});
+									    				});
+									    			});
+												}else{
+													console.log('Id standar harga SIPD tidak ditemukan!', current_data, data_ssh);
+												}
+								    		}
+								    		Promise.all(promise_all)
+					    					.then(function(){
+												resolve_reduce(nextData);
+											});
+										});
+				            		}
+				            	});
+			    			}else{
+			    				console.log('Kelompok SSH tidak ditemukan!', current_data);
+			    				resolve_reduce(nextData);
+			    			}
+	    				}else if(current_data.status_jenis_usulan == 'tambah_akun'){
+	    					var id_standar_harga = ssh_unik[id_duplikat].id_standar_harga;
+			    			var promise_all = [];
+				    		if(current_data.akun.length >= 1){
+				    			promise_all = current_data.akun.map(function(lokal_akun, i){
+				    				return new Promise(function(resolve2, reject2){
+				    					if(akun_all[lokal_akun.kode_akun]){
+						    				simpan_rekening(id_standar_harga, akun_all[lokal_akun.kode_akun].id_akun)
+						    				.then(function(){
+						    					resolve2();
+						    				});
+				    					}else{
+				    						console.log('Data akun tidak ditemukan di SIPD!', lokal_akun);
+				    						resolve2();
+				    					}
+				    				})
+				    			});
+				    		}
+				    		Promise.all(promise_all)
+				    		.then(function(){
+								id_all.push(current_data.id);
+				    			resolve_reduce(nextData);
+				    		});
+				    	}else{
+		    				console.log('Item SSH sudah ada!', current_data, ssh_unik[id_duplikat]);
+		    				resolve_reduce(nextData);
+				    	}
+		    		})
+		            .catch(function(e){
+		                console.log(e);
+		                return Promise.resolve(nextData);
+		            });
+		        })
+		        .catch(function(e){
+		            console.log(e);
+		            return Promise.resolve(nextData);
+		        });
+		    }, Promise.resolve(list_usulan_selected[last]))
+		    .then(function(data_last){
+				run_script('hide_modal', 'usulan-ssh');
+		    	var opsi = { 
+					action: 'update_usulan_ssh_sipd',
+					api_key: config.api_key,
+					data_id : id_all,
+					tahun_anggaran : config.tahun_anggaran
+				};
+				var data = {
+				    message:{
+				        type: "get-url",
+				        content: {
+						    url: config.url_server_lokal,
+						    type: 'post',
+						    data: opsi,
+			    			return: true
+						}
+				    }
+				};
+				chrome.runtime.sendMessage(data, function(response) {
+				    console.log('responeMessage', response);
+				});
+		    })
+		    .catch(function(e){
+		        console.log(e);
+		    });
+		});
+	});
 }
