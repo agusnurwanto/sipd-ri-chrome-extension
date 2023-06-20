@@ -976,15 +976,22 @@ function singkron_ssh_dari_lokal(usulan){
 		if(b.kode_standar_harga_sipd){
 			kode_standar_harga += '<br>(Kode SIPD : '+b.kode_standar_harga_sipd+')';
 		}
+		var jenis_produk = '';
+		if(b.jenis_produk == 0){
+			jenis_produk = 'Produk Luar Negri';
+		}else if(b.jenis_produk == 1){
+			jenis_produk = 'Produk Dalam Negri';
+		}
 		body += ''
 			+'<tr>'
 				+'<td><input type="checkbox" value="'+b.id+'"></td>'
-				+'<td>'+kode_standar_harga+'</td>'
-				+'<td>'+b.status_jenis_usulan+'</td>'
+				+'<td class="text-center">'+kode_standar_harga+'</td>'
+				+'<td class="text-center">'+b.status_jenis_usulan+'</td>'
 				+'<td>'+b.nama_standar_harga+'</td>'
 				+'<td>'+b.spek+'</td>'
-				+'<td>'+b.satuan+' (Jenis Produk: '+b.jenis_produk+') (TKDN: '+b.tkdn+')</td>'
-				+'<td>'+formatMoney(b.harga)+'</td>'
+				+'<td class="text-center">'+b.satuan+'</td>'
+				+'<td class="text-right">'+formatMoney(b.harga)+'</td>'
+				+'<td class="text-center">'+jenis_produk+'<br>'+b.tkdn+'%</td>'
 				+'<td>'+akun_all.join('<br>')+'</td>'
 			+'</tr>';
 	});

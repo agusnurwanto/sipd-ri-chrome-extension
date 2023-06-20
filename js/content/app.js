@@ -707,7 +707,7 @@ function cekUrl(current_url, nomor=1){
 					});						
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="usulan-ssh" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999">'
-					        +'<div class="modal-dialog" style="width: 90%; min-width: 1100px;" role="document">'
+					        +'<div class="modal-dialog" style="min-width: 90%;" role="document">'
 					            +'<div class="modal-content">'
 					                +'<div class="modal-header bgpanel-theme">'
 					                    +'<h4 class="modal-title" id="">Daftar Usulan Satuan Harga <span class="info-title"></span></h4>'
@@ -724,6 +724,7 @@ function cekUrl(current_url, nomor=1){
 					                          		+'<th class="text-center">Spesifikasi</th>'
 					                          		+'<th class="text-center">Satuan</th>'
 					                          		+'<th class="text-center">Harga</th>'
+					                          		+'<th class="text-center">TKDN</th>'
 					                          		+'<th class="text-center">Akun</th>'
 					                        	+'</tr>'
 					                      	+'</thead>'
