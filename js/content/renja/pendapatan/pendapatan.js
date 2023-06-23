@@ -167,8 +167,9 @@ function singkron_pendapatan_lokal(){
                                             xhr.setRequestHeader("x-access-token", _token.token);
                                         },				          	
                                         success: function(data){
-                                            var data_pendapatan = [];                                            
+                                            var data_pendapatan = [];                                                                                        
                                             data.data.map(function(b, i){
+                                                console.log(b);
                                                 const bulan = ["01","02","03","04","05","06","07","08","09","10","11","12"];                                                
                                                 const cd = new Date(b.created_at);
                                                 let ctgl = cd.getDate();
@@ -204,7 +205,7 @@ function singkron_pendapatan_lokal(){
                                                 data_pendapatan[i].rkpd_pak = b.rkpd_pak; //baru int
                                                 //   data_pendapatan[i].nilaimurni = b.nilaimurni; //?                                              
                                                 //   data_pendapatan[i].rekening = b.rekening; //?
-                                                data_pendapatan[i].rekening = b.kode_akun+' '+nama_akun;
+                                                data_pendapatan[i].rekening = b.kode_akun+' '+b.nama_akun;
                                                 data_pendapatan[i].satuan = b.satuan; //baru var
                                                 data_pendapatan[i].skpd_koordinator = b.skpd_koordinator;
                                                 data_pendapatan[i].total = b.total;

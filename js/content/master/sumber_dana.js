@@ -67,7 +67,7 @@ function get_sumber_dana_master(){
                     // order[0][column]: 0,
                     // order[0][dir]: asc,
                     // search[value]: '',
-                    length: 1000000,
+                    length: 100000,
                     start: 0,
                 },
                 beforeSend: function (xhr) {                

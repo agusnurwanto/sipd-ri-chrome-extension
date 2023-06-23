@@ -8,11 +8,11 @@ function singkron_akun_ke_lokal(){
 			data: {
 				tahun: _token.tahun,
 				id_daerah: _token.daerah_id,				
-                // deleted_data: true,
+                deleted_data: true,
                 // order[0][column]: 0,
                 // order[0][dir]: asc,
                 // search[value]: '',
-                length: 21307,
+                length: 20862,
                 start: 0,
 			},
 			beforeSend: function (xhr) {			    
