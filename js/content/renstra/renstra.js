@@ -3,8 +3,7 @@ function backup_renstra(){
 		show_loading();
 		var apiKey = x_api_key();
 		var sendData = [];
-		jadwal_renstra_aktif(_token.tahun, _token.daerah_id).then(function(renstra_aktif){
-			// console.log('html tahapan_renstra', renstra_aktif.data[0].id_tahap);
+		jadwal_renstra_aktif(_token.tahun, _token.daerah_id).then(function(renstra_aktif){			
 			sendData.push( new Promise(function(resolve, reject){								
 				relayAjax({
 						// url: 'https://sipd-ri.kemendagri.go.id/api/renstra/renstra_tujuan/list',					
@@ -43,8 +42,8 @@ function backup_renstra(){
 											xhr.setRequestHeader("X-API-KEY", apiKey);
 											xhr.setRequestHeader("x-access-token", _token.token);
 										},
-										success: function (kamus) {
-											data_renstra.tujuan[i] = {};
+										success: function (kamus) {											
+											data_renstra.tujuan[i] = {};											
 											// data_renstra.tujuan[i].bidur_lock = tujuan.bidur_lock;
 											data_renstra.tujuan[i].id_bidang_urusan = tujuan.id_bidang_urusan;
 											data_renstra.tujuan[i].id_unik = tujuan.id_unik;
@@ -54,8 +53,8 @@ function backup_renstra(){
 											data_renstra.tujuan[i].is_locked = tujuan.is_locked;
 											data_renstra.tujuan[i].is_locked_indikator = tujuan.is_locked_indikator;
 											// data_renstra.tujuan[i].kode_bidang_urusan = tujuan.kode_bidang_urusan;
-											// data_renstra.tujuan[i].kode_skpd = tujuan.kode_skpd;
 											// data_renstra.tujuan[i].nama_bidang_urusan = tujuan.nama_bidang_urusan;
+											// data_renstra.tujuan[i].kode_skpd = tujuan.kode_skpd;											
 											// data_renstra.tujuan[i].nama_skpd = tujuan.nama_skpd;
 											data_renstra.tujuan[i].satuan = tujuan.satuan;
 											// data_renstra.tujuan[i].status = tujuan.status;
@@ -75,7 +74,23 @@ function backup_renstra(){
 											data_renstra.tujuan[i].id_visi = kamus.id_visi; //baru
 											data_renstra.tujuan[i].id_misi = kamus.id_misi; //baru
 											data_renstra.tujuan[i].tahun_awal = kamus.tahun_awal; //baru
-											data_renstra.tujuan[i].tahun_akhir = kamus.tahun_akhir; //baru											
+											data_renstra.tujuan[i].tahun_akhir = kamus.tahun_akhir; //baru
+											get_bidang_urusan(tujuan.id_bidang_urusan, _token.tahun).then(function(bidur){
+												data_renstra.tujuan[i].kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
+												data_renstra.tujuan[i].nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
+												if(tujuan.id_unit != 0){
+													get_detil_skpd({
+														idskpd: tujuan.id_unit,
+														tahun: _token.tahun,
+														iddaerah: _token.daerah_id
+													})
+													.then(function(data){
+														// console.log('html OPD Renstra', data);
+														data_renstra.tujuan[i].kode_skpd = data.data[0].kode_unit;											
+														data_renstra.tujuan[i].nama_skpd = data.data[0].nama_skpd;
+													})
+												}
+											})											
 											resolve2(true);
 										}
 									});
@@ -160,7 +175,23 @@ function backup_renstra(){
 							data_renstra.sasaran[i].id_tujuan_indikator = sasaran.id_tujuan_indikator; //baru
 							data_renstra.sasaran[i].kode_sasaran_rpjm = sasaran.kode_sasaran_rpjm; //baru		
 							data_renstra.sasaran[i].tahun_awal = sasaran.tahun_awal; //baru
-							data_renstra.sasaran[i].tahun_akhir = sasaran.tahun_akhir; //baru																		
+							data_renstra.sasaran[i].tahun_akhir = sasaran.tahun_akhir; //baru
+							get_bidang_urusan(sasaran.id_bidang_urusan, _token.tahun).then(function(bidur){
+								data_renstra.sasaran[i].kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
+								data_renstra.sasaran[i].nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
+								if(sasaran.id_unit != 0){
+									get_detil_skpd({
+										idskpd: sasaran.id_unit,
+										tahun: _token.tahun,
+										iddaerah: _token.daerah_id
+									})
+									.then(function(data){
+										// console.log('html OPD Renstra', data);
+										data_renstra.sasaran[i].kode_skpd = data.data[0].kode_unit;											
+										data_renstra.sasaran[i].nama_skpd = data.data[0].nama_skpd;
+									})
+								}
+							})																		
 						});
 						var data = {
 							message:{
@@ -254,7 +285,27 @@ function backup_renstra(){
 							data_program.id_renstra_program = program.id_renstra_program; //baru	
 							data_program.id_sasaran_indikator = program.id_sasaran_indikator; //baru
 							data_program.tahun_awal = program.tahun_awal; //baru
-							data_program.tahun_akhir = program.tahun_akhir; //baru							
+							data_program.tahun_akhir = program.tahun_akhir; //baru	
+							get_program(program.id_program, _token.tahun).then(function(p){	
+								// data_program.kode_program = p.data[0].kode_program;								
+								data_program.nama_program = p.data[0].nama_program;
+								get_bidang_urusan(program.id_bidang_urusan, _token.tahun).then(function(bidur){
+									// data_program.kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
+									// data_program.nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
+									if(program.id_unit != 0){
+										get_detil_skpd({
+											idskpd: program.id_unit,
+											tahun: _token.tahun,
+											iddaerah: _token.daerah_id
+										})
+										.then(function(data){
+											// console.log('html OPD Renstra', data);
+											data_program.kode_skpd = data.data[0].kode_unit;											
+											data_program.nama_skpd = data.data[0].nama_skpd;
+										})
+									}
+								})	
+							})					
 							data_temp.push(data_program);
 							if((i+1)%_length == 0){
 								data_all.push(data_temp);
@@ -368,6 +419,30 @@ function backup_renstra(){
 							data_keg.kode_sasaran_rpjm = kegiatan.kode_sasaran_rpjm; //baru
 							data_keg.tahun_awal = kegiatan.tahun_awal; //baru
 							data_keg.tahun_akhir = kegiatan.tahun_akhir; //baru	
+							get_giat(idgiat, tahun).then(function(g){
+								data_keg.kode_giat = g.data[0].kode_giat;
+								data_keg.nama_giat = g.data[0].nama_giat;
+								get_program(kegiatan.id_program, _token.tahun).then(function(p){	
+									// data_keg.kode_program = p.data[0].kode_program;
+									data_keg.nama_program = p.data[0].nama_program;
+									get_bidang_urusan(kegiatan.id_bidang_urusan, _token.tahun).then(function(bidur){
+										// data_keg.kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
+										// data_keg.nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
+										if(kegiatan.id_unit != 0){
+											get_detil_skpd({
+												idskpd: program.id_unit,
+												tahun: _token.tahun,
+												iddaerah: _token.daerah_id
+											})
+											.then(function(data){
+												// console.log('html OPD Renstra', data);
+												data_keg.kode_skpd = data.data[0].kode_unit;											
+												data_keg.nama_skpd = data.data[0].nama_skpd;
+											})
+										}
+									})	
+								})
+							})	
 							data_temp.push(data_keg);
 							if((i+1)%_length == 0){
 								data_all.push(data_temp);
@@ -585,4 +660,43 @@ function jadwal_renstra_aktif(){
 	      	}
 	    });
     });
+}
+
+function setup_unit(idunit){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/renja/setup_unit/find_by_id_unit',                                    
+			type: 'POST',	      				
+			data: {            
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun,
+				id_unit: idunit
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(opd){
+	      		return resolve(opd);
+	      	}
+	    });
+    });
+}
+
+function get_detil_skpd(opsi){
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/master/skpd/view/'+opsi.idskpd+'/'+opsi.tahun+'/'+opsi.iddaerah,
+			type: 'GET',
+			processData : false,
+			contentType : false,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+          	success: function(opd){
+          		resolve(opd);
+          	}
+        });
+	})
 }

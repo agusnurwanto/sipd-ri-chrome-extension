@@ -77,7 +77,23 @@ function backup_rpjmd(){
                         data_rpjmd.program[i].id_sasaran_indikator = program.id_sasaran_indikator; //baru
                         data_rpjmd.program[i].tahun_awal = program.tahun_awal; //baru
                         data_rpjmd.program[i].tahun_akhir = program.tahun_akhir; //baru                        
-                        data_rpjmd.program[i].id_tahap = program.id_tahap; //baru                                            
+                        data_rpjmd.program[i].id_tahap = program.id_tahap; //baru
+                        get_program(program.id_program, _token.tahun).then(function(p){	
+                            // data_rpjmd.program[i].kode_program = p.data[0].kode_program;
+                            data_rpjmd.program[i].nama_program = p.data[0].nama_program;
+                                if(program.id_unit != 0){
+                                    get_detil_skpd({
+                                        idskpd: program.id_unit,
+                                        tahun: _token.tahun,
+                                        iddaerah: _token.daerah_id
+                                    })
+                                    .then(function(data){
+                                        data_rpjmd.program[i].nama_skpd = data.data[0].nama_skpd;
+                                        data_rpjmd.program[i].kode_skpd = data.data[0].kode_unit;                                        
+                                    })
+                                }
+                            	
+                        })                                            
                     })
                     relayAjax({
                         url: config.sipd_url+'api/rpjm/rpjm_sasaran/list',
@@ -209,9 +225,13 @@ function backup_rpjmd(){
                                                 data: {            
                                                     id_daerah: _token.daerah_id,									
                                                     tahun: _token.tahun,					
-                                                    tahun_awal: rpjmd_aktif.data[0].tahun_awal,	
-                                                    tahun_akhir: rpjmd_aktif.data[0].tahun_akhir,						
+                                                    // tahun_awal: rpjmd_aktif.data[0].tahun_awal,	
+                                                    // tahun_akhir: rpjmd_aktif.data[0].tahun_akhir,						
                                                     id_tahap: rpjmd_aktif.data[0].id_tahap,					
+                                                },
+                                                beforeSend: function (xhr) {			    
+                                                    xhr.setRequestHeader("X-API-KEY", apiKey);
+                                                    xhr.setRequestHeader("x-access-token", _token.token);
                                                 },
                                                 success: function (data) {
                                                     data.data.map(function (visi, i) {
@@ -269,6 +289,26 @@ function jadwal_rpjmd_aktif(){
 			},
 	      	success: function(jadwal_rpjmd_aktif){
 	      		return resolve(jadwal_rpjmd_aktif);
+	      	}
+	    });
+    });
+}
+
+function cekRpjmPerubahan(){    
+    return new Promise(function(resolve, reject){    	
+		relayAjax({
+			url: config.sipd_url+'api/rpjm/rpjm_visi/cekRpjmPerubahan',                                    
+			type: 'POST',	      				
+			data: {            
+				id_daerah: _token.daerah_id,				
+				tahun: _token.tahun
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(cekRpjmPerubahan){
+	      		return resolve(cekRpjmPerubahan);
 	      	}
 	    });
     });
