@@ -77,25 +77,54 @@ function singkron_akun_ke_lokal(){
 				if(data_temp.length >= 1){
 					data_all.push(data_temp);
 				}
-				data_all.map(function(b, i){
-					data_akun.akun = b;
-					var data = {
-					    message:{
-					        type: "get-url",
-					        content: {
-							    url: config.url_server_lokal,
-							    type: 'post',
-							    data: data_akun,
-				    			return: false
+
+				var last = data_all.length - 1;
+		        var nomor = 0;
+				data_all.reduce(function(sequence, nextData){
+					return sequence.then(function(akun){
+						return new Promise(function(resolve_reduce, reject_reduce){
+							nomor++;
+							data_akun.page = nomor;
+							data_akun.akun = akun;
+							pesan_loading('Simpan ke '+nomor+' data akun/rekening ke DB Lokal!');
+							var data = {
+							    message:{
+							        type: "get-url",
+							        content: {
+									    url: config.url_server_lokal,
+									    type: 'post',
+									    data: data_akun,
+						    			return: false
+									}
+							    }
+							};
+							if(nomor == data_all.length-1){
+								data.message.content.return = true;
 							}
-					    }
-					};
-					if(i == data_all.length-1){
-						data.message.content.return = true;
-					}
-					chrome.runtime.sendMessage(data, function(response) {
-					    console.log('responeMessage', response);
+							chrome.runtime.sendMessage(data, function(response) {
+							    console.log('responeMessage', response);
+							});
+
+							// dikasih jeda agar lebih aman di server
+							setTimeout(function(){
+								resolve_reduce(nextData);
+							}, 1000);
+						})
+						.catch(function(e){
+							console.log(e);
+							return Promise.resolve(nextData);
+						});
+					})
+					.catch(function(e){
+						console.log(e);
+						return Promise.resolve(nextData);
 					});
+				}, Promise.resolve(data_all[last]))
+				.then(function(data_last){
+					// selesai kirim data menunggu respon dari background	
+				})
+				.catch(function(e){
+					console.log(e);
 				});
 			}
 		});

@@ -136,6 +136,7 @@ function singkron_data_giat_lokal() {
 							.then(function(data_last){
 								nomor++;
 								pesan_loading('Simpan ke '+nomor+' data Master Urusan, Bidang Urusan, Program, Kegiatan, Sub Kegiatan ke DB Lokal!');
+								data_prog_keg.page = nomor;
 								var data = {
 									message: {
 										type: "get-url",
