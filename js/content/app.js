@@ -177,13 +177,42 @@ function cekUrl(current_url, nomor=1){
 					get_rpd_lokal();
 				});
 			}
+			// Data RPJMD
+			else if(current_url.indexOf('/perencanaan/rpjmd/cascading/') != -1){
+				window.type_data_renstra = 'visi';				
+				var header_tujuan = 'Visi Teks';
+				if(current_url.indexOf('/perencanaan/rpjmd/cascading/visi') != -1){
+					type_data_rpjmd = 'visi';
+				}else if(current_url.indexOf('/perencanaan/rpjmd/cascading/misi') != -1){					
+					header_tujuan = 'misi Teks';
+					type_data_rpjmd = 'misi';
+				}else if(current_url.indexOf('/perencanaan/rpjmd/cascading/tujuan') != -1){					
+					header_tujuan = 'tujuan Teks';
+					type_data_rpjmd = 'tujuan';				
+				}else if(current_url.indexOf('/perencanaan/rpjmd/cascading/sasaran') != -1){					
+					header_tujuan = 'sasaran Teks';
+					type_data_rpjmd = 'sasaran';				
+				}else if(current_url.indexOf('/perencanaan/rpjmd/cascading/program') != -1){					
+					header_tujuan = 'program Teks';
+					type_data_rpjmd = 'program';
+				}
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="backup_rpjmd">Singkron ke DB Lokal</button>'
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#backup_rpjmd').on('click', function(){
+					backup_rpjmd();					
+				});
+			}
 			// Data Renstra
 			else if(current_url.indexOf('/perencanaan/renstra/cascading/') != -1){
 				window.type_data_renstra = 'tujuan';
 				var header_isu = 'Isu Strategi RPJMD';
 				var header_tujuan = 'Tujuan Teks';
 				if(current_url.indexOf('/perencanaan/renstra/cascading/tujuan') != -1){
-					type_data_rpd = 'tujuan';
+					type_data_renstra = 'tujuan';
 				}else if(current_url.indexOf('/perencanaan/renstra/cascading/sasaran') != -1){
 					header_isu = 'Tujuan Teks';
 					header_tujuan = 'Sasaran Teks';
@@ -204,22 +233,22 @@ function cekUrl(current_url, nomor=1){
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'
-						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_renstra">Singkron ke DB Lokal</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="backup_renstra">Singkron ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
-				jQuery('#singkron_renstra').on('click', function(){
-					//singkron_renstra();
-					if(type_data_renstra == 'tujuan'){
-						singkron_tujuan_renstra();
-					}else if(type_data_renstra == 'sasaran'){
-						singkron_sasaran_renstra();
-					}else if(type_data_renstra == 'program'){
-						singkron_program_renstra();
-					}else if(type_data_renstra == 'kegiatan'){
-						singkron_kegiatan_renstra();
-					}else if(type_data_renstra == 'sub_kegiatan'){
-						singkron_sub_kegiatan_renstra();
-					}
+				jQuery('#backup_renstra').on('click', function(){
+					backup_renstra();
+					// if(type_data_renstra == 'tujuan'){
+					// 	singkron_tujuan_renstra();
+					// }else if(type_data_renstra == 'sasaran'){
+					// 	singkron_sasaran_renstra();
+					// }else if(type_data_renstra == 'program'){
+					// 	singkron_program_renstra();
+					// }else if(type_data_renstra == 'kegiatan'){
+					// 	singkron_kegiatan_renstra();
+					// }else if(type_data_renstra == 'sub_kegiatan'){
+					// 	singkron_sub_kegiatan_renstra();
+					// }
 				});
 			}
 			// Data pengaturan SIPD
