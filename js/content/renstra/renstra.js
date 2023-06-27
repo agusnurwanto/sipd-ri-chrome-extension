@@ -75,17 +75,20 @@ function backup_renstra(){
 											data_renstra.tujuan[i].id_misi = kamus.id_misi; //baru
 											data_renstra.tujuan[i].tahun_awal = kamus.tahun_awal; //baru
 											data_renstra.tujuan[i].tahun_akhir = kamus.tahun_akhir; //baru
-											get_bidang_urusan(tujuan.id_bidang_urusan, _token.tahun).then(function(bidur){
+											var idbidangurusan = tujuan.id_bidang_urusan;											
+											var tahun = _token.tahun;
+											var idskpd = tujuan.id_unit;                        
+                        					var iddaerah = _token.daerah_id;	
+											get_bidang_urusan(idbidangurusan, tahun).then(function(bidur){												
 												data_renstra.tujuan[i].kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
 												data_renstra.tujuan[i].nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
 												if(tujuan.id_unit != 0){
 													get_detil_skpd({
-														idskpd: tujuan.id_unit,
-														tahun: _token.tahun,
-														iddaerah: _token.daerah_id
+														idskpd: idskpd,
+														tahun: tahun,
+														iddaerah: iddaerah
 													})
-													.then(function(data){
-														// console.log('html OPD Renstra', data);
+													.then(function(data){														
 														data_renstra.tujuan[i].kode_skpd = data.data[0].kode_unit;											
 														data_renstra.tujuan[i].nama_skpd = data.data[0].nama_skpd;
 													})
@@ -176,14 +179,18 @@ function backup_renstra(){
 							data_renstra.sasaran[i].kode_sasaran_rpjm = sasaran.kode_sasaran_rpjm; //baru		
 							data_renstra.sasaran[i].tahun_awal = sasaran.tahun_awal; //baru
 							data_renstra.sasaran[i].tahun_akhir = sasaran.tahun_akhir; //baru
-							get_bidang_urusan(sasaran.id_bidang_urusan, _token.tahun).then(function(bidur){
+							var idbidangurusan = sasaran.id_bidang_urusan;							
+							var tahun = _token.tahun;
+							var idskpd = sasaran.id_unit;                        
+                        	var iddaerah = _token.daerah_id;	
+							get_bidang_urusan(idbidangurusan, tahun).then(function(bidur){
 								data_renstra.sasaran[i].kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
 								data_renstra.sasaran[i].nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
 								if(sasaran.id_unit != 0){
 									get_detil_skpd({
-										idskpd: sasaran.id_unit,
-										tahun: _token.tahun,
-										iddaerah: _token.daerah_id
+										idskpd: idskpd,
+										tahun: tahun,
+										iddaerah: iddaerah
 									})
 									.then(function(data){
 										// console.log('html OPD Renstra', data);
@@ -249,14 +256,11 @@ function backup_renstra(){
 							data_program.indikator = program.indikator;
 							data_program.is_locked = program.is_locked;
 							data_program.is_locked_indikator = program.is_locked_indikator;
-							// data_program.kode_bidang_urusan = program.kode_bidang_urusan;
-							// data_program.kode_program = program.kode_program;
+							
 							data_program.kode_sasaran = program.kode_sasaran;
-							// data_program.kode_skpd = program.kode_skpd;
+							
 							data_program.kode_tujuan = program.kode_tujuan;
-							// data_program.nama_bidang_urusan = program.nama_bidang_urusan;
-							// data_program.nama_program = program.nama_program;
-							// data_program.nama_skpd = program.nama_skpd;							
+									
 							data_program.pagu_1 = program.pagu_1;
 							data_program.pagu_2 = program.pagu_2;
 							data_program.pagu_3 = program.pagu_3;
@@ -286,17 +290,27 @@ function backup_renstra(){
 							data_program.id_sasaran_indikator = program.id_sasaran_indikator; //baru
 							data_program.tahun_awal = program.tahun_awal; //baru
 							data_program.tahun_akhir = program.tahun_akhir; //baru	
-							get_program(program.id_program, _token.tahun).then(function(p){	
-								// data_program.kode_program = p.data[0].kode_program;								
+							data_program.id_misi_old = program.id_misi_old; //baru	
+							data_program.id_sasaran_old = program.id_sasaran_old; //baru	
+							data_program.id_tujuan_old = program.id_tujuan_old; //baru	
+							data_program.id_urusan = program.id_urusan; //baru	
+
+							var idbidangurusan = program.id_bidang_urusan;
+							var idprogram = program.id_program;
+							var tahun = _token.tahun;
+							var idskpd = program.id_unit;                        
+                        	var iddaerah = _token.daerah_id;	
+							get_program(idprogram, tahun).then(function(p){									
+								data_program.kode_program = p.data[0].kode_program;								
 								data_program.nama_program = p.data[0].nama_program;
-								get_bidang_urusan(program.id_bidang_urusan, _token.tahun).then(function(bidur){
-									// data_program.kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
-									// data_program.nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
+								get_bidang_urusan(idbidangurusan, tahun).then(function(bidur){
+									data_program.kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
+									data_program.nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
 									if(program.id_unit != 0){
 										get_detil_skpd({
-											idskpd: program.id_unit,
-											tahun: _token.tahun,
-											iddaerah: _token.daerah_id
+											idskpd: idskpd,
+											tahun: tahun,
+											iddaerah: iddaerah
 										})
 										.then(function(data){
 											// console.log('html OPD Renstra', data);
@@ -419,20 +433,27 @@ function backup_renstra(){
 							data_keg.kode_sasaran_rpjm = kegiatan.kode_sasaran_rpjm; //baru
 							data_keg.tahun_awal = kegiatan.tahun_awal; //baru
 							data_keg.tahun_akhir = kegiatan.tahun_akhir; //baru	
+
+							var idbidangurusan = kegiatan.id_bidang_urusan;
+							var idprogram = kegiatan.id_program;
+							var idgiat = kegiatan.id_giat;
+							var tahun = _token.tahun;
+							var idskpd = kegiatan.id_unit;                        
+                        	var iddaerah = _token.daerah_id;
 							get_giat(idgiat, tahun).then(function(g){
 								data_keg.kode_giat = g.data[0].kode_giat;
 								data_keg.nama_giat = g.data[0].nama_giat;
-								get_program(kegiatan.id_program, _token.tahun).then(function(p){	
-									// data_keg.kode_program = p.data[0].kode_program;
+								get_program(idprogram, tahun).then(function(p){	
+									data_keg.kode_program = p.data[0].kode_program;
 									data_keg.nama_program = p.data[0].nama_program;
-									get_bidang_urusan(kegiatan.id_bidang_urusan, _token.tahun).then(function(bidur){
-										// data_keg.kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
-										// data_keg.nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
+									get_bidang_urusan(idbidangurusan, tahun).then(function(bidur){
+										data_keg.kode_bidang_urusan = bidur.data[0].kode_bidang_urusan;
+										data_keg.nama_bidang_urusan = bidur.data[0].nama_bidang_urusan;
 										if(kegiatan.id_unit != 0){
 											get_detil_skpd({
-												idskpd: program.id_unit,
+												idskpd: idskpd,
 												tahun: _token.tahun,
-												iddaerah: _token.daerah_id
+												iddaerah: iddaerah
 											})
 											.then(function(data){
 												// console.log('html OPD Renstra', data);
@@ -589,40 +610,10 @@ function backup_renstra(){
 		});
 		Promise.all(sendData)
 		.then(function(all_data){
-			jQuery('#wrap-loading').hide();
+			hide_loading();
 			alert('Berhasil singkron data RENSTRA!');
 		});
 	}
-}
-
-function singkron_tujuan_renstra(tipe){
-    if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-    }
-}
-
-function singkron_sasaran_renstra(tipe){
-    if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-    }
-}
-
-function singkron_program_renstra(tipe){
-    if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-    }
-}
-
-function singkron_kegiatan_renstra(tipe){
-    if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-    }
-}
-
-function singkron_sub_kegiatan_renstra(tipe){
-    if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-    }
 }
 
 function get_tahapan_renstra(){
@@ -660,43 +651,4 @@ function jadwal_renstra_aktif(){
 	      	}
 	    });
     });
-}
-
-function setup_unit(idunit){    
-    return new Promise(function(resolve, reject){    	
-		relayAjax({
-			url: config.sipd_url+'api/renja/setup_unit/find_by_id_unit',                                    
-			type: 'POST',	      				
-			data: {            
-				id_daerah: _token.daerah_id,				
-				tahun: _token.tahun,
-				id_unit: idunit
-			},
-			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},
-	      	success: function(opd){
-	      		return resolve(opd);
-	      	}
-	    });
-    });
-}
-
-function get_detil_skpd(opsi){
-	return new Promise(function(resolve, reject){
-		relayAjax({
-			url: config.sipd_url+'api/master/skpd/view/'+opsi.idskpd+'/'+opsi.tahun+'/'+opsi.iddaerah,
-			type: 'GET',
-			processData : false,
-			contentType : false,
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
-				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-			},
-          	success: function(opd){
-          		resolve(opd);
-          	}
-        });
-	})
 }
