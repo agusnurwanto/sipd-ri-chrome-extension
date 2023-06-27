@@ -1,8 +1,7 @@
 function backup_rpjmd(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-		var apiKey = x_api_key();
-		var sendData = [];
+		var apiKey = x_api_key();		
 		jadwal_rpjmd_aktif(_token.tahun, _token.daerah_id).then(function(rpjmd_aktif){
             relayAjax({
                 url: config.sipd_url+'api/rpjm/rpjm_program/list',
@@ -78,16 +77,25 @@ function backup_rpjmd(){
                         data_rpjmd.program[i].tahun_awal = program.tahun_awal; //baru
                         data_rpjmd.program[i].tahun_akhir = program.tahun_akhir; //baru                        
                         data_rpjmd.program[i].id_tahap = program.id_tahap; //baru
-                        get_program(program.id_program, _token.tahun).then(function(p){	
-                            // data_rpjmd.program[i].kode_program = p.data[0].kode_program;
+                        data_rpjmd.program[i].id_jadwal = program.id_jadwal; //baru
+                        data_rpjmd.program[i].id_tujuan_old = program.id_tujuan_old; //baru
+                        data_rpjmd.program[i].id_sasaran_old = program.id_sasaran_old; //baru
+                        data_rpjmd.program[i].id_bidang_urusan = program.id_bidang_urusan; //baru
+                        
+						var idprogram = program.id_program;
+                        var tahun = _token.tahun;
+                        var idskpd = program.id_unit;                        
+                        var iddaerah = _token.daerah_id;	
+                        get_program(idprogram, tahun).then(function(p){	                            
+                            data_rpjmd.program[i].kode_program = p.data[0].kode_program;
                             data_rpjmd.program[i].nama_program = p.data[0].nama_program;
                                 if(program.id_unit != 0){
                                     get_detil_skpd({
-                                        idskpd: program.id_unit,
-                                        tahun: _token.tahun,
-                                        iddaerah: _token.daerah_id
+                                        idskpd: idskpd,
+                                        tahun: tahun,
+                                        iddaerah: iddaerah
                                     })
-                                    .then(function(data){
+                                    .then(function(data){                                        
                                         data_rpjmd.program[i].nama_skpd = data.data[0].nama_skpd;
                                         data_rpjmd.program[i].kode_skpd = data.data[0].kode_unit;                                        
                                     })
@@ -142,6 +150,10 @@ function backup_rpjmd(){
                                 data_rpjmd.sasaran[i].tahun_awal = sasaran.tahun_awal; //baru
                                 data_rpjmd.sasaran[i].tahun_akhir = sasaran.tahun_akhir; //baru
                                 data_rpjmd.sasaran[i].id_tahap = sasaran.id_tahap; //baru
+                                data_rpjmd.sasaran[i].id_jadwal = sasaran.id_jadwal; //baru
+                                data_rpjmd.sasaran[i].id_tujuan_old = sasaran.id_tujuan_old; //baru
+                                data_rpjmd.sasaran[i].id_sasaran_old = sasaran.id_sasaran_old; //baru
+                                data_rpjmd.sasaran[i].id_tujuan_indikator = sasaran.id_tujuan_indikator; //baru
                             });
                             relayAjax({
                                 url: config.sipd_url+'api/rpjm/rpjm_tujuan/list',
@@ -187,6 +199,8 @@ function backup_rpjmd(){
                                         data_rpjmd.tujuan[i].tahun_awal = tujuan.tahun_awal; //baru
                                         data_rpjmd.tujuan[i].tahun_akhir = tujuan.tahun_akhir; //baru
                                         data_rpjmd.tujuan[i].id_tahap = tujuan.id_tahap; //baru
+                                        data_rpjmd.tujuan[i].id_jadwal = tujuan.id_jadwal; //baru
+                                        data_rpjmd.tujuan[i].id_tujuan_old = tujuan.id_tujuan_old; //baru
                                     });
                                        relayAjax({
                                         url: config.sipd_url+'api/rpjm/rpjm_misi/list',
@@ -217,7 +231,7 @@ function backup_rpjmd(){
                                                 data_rpjmd.misi[i].id_unik = misi.id_unik; //baru
                                                 data_rpjmd.misi[i].tahun_awal = misi.tahun_awal; //baru
                                                 data_rpjmd.misi[i].tahun_akhir = misi.tahun_akhir; //baru
-                                                data_rpjmd.misi[i].id_tahap = misi.id_tahap; //baru
+                                                data_rpjmd.misi[i].id_tahap = misi.id_tahap; //baru                                                                                              
                                             });
                                                relayAjax({
                                                 url: config.sipd_url+'api/rpjm/rpjm_visi/list',
@@ -243,7 +257,7 @@ function backup_rpjmd(){
                                                         data_rpjmd.visi[i].id_unik = visi.id_unik; //baru
                                                         data_rpjmd.visi[i].id_tahap = visi.id_tahap; //baru
                                                         data_rpjmd.visi[i].tahun_awal = visi.tahun_awal; //baru
-                                                        data_rpjmd.visi[i].tahun_akhir = visi.tahun_akhir; //baru                                                        
+                                                        data_rpjmd.visi[i].tahun_akhir = visi.tahun_akhir; //baru                                                                                                       
                                                     });
                                                     var data = {
                                                         message: {
@@ -312,4 +326,78 @@ function cekRpjmPerubahan(){
 	      	}
 	    });
     });
+}
+
+function get_bidang_urusan(idbidangurusan, tahun){
+    return new Promise(function(resolve, reject){
+    	if(typeof get_bidang_urusan_global == 'undefined'){
+    		window.get_bidang_urusan_global = {};
+    	}
+    	var key = idbidangurusan+'-'+tahun;
+    	if(!get_bidang_urusan_global[key]){
+    		console.log('get_bidang_urusan key', key);
+			relayAjax({	      	
+				url: config.sipd_url+'api/master/bidang_urusan/view/'+idbidangurusan+'/'+tahun,
+				type: 'GET',	      				
+				processData : false,
+				contentType : false,
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},	
+		      	success: function(data){
+		      		get_bidang_urusan_global[key] = data;
+		      		return resolve(data);
+		      	}
+		    });
+    	}else{
+    		return resolve(get_bidang_urusan_global[key]);
+    	}
+    });
+}
+
+function get_program(idprogram, tahun){
+    return new Promise(function(resolve, reject){
+    	if(typeof get_program_global == 'undefined'){
+    		window.get_program_global = {};
+    	}
+    	var key = idprogram+'-'+tahun;
+    	if(!get_program_global[key]){
+    		console.log('get_program key', key);
+			relayAjax({	      	
+				url: config.sipd_url+'api/master/program/view/'+idprogram+'/'+tahun,
+				type: 'GET',	      				
+				processData : false,
+				contentType : false,
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},	
+		      	success: function(data){
+		      		get_program_global[key] = data;
+		      		return resolve(data);
+		      	}
+		    });
+    	}else{
+    		return resolve(get_program_global[key]);
+    	}
+    });
+}
+
+function get_detil_skpd(opsi){
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/master/skpd/view/'+opsi.idskpd+'/'+opsi.tahun+'/'+opsi.iddaerah,
+			type: 'GET',
+			processData : false,
+			contentType : false,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+          	success: function(opd){
+          		resolve(opd);
+          	}
+        });
+	})
 }
