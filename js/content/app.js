@@ -458,7 +458,7 @@ function cekUrl(current_url, nomor=1){
 					console.log('halaman User SKPD');	
 					level = "9,13,40";
 					model="skpd";
-					idunit=_token.unit;
+					idunit=_token.unit_id;
 					jQuery('.aksi-extension').remove();
 					var btn = ''
 						+'<div class="aksi-extension">'						
