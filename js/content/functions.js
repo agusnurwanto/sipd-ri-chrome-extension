@@ -131,6 +131,7 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     		&& jqXHR.status != '502'
     		&& jqXHR.status != '503'
     		&& jqXHR.status != '500'
+    		&& jqXHR.status != '403'
     	){
     		if(jqXHR.responseJSON){
     			options.success(jqXHR.responseJSON);
