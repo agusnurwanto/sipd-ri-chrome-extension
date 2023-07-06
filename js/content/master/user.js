@@ -204,7 +204,7 @@ function singkron_user_dewan_lokal(level){
 function singkron_user_masyarakat_lokal(level){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();		
-		console.log('level', level);
+		
 		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/user/list_user_masyarakat',
@@ -381,7 +381,7 @@ function singkron_user_mitra_lokal(level, model){
 			},
 			success: function(dewan){				
 				pesan_loading('Simpan data Master User Mitra / Penyelia ke DB Lokal!');		
-				console.log(dewan);	
+				
 				var last = dewan.data.length-1;
 				var first = true;
 				dewan.data.reduce(function(sequence, nextData){
@@ -428,7 +428,7 @@ function singkron_user_mitra_lokal(level, model){
 
 									var idusers = detil.data.id_user;
 									get_skpd_pemangku(idusers, model).then(function(skpd){
-										console.log(skpd.data.length);		
+											
 										if(skpd.data.length >= 1){
 											var data_skpd = { 
 												action: 'singkron_skpd_mitra_bappeda',
@@ -510,11 +510,7 @@ function singkron_user_mitra_lokal(level, model){
 
 function singkron_user_skpd_lokal(level, model, idunit){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-		console.log('level', level);
-		console.log('model', model);
-		console.log('idunit', idunit);
-		// var idunit = _token.unit;
+		show_loading();		
 		var apiKey = x_api_key();
 		if (idunit >= 1)
 		{
