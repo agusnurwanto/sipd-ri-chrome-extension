@@ -321,9 +321,24 @@ function proses_modal_renja(data_selected_asli = false) {
 													var kode_sub = kode_sub_asli.replace('X.XX', current_data.kode_bidang_urusan);
 													var nama_sub = kode_sub+' '+removeNewlines(nama_sub_asli.join(' '));
 													nama_sub_asli = kode_sub_asli+' '+removeNewlines(nama_sub_asli.join(' '));
+													var pemutakhiran = false;
 													var existing = false;
 													if(rka_sipd[current_data.kode_sub_skpd+' '+nama_sub]){
 														existing = rka_sipd[current_data.kode_sub_skpd+' '+nama_sub];
+													}
+													if(current_data.kode_sbl_lama && current_data.sub_keg_lama){
+														current_data.sub_keg_lama.map(function(b, i){
+															var nama_sub_asli2 = b.nama_sub_giat.split(' ');
+															var kode_sub_asli2 = nama_sub_asli2.shift();
+															var kode_sub2 = kode_sub_asli2.replace('X.XX', b.kode_bidang_urusan);
+															var nama_sub2 = kode_sub2+' '+removeNewlines(nama_sub_asli2.join(' '));
+															nama_sub_asli2 = kode_sub_asli2+' '+removeNewlines(nama_sub_asli2.join(' '));
+															if(rka_sipd[current_data.kode_sub_skpd+' '+nama_sub2]){
+																existing = rka_sipd[current_data.kode_sub_skpd+' '+nama_sub2];
+																pemutakhiran = b;
+																pesan_loading('Pemutakhiran sub kegiatan SIPD dari "'+nama_sub_asli2+'" ke "'+nama_sub_asli+'"');
+															}
+														});
 													}
 													if(!master_sub_keg[nama_sub_asli]){
 														pesan_loading('Sub kegiatan tidak ditemukan di master SIPD. "'+nama_sub_asli+'"');
@@ -365,7 +380,7 @@ function proses_modal_renja(data_selected_asli = false) {
 
 													// update baru dari sipd-ri 23-05-2023
 													options_sub.token = token_sub_keg(options_sub);
-													console.log('token', options_sub);
+													console.log('current_data', options_sub, current_data);
 
 													if(master_sub_keg[nama_sub_asli].kode_sub_giat.indexOf('X.XX.') != -1){
 														var cek_bidang_urusan = false;
@@ -1368,6 +1383,7 @@ function update_dana_sub_bl(opsi, current_data) {
 						pesan_loading('Sumber dana tidak ditemukan di WP-SIPD! kode='+data.kode_dana);
 						return resolve2();
 					}
+					pesan_loading('Update sumber dana kode='+data.kode_dana);
 					options_dana[data.kode_dana].singkron = 1;
 					relayAjax({
 						url: config.sipd_url+'api/renja/dana_sub_bl/update',
@@ -1404,7 +1420,6 @@ function update_dana_sub_bl(opsi, current_data) {
 
 			Promise.all(promise_all)
 			.then(function(){
-				var promise_all = [];
 				var new_data = {sumber_dana: []};
 				for(var kode in options_dana){
 					if(!options_dana[kode].singkron){
@@ -1413,10 +1428,9 @@ function update_dana_sub_bl(opsi, current_data) {
 								new_data.sumber_dana.push(b);
 							}
 						});
-						promise_all.push(simpan_dana_sub_bl(options_dana[kode], new_data));
 					}
 				}
-				Promise.all(promise_all)
+				simpan_dana_sub_bl(options_dana[kode], new_data)
 				.then(function(){
 					return resolve();
 				});

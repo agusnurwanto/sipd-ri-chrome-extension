@@ -173,7 +173,7 @@ function singkron_data_giat_lokal() {
 				})
 				.catch(function(e){
 					console.log(e);
-				});      								
+				});
 			}
 		});
 	}
