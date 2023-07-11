@@ -124,15 +124,17 @@ function open_modal_skpd(){
 	});
 }
 
-function get_renja_lokal(no_popup=false){
+function get_renja_lokal(no_popup=false, hapus_sub_keg=false){
 	return new Promise(function(resolve, reject){
 		window.global_resolve_get_renja_lokal = resolve;
 		show_loading();
 		pesan_loading('Get data RENJA dari WP-SIPD');
 		var _run = 'open_modal_renja';
-		if(no_popup){
+		if(hapus_sub_keg){
+			_run = 'proses_hapus_modal_renja';
+		}else if(no_popup){
 			_run = 'proses_modal_renja';
-		}
+		} 
 		var data = {
 		    message:{
 		        type: "get-url",
@@ -173,78 +175,71 @@ function open_modal_renja(res, run_proses = false){
 	if(!run_proses){
 		pesan_loading(res.message+' run open_modal_renja!');
 		window.rka_all = {};
-	    get_detil_skpd({
-	    	idskpd: idunitskpd,
-	    	tahun: _token.tahun,
-	    	iddaerah: _token.daerah_id
-	    })
-		.then(function(data_skpd){
-			list_belanja_by_tahun_daerah_unit(idunitskpd)
-			.then(function(sub_keg_exist){
-				var rka_sipd = {};
-				sub_keg_exist.data.map(function(b, i){
-					rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
-				});
-
-				var result = {
-					tidak_ada_di_sipd: [],
-					tidak_ada_di_lokal: []
-				}
-
-				var rka_lokal = {};
-				var body = '';
-				res.data.map(function(b, i){
-					var keyword = b.kode_sbl;
-					rka_all[keyword] = b;
-
-					var nama_sub = b.nama_sub_giat.split(' ');
-					var kode_sub = nama_sub.shift();
-					kode_sub = kode_sub.replace('X.XX', b.kode_bidang_urusan);
-					nama_sub = nama_sub.join(' ');
-
-					rka_lokal[b.kode_sub_skpd+' '+kode_sub+' '+removeNewlines(nama_sub)] = b;
-					var existing = "";
-					if(rka_sipd[b.kode_sub_skpd+' '+kode_sub+' '+removeNewlines(nama_sub)]){
-						existing = " <b>Existing</b>";
-					}else{
-						result.tidak_ada_di_sipd.push(b);
-					}
-					body += ''
-						+'<tr>'								
-							+'<td class="text-center"><input type="checkbox" value="'+keyword+'">'+existing+'</td>'
-							+'<td>'+b.kode_sub_skpd+' - '+b.nama_sub_skpd+'</td>'
-							+'<td>'+b.nama_program+'</td>'
-							+'<td>'+b.nama_giat+'</td>'
-							+'<td>'+b.nama_sub_giat+'</td>'
-							+'<td>'+formatMoney(b.pagu)+'</td>'								
-						+'</tr>';
-				});
-
-				// menampilkan sub keg yang ada di sipd dan tidak ada dilokal wp-sipd
-				for(var nama_sub in rka_sipd){
-					var b = rka_sipd[nama_sub];
-					if(!rka_lokal[nama_sub]){
-						result.tidak_ada_di_lokal.push(b);
-						body += ''
-						+'<tr>'								
-							+'<td class="text-center"><span style="color: red; font-weight: bold;">Tidak ada di lokal</span></td>'
-							+'<td>'+b.kode_sub_skpd+' - '+b.nama_sub_skpd+'</td>'
-							+'<td>'+b.kode_program+' '+b.nama_program+'</td>'
-							+'<td>'+b.kode_giat+' '+b.nama_giat+'</td>'
-							+'<td>'+b.kode_sub_giat+' '+b.nama_sub_giat+'</td>'
-							+'<td>'+formatMoney(b.pagu)+'</td>'
-						+'</tr>';
-					}
-				}
-				console.log('Cek selisih data sub kegiatan!', result);
-
-				jQuery('#table-extension-renja-lokal tbody').html(body);
-				run_script('show_modal', {
-					id: 'modal-extension-renja-lokal'
-				});
-				hide_loading();
-				global_resolve_get_renja_lokal();
+		list_belanja_by_tahun_daerah_unit(idunitskpd)
+		.then(function(sub_keg_exist){
+			window.rka_sipd = {};
+			sub_keg_exist.data.map(function(b, i){
+				rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
 			});
+
+			var result = {
+				tidak_ada_di_sipd: [],
+				tidak_ada_di_lokal: []
+			}
+
+			var rka_lokal = {};
+			var body = '';
+			res.data.map(function(b, i){
+				var keyword = b.kode_sbl;
+				rka_all[keyword] = b;
+
+				var nama_sub = b.nama_sub_giat.split(' ');
+				var kode_sub = nama_sub.shift();
+				kode_sub = kode_sub.replace('X.XX', b.kode_bidang_urusan);
+				nama_sub = nama_sub.join(' ');
+
+				rka_lokal[b.kode_sub_skpd+' '+kode_sub+' '+removeNewlines(nama_sub)] = b;
+				var existing = "";
+				if(rka_sipd[b.kode_sub_skpd+' '+kode_sub+' '+removeNewlines(nama_sub)]){
+					existing = " <b>Existing</b>";
+				}else{
+					result.tidak_ada_di_sipd.push(b);
+				}
+				body += ''
+					+'<tr>'								
+						+'<td class="text-center"><input type="checkbox" value="'+keyword+'">'+existing+'</td>'
+						+'<td>'+b.kode_sub_skpd+' - '+b.nama_sub_skpd+'</td>'
+						+'<td>'+b.nama_program+'</td>'
+						+'<td>'+b.nama_giat+'</td>'
+						+'<td>'+b.nama_sub_giat+'</td>'
+						+'<td>'+formatMoney(b.pagu)+'</td>'								
+					+'</tr>';
+			});
+
+			// menampilkan sub keg yang ada di sipd dan tidak ada dilokal wp-sipd
+			for(var nama_sub in rka_sipd){
+				var b = rka_sipd[nama_sub];
+				if(!rka_lokal[nama_sub]){
+					result.tidak_ada_di_lokal.push(b);
+					body += ''
+					+'<tr>'								
+						+'<td class="text-center tidak-ada-dilokal" nama_sub="'+nama_sub+'"><span style="color: red; font-weight: bold;">Tidak ada di lokal</span></td>'
+						+'<td>'+b.kode_sub_skpd+' - '+b.nama_sub_skpd+'</td>'
+						+'<td>'+b.kode_program+' '+b.nama_program+'</td>'
+						+'<td>'+b.kode_giat+' '+b.nama_giat+'</td>'
+						+'<td>'+b.kode_sub_giat+' '+b.nama_sub_giat+'</td>'
+						+'<td>'+formatMoney(b.pagu)+'</td>'
+					+'</tr>';
+				}
+			}
+			console.log('Cek selisih data sub kegiatan!', result);
+
+			jQuery('#table-extension-renja-lokal tbody').html(body);
+			run_script('show_modal', {
+				id: 'modal-extension-renja-lokal'
+			});
+			hide_loading();
+			global_resolve_get_renja_lokal();
 		});
 	}else{
 		proses_modal_renja(res.data)
@@ -252,6 +247,161 @@ function open_modal_renja(res, run_proses = false){
 			global_resolve_get_renja_lokal();
 		});
 	}
+}
+
+function proses_hapus_modal_renja(res) {
+	if(res.status == 'error'){
+		hide_loading();
+		return alert(res.message);
+	}
+	list_belanja_by_tahun_daerah_unit(idunitskpd)
+	.then(function(sub_keg_exist){
+		window.rka_sipd = {};
+		sub_keg_exist.data.map(function(b, i){
+			rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
+		});
+		var rka_lokal = {};
+		res.data.map(function(b, i){
+			var nama_sub = b.nama_sub_giat.split(' ');
+			var kode_sub = nama_sub.shift();
+			kode_sub = kode_sub.replace('X.XX', b.kode_bidang_urusan);
+			nama_sub = nama_sub.join(' ');
+			rka_lokal[b.kode_sub_skpd+' '+kode_sub+' '+removeNewlines(nama_sub)] = b;
+		});
+
+		var data_selected = [];
+		for(var nama_sub in rka_sipd){
+			var b = rka_sipd[nama_sub];
+			if(!rka_lokal[nama_sub]){
+				data_selected.push(rka_sipd[nama_sub]);
+			}
+		}
+		hapus_modal_renja(data_selected)
+		.then(function(){
+			global_resolve_get_renja_lokal();
+		});
+	});
+}
+
+function hapus_modal_renja(data_selected_asli = false) {
+	return new Promise(function(resolve, reject){
+		var data_selected = [];
+		if(data_selected_asli){
+			data_selected = data_selected_asli;
+		}else{
+			jQuery('#table-extension-renja-lokal tbody tr .tidak-ada-dilokal').map(function(i, b){
+				var nama_sub = jQuery(b).attr('nama_sub');
+				data_selected.push(rka_sipd[nama_sub]);
+			});
+		}
+		if(data_selected.length >= 1){
+			if(
+				data_selected_asli 
+				|| confirm('Apakah anda yakin melakukan ini? sub kegiatan yang tidak ada di lokal akan dihapus.')
+			){
+				show_loading();
+				console.log('data_selected', data_selected);
+				var last = data_selected.length-1;
+				data_selected.reduce(function(sequence, nextData){
+					return sequence.then(function(current_data){
+						return new Promise(function(resolve_reduce, reject_reduce){
+							var options_sub = {
+								id_unit: current_data.id_unit,
+								id_skpd: current_data.id_skpd,
+								id_sub_skpd: current_data.id_sub_skpd,
+								id_urusan: current_data.id_urusan,
+								id_bidang_urusan: current_data.id_bidang_urusan,
+								id_program: current_data.id_program,
+								id_giat: current_data.id_giat,
+								id_sub_giat: current_data.id_sub_giat,
+								pagu: current_data.pagu,
+								pagu_n_depan: current_data.pagu_n_depan,
+								nama_sub_giat: current_data.nama_sub_giat,
+								id_lokasi: _token.daerah_id,
+								waktu_awal: current_data.waktu_awal,
+								waktu_akhir: current_data.waktu_akhir,
+								nama_daerah: _token.daerah_nama,
+								nama_unit: current_data.nama_unit,
+								nama_skpd: current_data.nama_skpd,
+								nama_sub_skpd: current_data.nama_sub_skpd,
+								nama_bidang_urusan: '',
+								kode_sub_giat: current_data.kode_sub_giat,
+								id_daerah_log: _token.daerah_id,
+								id_user_log: _token.user_id,
+								id_daerah: _token.daerah_id,
+								tahun: _token.tahun,
+								level_id: _token.level_id,
+								created_user: _token.user_id
+							};
+							options_sub.created_user = current_data.created_user;
+							options_sub.set_pagu_user = current_data.set_pagu_user;
+							options_sub.pagu_giat = current_data.pagu_giat;
+							options_sub.rincian = current_data.rincian;
+							options_sub.rinci_giat = current_data.rinci_giat;
+							options_sub.kode_bl = current_data.kode_bl;
+							options_sub.kode_sbl = current_data.kode_sbl;
+							options_sub.id_sub_bl = current_data.id_sub_bl;
+							options_sub.created_date = current_data.created_date;
+							options_sub.created_time = current_data.created_time;
+							options_sub.updated_date = current_data.updated_date;
+							options_sub.updated_time = current_data.updated_time;
+							options_sub.user_created = current_data.user_created;
+							options_sub.user_updated = current_data.user_updated;
+							options_sub.nama_urusan = current_data.nama_urusan;
+							options_sub.nama_bidang_urusan = current_data.nama_bidang_urusan;
+							options_sub.nama_program = current_data.nama_program;
+							options_sub.nama_giat = current_data.nama_giat;
+							options_sub.nama_sub_giat = current_data.nama_sub_giat;
+							options_sub.kode_skpd = current_data.kode_skpd;
+							options_sub.kode_sub_skpd = current_data.kode_sub_skpd;
+							options_sub.kode_urusan = current_data.kode_urusan;
+							options_sub.kode_bidang_urusan = current_data.kode_bidang_urusan;
+							options_sub.kode_program = current_data.kode_program;
+							options_sub.kode_giat = current_data.kode_giat;
+							options_sub.token = token_sub_keg(options_sub);
+
+							// jika mau hapus sub kegiatan
+							options_sub.aktivitas = 'delete';
+							update_sub_bl(options_sub)
+							.then(function(){
+								resolve_reduce(nextData);
+							});
+						})
+						.catch(function(e){
+							console.log(e);
+							return Promise.resolve(nextData);
+						});
+					})
+					.catch(function(e){
+						console.log(e);
+						return Promise.resolve(nextData);
+					});
+				}, Promise.resolve(data_selected[last]))
+				.then(function(data_last){
+					if(!data_selected_asli){
+						run_script('hide_modal', {
+							id: 'modal-extension-renja-lokal'
+						});
+						hide_loading();
+						alert('Data berhasil dihapus! Refresh halaman ini untuk melihat hasilnya.');
+					}
+					return resolve();
+				})
+				.catch(function(e){
+					console.log(e);
+				});
+			}else{
+				return resolve();
+			}
+		}else{
+			if(!data_selected_asli){
+				alert('Data sub kegiatan yang tidak ada di lokal tidak ditemukan!');
+			}else{
+				console.log('Data sub kegiatan yang tidak ada di lokal untuk skpd ini tidak ditemukan!');
+			}
+			return resolve();
+		}
+	});
 }
 
 function proses_modal_renja(data_selected_asli = false) {
@@ -480,9 +630,6 @@ function proses_modal_renja(data_selected_asli = false) {
 														options_sub.updated_time = existing.updated_time;
 														options_sub.user_created = existing.user_created;
 														options_sub.user_updated = existing.user_updated;
-
-														// jika mau hapus sub kegiatan
-														// options_sub.aktivitas = 'delete';
 														update_sub_bl(options_sub)
 														.then(function(){
 															options_label.id_sub_bl = existing.id_sub_bl;
@@ -1097,7 +1244,11 @@ function simpan_dana_sub_bl(opsi, current_data) {
 
 // update 1
 function update_sub_bl(opsi) {
-	pesan_loading("Update Sub Kegiatan '"+opsi.nama_sub_giat+"' OPD "+opsi.nama_sub_skpd);
+	if(opsi.aktivitas == 'delete'){
+		pesan_loading("Hapus Sub Kegiatan '"+opsi.nama_sub_giat+"' OPD "+opsi.nama_sub_skpd);
+	}else{
+		pesan_loading("Update Sub Kegiatan '"+opsi.nama_sub_giat+"' OPD "+opsi.nama_sub_skpd);
+	}
 	return new Promise(function(resolve, reject){
 		sub_bl_view(opsi.id_sub_bl)
 		.then(function(data_exist){
@@ -3556,6 +3707,12 @@ function proses_setting_kegiatan(tipe_task, sigkron_sub_keg=false){
 										resolve_reduce(nextData);
 									});
 								}
+							});
+						}else if(tipe_task == 'hapus-sub-kegiatan'){
+							window.idunitskpd = current_data.id_skpd;
+							get_renja_lokal(true, true)
+							.then(function(sub_keg_exist){
+								resolve_reduce(nextData);
 							});
 						}else if(tipe_task == 'kunci-kegiatan'){
 							update_kunci_belanja_unit(current_data, 1)

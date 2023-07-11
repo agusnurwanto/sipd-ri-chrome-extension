@@ -87,6 +87,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 				open_modal_renja(res);
 			}else if(res.run == "proses_modal_renja"){
 				open_modal_renja(res, true);
+			}else if(res.run == "proses_hapus_modal_renja"){
+				proses_hapus_modal_renja(res, true);
 			};
 		}
 		if(cek_hide_loading){

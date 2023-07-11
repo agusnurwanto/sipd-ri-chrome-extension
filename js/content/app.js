@@ -925,6 +925,7 @@ function cekUrl(current_url, nomor=1){
 										+'</table>'
 									+'</div>'
 									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-danger" id="hapus-sub-keg">Hapus Sub Kegiatan Not Exist</button>'
 										+'<button type="button" class="btn btn-primary" id="proses-extension-renja-lokal">Proses</button>'
 										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
 									+'</div>'
@@ -954,6 +955,9 @@ function cekUrl(current_url, nomor=1){
 					});
 					jQuery('#proses-extension-renja-lokal').on('click', function(){
 						proses_modal_renja();
+					});
+					jQuery('#hapus-sub-keg').on('click', function(){
+						hapus_modal_renja();
 					});
 					if(jQuery('#singkron_master_cse').length == 0){
 						var master_html = ''
@@ -997,6 +1001,7 @@ function cekUrl(current_url, nomor=1){
 										+'</table>'
 									+'</div>'
 									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-sm btn-danger" id="hapus-sub-keg">Hapus Sub Kegiatan Not Exist</button>'
 										+'<button type="button" class="btn btn-sm btn-success" id="tarik-data-lokal">Tarik Data dari DB Lokal</button>'
 										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="kunci-tambah-kegiatan">Kunci Tambah Kegiatan</button>'
 										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="buka-tambah-kegiatan">Buka Tambah Kegiatan</button>'
@@ -1022,6 +1027,9 @@ function cekUrl(current_url, nomor=1){
 					});
 					jQuery('#tarik-data-lokal').on('click', function(){
 						proses_setting_kegiatan('buka-tambah-kegiatan', true);
+					});
+					jQuery('#hapus-sub-keg').on('click', function(){
+						proses_setting_kegiatan('hapus-sub-kegiatan', true);
 					});
 					jQuery('.aksi-extension').remove();
 					var btn = ''
