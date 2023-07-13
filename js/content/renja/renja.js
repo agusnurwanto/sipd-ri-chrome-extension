@@ -560,9 +560,20 @@ function proses_modal_renja(data_selected_asli = false) {
 														tahun: options_sub.tahun,
 														id_daerah: options_sub.id_daerah,
 														id_kab_kota: options_sub.id_daerah,
+														id_camat: 0,
+														id_lurah: 0,
 														id_daerah_log: options_sub.id_daerah_log,
 														id_user_log: options_sub.id_user_log
 													};
+													if(current_data.lokasi.length >= 1){
+														if(current_data.lokasi[0].idcamat){
+															options_lokasi.id_camat = current_data.lokasi[0].idcamat;
+															if(current_data.lokasi[0].idlurah){
+																options_lokasi.id_lurah = current_data.lokasi[0].idlurah;
+															}
+														}
+													}
+
 													var targetoutput = 0
 													if(current_data.indikator.length >= 1){
 														targetoutput = current_data.indikator[0].targetoutput;
@@ -1101,8 +1112,8 @@ function simpan_detil_lokasi_bl(opsi) {
 				id_bl: 0,
 				id_sub_bl: opsi.id_sub_bl,
 				id_kab_kota: opsi.id_kab_kota,
-				id_camat: 0,
-				id_lurah: 0,
+				id_camat: opsi.id_camat,
+				id_lurah: opsi.id_lurah,
 				id_skpd: 0,
 				id_sub_skpd: 0,
 				id_program: 0,
@@ -1439,8 +1450,8 @@ function update_detil_lokasi_bl(opsi) {
 							id_bl: 0,
 							id_sub_bl: opsi.id_sub_bl,
 							id_kab_kota: opsi.id_kab_kota,
-							id_camat: 0,
-							id_lurah: 0,
+							id_camat: opsi.id_camat,
+							id_lurah: opsi.id_lurah,
 							id_skpd: 0,
 							id_sub_skpd: 0,
 							id_program: 0,
@@ -1594,16 +1605,26 @@ function update_dana_sub_bl(opsi, current_data) {
 					options_dana[b.kodedana][n] = opsi[n];
 				}
 				options_dana[b.kodedana].id_dana = global_all_sumber_dana_obj[b.kodedana].id_dana;
-				options_dana[b.kodedana].nama_dana = global_all_sumber_dana_obj[b.kodedana].nama_dana,
-				options_dana[b.kodedana].kode_dana = global_all_sumber_dana_obj[b.kodedana].kode_dana,
+				options_dana[b.kodedana].nama_dana = global_all_sumber_dana_obj[b.kodedana].nama_dana;
+				options_dana[b.kodedana].kode_dana = global_all_sumber_dana_obj[b.kodedana].kode_dana;
 				options_dana[b.kodedana].pagu_dana = b.pagudana;
 			});
 			var promise_all = data_exist.data.map(function(data, i){
 				let no = i;
 				return new Promise(function(resolve2, reject2){
 					if(!options_dana[data.kode_dana]){
-						pesan_loading('Sumber dana tidak ditemukan di WP-SIPD! kode='+data.kode_dana);
-						return resolve2();
+						var opsi_dana = {
+							id_dana_sub_bl: data.id_dana_sub_bl,
+							id_unit: data.id_unit,
+							id_dana: data.id_dana,
+							kode_dana: data.kode_dana,
+							nama_dana: global_all_sumber_dana_obj[data.kode_dana].nama_dana,
+							id_sub_bl: opsi.id_sub_bl
+						};
+						return hapus_sumber_dana(opsi_dana)
+						.then(function(){
+							return resolve2();
+						})
 					}
 					pesan_loading('Update sumber dana kode='+data.kode_dana);
 					options_dana[data.kode_dana].singkron = 1;
@@ -4722,6 +4743,38 @@ function sasaran_giat(opsi){
 			},						
 			success: function(subkeg){
 				return resolve(subkeg);
+			},
+			error: function(e){
+				console.log(e);
+				return resolve({});
+			}
+		});
+	});
+}
+
+// hapus sumber dana di sub kegiatan
+function hapus_sumber_dana(opsi){
+	pesan_loading('Hapus sumber dana '+opsi.kode_dana+' '+opsi.nama_dana+'!');
+	return new Promise(function(resolve, reject){
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/dana_sub_bl/delete',						
+			type: 'POST',	      				
+			data: {
+				id_dana_sub_bl: opsi.id_dana_sub_bl,
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,
+				id_unit: opsi.id_unit,
+				id_dana: opsi.id_dana,
+				id_daerah_log: _token.daerah_id,
+				id_user_log: _token.user_id,
+				id_sub_bl: opsi.id_sub_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
 			},
 			error: function(e){
 				console.log(e);
