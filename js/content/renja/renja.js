@@ -124,7 +124,7 @@ function open_modal_skpd(){
 	});
 }
 
-function get_renja_lokal(no_popup=false, hapus_sub_keg=false){
+function get_renja_lokal(no_popup=false, hapus_sub_keg=false, id_jadwal=''){
 	return new Promise(function(resolve, reject){
 		window.global_resolve_get_renja_lokal = resolve;
 		show_loading();
@@ -134,7 +134,9 @@ function get_renja_lokal(no_popup=false, hapus_sub_keg=false){
 			_run = 'proses_hapus_modal_renja';
 		}else if(no_popup){
 			_run = 'proses_modal_renja';
-		} 
+		}else{
+			id_jadwal = prompt('Masukan ID jadwal! Isikan kata "terbaru" jika ingin menarik data dari jadwal terbuka. Biarkan kosong jika ingin menarik data dari jadwal terkunci yang terakhir.');
+		}
 		var data = {
 		    message:{
 		        type: "get-url",
@@ -146,7 +148,8 @@ function get_renja_lokal(no_popup=false, hapus_sub_keg=false){
 						run: _run,
 						id_skpd: idunitskpd,
 						tahun_anggaran: _token.tahun,
-						api_key: config.api_key
+						api_key: config.api_key,
+						id_jadwal: id_jadwal
 					},
 	    			return: true
 				}
@@ -3707,6 +3710,7 @@ function proses_setting_kegiatan(tipe_task, sigkron_sub_keg=false){
 	if(data_selected.length >= 1){
 		console.log('data_selected', data_selected);
 		if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+			show_loading();
 			var last = data_selected.length-1;
 			data_selected.reduce(function(sequence, nextData){
 	            return sequence.then(function(current_data){
@@ -3722,21 +3726,28 @@ function proses_setting_kegiatan(tipe_task, sigkron_sub_keg=false){
 								if(!sigkron_sub_keg){
 									resolve_reduce(nextData);
 								}else{
+									var id_jadwal = prompt('Masukan ID jadwal! Isikan kata "terbaru" jika ingin menarik data dari jadwal terbuka. Biarkan kosong jika ingin menarik data dari jadwal terkunci yang terakhir.');
 									window.idunitskpd = current_data.id_skpd;
-									get_renja_lokal(true)
+									get_renja_lokal(true, false, id_jadwal)
 									.then(function(){
 										resolve_reduce(nextData);
 									});
 								}
 							});
 						}else if(tipe_task == 'hapus-sub-kegiatan'){
+							var id_jadwal = prompt('Masukan ID jadwal! Isikan kata "terbaru" jika ingin menarik data dari jadwal terbuka. Biarkan kosong jika ingin menarik data dari jadwal terkunci yang terakhir.');
 							window.idunitskpd = current_data.id_skpd;
-							get_renja_lokal(true, true)
+							get_renja_lokal(true, true, id_jadwal)
 							.then(function(sub_keg_exist){
 								resolve_reduce(nextData);
 							});
 						}else if(tipe_task == 'kunci-kegiatan'){
 							update_kunci_belanja_unit(current_data, 1)
+							.then(function(){
+								resolve_reduce(nextData);
+							});
+						}else if(tipe_task == 'validasi-sub-kegiatan'){
+							validasi_pagu(current_data)
 							.then(function(){
 								resolve_reduce(nextData);
 							});
@@ -4768,6 +4779,34 @@ function hapus_sumber_dana(opsi){
 				id_daerah_log: _token.daerah_id,
 				id_user_log: _token.user_id,
 				id_sub_bl: opsi.id_sub_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			},
+			error: function(e){
+				console.log(e);
+				return resolve({});
+			}
+		});
+	});
+}
+
+// validasi sub kegiatan
+function validasi_pagu(opsi){
+	pesan_loading('Validasi pagu sub kegiatan '+opsi.nama_skpd+'!');
+	return new Promise(function(resolve, reject){
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/sub_bl/validasi_semua_pagu',						
+			type: 'POST',	      				
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,
+				id_unit: opsi.id_skpd,
+				id_user: _token.user_id
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key());

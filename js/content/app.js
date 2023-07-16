@@ -1001,6 +1001,7 @@ function cekUrl(current_url, nomor=1){
 										+'</table>'
 									+'</div>'
 									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-sm btn-info" id="validasi-sub-keg">Validasi Sub Kegiatan</button>'
 										+'<button type="button" class="btn btn-sm btn-danger" id="hapus-sub-keg">Hapus Sub Kegiatan Not Exist</button>'
 										+'<button type="button" class="btn btn-sm btn-success" id="tarik-data-lokal">Tarik Data dari DB Lokal</button>'
 										+'<button type="button" class="btn btn-sm btn-danger setting-kegiatan" id="kunci-tambah-kegiatan">Kunci Tambah Kegiatan</button>'
@@ -1030,6 +1031,9 @@ function cekUrl(current_url, nomor=1){
 					});
 					jQuery('#hapus-sub-keg').on('click', function(){
 						proses_setting_kegiatan('hapus-sub-kegiatan', true);
+					});
+					jQuery('#validasi-sub-keg').on('click', function(){
+						proses_setting_kegiatan('validasi-sub-kegiatan');
 					});
 					jQuery('.aksi-extension').remove();
 					var btn = ''
