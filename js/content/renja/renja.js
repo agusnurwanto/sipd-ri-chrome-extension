@@ -784,10 +784,10 @@ function proses_modal_renja(data_selected_asli = false) {
 																	id_bidang_urusan: giat.id_bidang_urusan,
 																	id_program: giat.id_program,
 																	id_giat: giat.id_giat,
-																	tolak_ukur: b.outputteks,
-																	target: b.targetoutput,
-																	satuan: b.satuanoutput,
-																	target_teks: b.targetoutputteks,
+																	tolak_ukur: b.hasilteks,
+																	target: b.targethasil,
+																	satuan: b.satuanhasil,
+																	target_teks: b.targethasilteks,
 																	created_user: _token.user_id,
 																	id_daerah_log: giat.id_daerah,
 																	id_user_log: _token.user_id
@@ -799,9 +799,46 @@ function proses_modal_renja(data_selected_asli = false) {
 																	var opsi_indikator_program_insert = [];
 																	var opsi_indikator_program_update = [];
 																	var indikator_program_list = [];
+																	var indikator_program_unik = {};
+																	var indikator_program_unik_sipd = {};
+																	capaian_ret.data.map(function(b, i){
+																		var key_unik = b.tolak_ukur+b.target_teks;
+																		if(!indikator_program_unik_sipd[key_unik]){
+																			indikator_program_unik_sipd[key_unik] = b;
+																		}else{
+																			return;
+																		}
+																	});
 																	opsi_indikator_program.map(function(b, i){
+
+																		// agar tidak double indikator
+																		var key_unik = b.tolak_ukur+b.target_teks;
+																		if(!indikator_program_unik[key_unik]){
+																			indikator_program_unik[key_unik] = true;
+																		}else{
+																			return;
+																		}
+
 																		if(capaian_ret.data[i]){
-																			b.id_capaian_bl = capaian_ret.data[i].id_capaian_bl;
+																			if(
+																				indikator_program_unik_sipd[key_unik]
+																				&& !indikator_program_unik_sipd[key_unik].exist
+																			){
+																				b.id_capaian_bl = indikator_program_unik_sipd[key_unik].id_capaian_bl;
+																				indikator_program_unik_sipd[key_unik].exist = true;
+																			}else{
+																				var id_capaian_bl = false;
+																				for(var bb in indikator_program_unik_sipd){
+																					if(
+																						!indikator_program_unik_sipd[bb].exist
+																						&& false == id_capaian_bl
+																					){
+																						id_capaian_bl = indikator_program_unik_sipd[bb].id_capaian_bl;
+																						indikator_program_unik_sipd[bb].exist = true;
+																					}
+																				}
+																				b.id_capaian_bl = id_capaian_bl;
+																			}
 																			indikator_program_list.push(b.id_capaian_bl);
 																			opsi_indikator_program_update.push(b);
 																		}else{
@@ -831,6 +868,15 @@ function proses_modal_renja(data_selected_asli = false) {
 																		var opsi_indikator_giat_update = [];
 																		var indikator_giat_list = [];
 																		var indikator_giat_unik = {};
+																		var indikator_giat_unik_sipd = {};
+																		output_ret.data.map(function(b, i){
+																			var key_unik = b.tolok_ukur+b.target_teks;
+																			if(!indikator_giat_unik_sipd[key_unik]){
+																				indikator_giat_unik_sipd[key_unik] = b;
+																			}else{
+																				return;
+																			}
+																		});
 																		opsi_indikator_giat.map(function(b, i){
 
 																			// agar tidak double indikator
@@ -842,7 +888,25 @@ function proses_modal_renja(data_selected_asli = false) {
 																			}
 
 																			if(output_ret.data[i]){
-																				b.id_output_giat = output_ret.data[i].id_output_giat;
+																				if(
+																					indikator_giat_unik_sipd[key_unik]
+																					&& !indikator_giat_unik_sipd[key_unik].exist
+																				){
+																					b.id_output_giat = indikator_giat_unik_sipd[key_unik].id_output_giat;
+																					indikator_giat_unik_sipd[key_unik].exist = true;
+																				}else{
+																					var id_output_giat = false;
+																					for(var bb in indikator_giat_unik_sipd){
+																						if(
+																							!indikator_giat_unik_sipd[bb].exist
+																							&& false == id_output_giat
+																						){
+																							id_output_giat = indikator_giat_unik_sipd[bb].id_output_giat;
+																							indikator_giat_unik_sipd[bb].exist = true;
+																						}
+																					}
+																					b.id_output_giat = id_output_giat;
+																				}
 																				indikator_giat_list.push(b.id_output_giat);
 																				opsi_indikator_giat_update.push(b);
 																			}else{
@@ -881,9 +945,73 @@ function proses_modal_renja(data_selected_asli = false) {
 															})
 															.then(function(id_bl){
 																return new Promise(function(resolve2, reject2){
-																	simpan_hasil(opsi_indikator_hasil, id_bl)
-																	.then(function(){
-																		return resolve2(id_bl);
+																	get_hasil(giat)
+																	.then(function(output_hasil){
+																		var opsi_indikator_hasil_insert = [];
+																		var opsi_indikator_hasil_update = [];
+																		var indikator_hasil_list = [];
+																		var indikator_hasil_unik = {};
+																		var indikator_hasil_unik_sipd = {};
+																		if(output_hasil){
+																			output_hasil.data.map(function(b, i){
+																				var key_unik = b.tolak_ukur+b.target_teks;
+																				if(!indikator_hasil_unik_sipd[key_unik]){
+																					indikator_hasil_unik_sipd[key_unik] = b;
+																				}else{
+																					return;
+																				}
+																			});
+																		}
+																		opsi_indikator_hasil.map(function(b, i){
+
+																			// agar tidak double indikator
+																			var key_unik = b.tolak_ukur+b.target_teks;
+																			if(!indikator_hasil_unik[key_unik]){
+																				indikator_hasil_unik[key_unik] = true;
+																			}else{
+																				return;
+																			}
+
+																			if(
+																				output_hasil 
+																				&& output_hasil.data[i]
+																			){
+																				if(
+																					indikator_hasil_unik_sipd[key_unik]
+																					&& !indikator_hasil_unik_sipd[key_unik].exist
+																				){
+																					b.id_hasil_bl = indikator_hasil_unik_sipd[key_unik].id_hasil_bl;
+																					indikator_hasil_unik_sipd[key_unik].exist = true;
+																				}else{
+																					var id_hasil_bl = false;
+																					for(var bb in indikator_hasil_unik_sipd){
+																						if(
+																							!indikator_hasil_unik_sipd[bb].exist
+																							&& false == id_hasil_bl
+																						){
+																							id_hasil_bl = indikator_hasil_unik_sipd[bb].id_hasil_bl;
+																							indikator_hasil_unik_sipd[bb].exist = true;
+																						}
+																					}
+																					b.id_hasil_bl = id_hasil_bl;
+																				}
+																				indikator_hasil_list.push(b.id_hasil_bl);
+																				opsi_indikator_hasil_update.push(b);
+																			}else{
+																				opsi_indikator_hasil_insert.push(b);
+																			}
+																		});
+																		update_hasil(opsi_indikator_hasil_update, id_bl)
+																		.then(function(){
+																			// dihapus insertnya karena indikator hasil hanya 1
+																			if(opsi_indikator_hasil_update.length >= 1){
+																				opsi_indikator_hasil_insert = [];
+																			}
+																			simpan_hasil(opsi_indikator_hasil_insert, id_bl)
+																			.then(function(){
+																				return resolve2(id_bl);
+																			});
+																		});
 																	});
 																})
 															})
@@ -3710,6 +3838,15 @@ function proses_setting_kegiatan(tipe_task, sigkron_sub_keg=false){
 	if(data_selected.length >= 1){
 		console.log('data_selected', data_selected);
 		if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+			if(
+				(
+					tipe_task == 'buka-tambah-kegiatan'
+					&& sigkron_sub_keg
+				)
+				|| tipe_task == 'hapus-sub-kegiatan'
+			){
+				var id_jadwal = prompt('Masukan ID jadwal! Isikan kata "terbaru" jika ingin menarik data dari jadwal terbuka. Biarkan kosong jika ingin menarik data dari jadwal terkunci yang terakhir.');
+			}
 			show_loading();
 			var last = data_selected.length-1;
 			data_selected.reduce(function(sequence, nextData){
@@ -3726,7 +3863,6 @@ function proses_setting_kegiatan(tipe_task, sigkron_sub_keg=false){
 								if(!sigkron_sub_keg){
 									resolve_reduce(nextData);
 								}else{
-									var id_jadwal = prompt('Masukan ID jadwal! Isikan kata "terbaru" jika ingin menarik data dari jadwal terbuka. Biarkan kosong jika ingin menarik data dari jadwal terkunci yang terakhir.');
 									window.idunitskpd = current_data.id_skpd;
 									get_renja_lokal(true, false, id_jadwal)
 									.then(function(){
@@ -3735,7 +3871,6 @@ function proses_setting_kegiatan(tipe_task, sigkron_sub_keg=false){
 								}
 							});
 						}else if(tipe_task == 'hapus-sub-kegiatan'){
-							var id_jadwal = prompt('Masukan ID jadwal! Isikan kata "terbaru" jika ingin menarik data dari jadwal terbuka. Biarkan kosong jika ingin menarik data dari jadwal terkunci yang terakhir.');
 							window.idunitskpd = current_data.id_skpd;
 							get_renja_lokal(true, true, id_jadwal)
 							.then(function(sub_keg_exist){
@@ -4598,12 +4733,12 @@ function simpan_kelompok_sasaran(opsi){
 }
 
 // simpan indikator hasil giat
-function simpan_hasil(opsi, id_bl){
+function simpan_hasil(opsi, id_bl, offset=0){
     return new Promise(function(resolve, reject){
     	if(opsi.length == 0){
     		return resolve();
     	}
-    	console.log('simpan_hasil', opsi);
+    	console.log('simpan_hasil', opsi[offset]);
 		jQuery.ajax({
 			url: config.sipd_url+'api/renja/hasil_bl/add',                               
 			type: 'POST',	      				
@@ -4631,7 +4766,70 @@ function simpan_hasil(opsi, id_bl){
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 	      	success: function(ret){
-	      		return resolve(ret);
+	      		return resolve(ret); // langsung direturn karena hanya bisa satu indikator hasil
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			simpan_hasil(opsi, id_bl, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	},
+	      	error: function(ret){
+	      		console.log('error', ret);
+	      		return resolve();
+	      	}
+	    });
+    });
+}
+
+// update indikator hasil giat
+function update_hasil(opsi, id_bl, offset=0){
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('update_hasil', opsi[offset]);
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/hasil_bl/update',                               
+			type: 'POST',	      				
+			data: {				
+				tahun: opsi[0].tahun,
+				id_daerah: opsi[0].id_daerah,
+				id_unit: opsi[0].id_unit,
+				id_skpd: opsi[0].id_skpd,
+				id_sub_skpd: opsi[0].id_sub_skpd,
+				id_bl: id_bl,
+				id_urusan: opsi[0].id_urusan,
+				id_bidang_urusan: opsi[0].id_bidang_urusan,
+				id_program: opsi[0].id_program,
+				id_giat: opsi[0].id_giat,
+				tolak_ukur: opsi[0].tolak_ukur,
+				target: opsi[0].target,
+				satuan: opsi[0].satuan,
+				target_teks: opsi[0].target_teks,
+				created_user: opsi[0].created_user,
+				id_daerah_log: opsi[0].id_daerah_log,
+				id_user_log: opsi[0].id_user_log,
+				id_hasil_bl: opsi[0].id_hasil_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		return resolve(ret); // langsung direturn karena hanya bisa satu indikator hasil
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			update_hasil(opsi, id_bl, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
 	      	},
 	      	error: function(ret){
 	      		console.log('error', ret);
@@ -4675,6 +4873,34 @@ function simpan_label_pusat(opsi){
 	      	error: function(ret){
 	      		console.log('error', ret);
 	      		return resolve();
+	      	}
+	    });
+    });
+}
+
+function get_hasil(opsi){    
+    return new Promise(function(resolve, reject){
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/hasil_bl/load_data',                               
+			type: 'POST',	      				
+			data: {
+				tahun: opsi.tahun,
+				id_daerah: opsi.id_daerah,
+				id_program: opsi.id_program,
+				id_giat: opsi.id_giat,
+				id_unit: opsi.id_unit,
+				id_skpd: opsi.id_skpd,
+				id_sub_skpd: opsi.id_sub_skpd
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		return resolve(ret);
+	      	},
+	      	error: function(ret){
+	      		return resolve(false);
 	      	}
 	    });
     });
