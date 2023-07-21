@@ -71,6 +71,9 @@ function open_modal_skpd(){
 	        		return new Promise(function(resolve_reduce, reject_reduce){
 						get_setup_unit(b)
 						.then(function(unit){
+							if(unit.data.length == 0){
+								return resolve_reduce(nextData);
+							}
 							var keyword = b.id_skpd+'-'+b.id_unit;
 							rka_all[keyword] = b;
 							body += ''
@@ -1959,8 +1962,11 @@ function open_modal_subgiat(idunit){
 	});
 }
 
-function singkron_subgiat_modal(){
+function singkron_subgiat_modal(sub_keg_asli=false){
 	var data_sub_keg_selected = [];
+	if(sub_keg_asli){
+		data_sub_keg_selected = sub_keg_asli;
+	}
 	jQuery('#table-extension tbody tr input[type="checkbox"]').map(function(i, b){	
 		if(jQuery(b).is(':checked') == true){
 			var kode_sbl =  jQuery(b).val();
@@ -1969,11 +1975,14 @@ function singkron_subgiat_modal(){
 					data_sub_keg_selected.push(bb);
 				}
 			});
-		}			
+		}
 	});
 	if(data_sub_keg_selected.length == 0){
 		alert('Pilih sub kegiatan dulu!');
-	}else if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+	}else if(
+		sub_keg_asli
+		|| confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')
+	){
 		console.log('data_sub_keg_selected', data_sub_keg_selected);
 		var id_unit = _token.unit;
 		var cat_wp = '';
@@ -2363,7 +2372,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 	if((opsi && opsi.kode_bl) || confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();		
 		// var id_unit = idune;
-        console.log('singkron_rka_ke_lokal', opsi);
+        pesan_loading('singkron_rka_ke_lokal kode_sbl='+opsi.kode_sbl+' nama_sub_skpd='+opsi.nama_sub_skpd);
 		var id_unit = opsi.id_skpd ? opsi.id_skpd : _token.unit;
 		if(opsi && opsi.id_unit){
 			id_unit = opsi.id_unit;
@@ -2408,6 +2417,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 			new Promise(function(resolve, reject){
 				sub_bl_view(idsubbl).then(function(res){
 					res_sub_bl_view = res;
+					pesan_loading('sub_bl_view get data sub kegiatan '+res_sub_bl_view.data[0].nama_sub_giat);
 					console.log('sub_bl_view singkron_rka_ke_lokal', res_sub_bl_view);
 					get_skpd(tahun, id_daerah, id_unit).then(function(res){
 						data_unit = res;

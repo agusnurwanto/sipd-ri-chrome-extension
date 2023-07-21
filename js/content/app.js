@@ -868,8 +868,37 @@ function cekUrl(current_url, nomor=1){
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
 					+'</button>';
 				// idunit=_token.unit;				
-				if(current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1){			
-					console.log('halaman Renja SKPD');
+				if(current_url.indexOf('/perencanaan/renja/cascading/rincian/sub-kegiatan') != -1){
+					console.log('halaman Rincian belanja SKPD');
+					var btn = ''
+						+'<div class="aksi-extension">'						
+							+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
+							+singkron_rka
+						+'</div>';				
+					jQuery('.page-title').append(btn);
+					jQuery('#open_modal_skpd').on('click', function(){
+						if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+							var id_sub_bl = current_url.split('/').pop();
+							sub_bl_view(id_sub_bl)
+							.then(function(res){
+								var newData = [];
+								res.data.map(function(b, i){
+									b.kode_bl = b.id_skpd+'.'+b.id_sub_skpd+'.'+b.id_program+'.'+b.id_giat;
+									b.kode_sbl = b.kode_bl+'.'+b.id_sub_giat;
+									if(!b.action){
+										b.action = '';
+									}
+									if(!b.pagumurni){
+										b.pagumurni = 0;
+									}
+									newData.push(b);
+								})
+								singkron_subgiat_modal(newData);
+							})
+						}
+					});
+				}else if(current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1){			
+					console.log('halaman Renja per SKPD');
 					singkron_rka += ''
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="get_renja_lokal">'
 							+'<i class="menu-download m-r-5"></i> <span>Tarik RENJA dari DB lokal</span>'
