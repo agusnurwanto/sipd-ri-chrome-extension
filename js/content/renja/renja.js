@@ -2707,6 +2707,9 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_rka.lokus_akun_teks = rka.lokus_akun_teks;
 							_rka.nama_akun = rka.nama_akun;
 							_rka.nama_standar_harga = rka.nama_standar_harga;
+							if(!rka.nama_standar_harga){
+								_rka.nama_standar_harga = rka.nama_akun;
+							}
 							_rka.nama_komponen = rka.nama_standar_harga;
 							_rka.spek_komponen = rka.spek;
 							_rka.id_subs_sub_bl = rka.id_subs_sub_bl; //baru
@@ -2784,11 +2787,20 @@ function singkron_rka_ke_lokal(opsi, callback) {
 											if(rka.id_subs_sub_bl !=0){
 												sendData2.push(new Promise(function(resolve3, reject3){
 													get_subs_sub_bl(rka.id_subs_sub_bl).then(function(subs_sub_bl){
-														rka.subs_bl_teks = subs_sub_bl.data[0].subs_bl_teks;
-														rka.id_dana = subs_sub_bl.data[0].id_dana;
+														rka.subs_bl_teks = {
+															subs_asli: subs_sub_bl.data[0].subs_bl_teks,
+															substeks: subs_sub_bl.data[0].subs_bl_teks,
+															sumber_dana: {
+																id_dana: subs_sub_bl.data[0].id_dana,
+																nama_dana: '',
+																is_paket: subs_sub_bl.data[0].is_paket,
+																kode_dana: '',
+																id_subtitle: rka.id_subs_sub_bl,
+																subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
+															}
+														};
 														rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
 														rka.id_metode_barjas = subs_sub_bl.data[0].id_metode_barjas;
-														rka.is_paket = subs_sub_bl.data[0].is_paket;
 														return resolve3();
 													});	
 												}));
