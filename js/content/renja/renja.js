@@ -1989,11 +1989,11 @@ function singkron_subgiat_modal(sub_keg_asli=false){
 		var last = data_sub_keg_selected.length-1;
 		data_sub_keg_selected.reduce(function(sequence, nextData){
 			return sequence.then(function(current_data){
-				console.log('current_data data_sub_keg_selected', current_data);
 				return new Promise(function(resolve_reduce, reject_reduce){
 					if(
 						current_data.kode_sub_skpd
 					){
+						show_loading('singkron SKPD '+current_data.nama_sub_skpd, true);
 						cat_wp = current_data.kode_sub_skpd+' '+current_data.nama_sub_skpd;
 						var nama_skpd = current_data.nama_skpd.split(' ');
 						nama_skpd.shift();
@@ -2051,31 +2051,30 @@ function singkron_subgiat_modal(sub_keg_asli=false){
 }
 
 function singkron_all_unit(units) {
+	show_loading();
 	jQuery('#persen-loading').attr('persen', 0);
 	jQuery('#persen-loading').html('0%');
 	var last = units.length-1;
 	jQuery('#persen-loading').attr('total', units.length);
 	units.reduce(function(sequence, nextData){
         return sequence.then(function(current_data){
-    		return new Promise(function(resolve_reduce, reject_reduce){				
+    		return new Promise(function(resolve_reduce, reject_reduce){
 				var c_persen = +jQuery('#persen-loading').attr('persen');
 				c_persen++;
 				jQuery('#persen-loading').attr('persen', c_persen);
 				jQuery('#persen-loading').html(((c_persen/units.length)*100).toFixed(2)+'%'+'<br>'+current_data.nama_skpd);
-				console.log('singkron_all_unit', current_data);
+				pesan_loading('singkron SKPD '+current_data.nama_skpd);
     			relayAjax({
-					url: config.sipd_url+'api/master/skpd/view/'+current_data.id_skpd+'/'+current_data.tahun+'/'+current_data.id_daerah,			
-                    type: 'GET',	      				
+					url: config.sipd_url+'api/master/skpd/view/'+current_data.id_skpd+'/'+current_data.tahun+'/'+current_data.id_daerah,
+                    type: 'GET',
                     processData: false,
                     contentType : 'application/json',
-                    beforeSend: function (xhr) {			    
+                    beforeSend: function (xhr) {
                         xhr.setRequestHeader("X-API-KEY", x_api_key());
-                        xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+                        xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);
                     },
 					success: function(html){
-                        console.log('html singkron_all_unit', html);
             			singkron_rka_ke_lokal_all(current_data, function(){
-            				console.log('next reduce singkron_all_unit', nextData);
 							resolve_reduce(nextData);
             			});
             		}
@@ -2092,26 +2091,8 @@ function singkron_all_unit(units) {
         });
     }, Promise.resolve(units[last]))
     .then(function(data_last){
-    	var opsi = { 
-			action: 'get_cat_url',
-			type: 'ri',
-			api_key: config.api_key,
-			category : 'Semua Perangkat Daerah Tahun Anggaran '+_token.tahun
-		};
-		var data = {
-		    message:{
-		        type: "get-url",
-		        content: {
-				    url: config.url_server_lokal,
-				    type: 'post',
-				    data: opsi,
-	    			return: true
-				}
-		    }
-		};
-		chrome.runtime.sendMessage(data, function(response) {
-		    console.log('responeMessage', response);
-		});
+    	alert('Berhasil singkron ke DB lokal!');
+    	hide_loading();
     })
     .catch(function(e){
         console.log(e);
@@ -2120,8 +2101,9 @@ function singkron_all_unit(units) {
 
 function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 	if((opsi_unit && opsi_unit.id_skpd) || confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
-		show_loading();
-		console.log('singkron_rka_ke_lokal_all opsi_unit', opsi_unit);
+		if((!opsi_unit || !opsi_unit.id_skpd)){
+			show_loading();
+		}
 		id_unit = opsi_unit.id_skpd;
 		if(opsi_unit && opsi_unit.id_skpd){
 			// script singkron pagu SKPD
@@ -2204,7 +2186,6 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 		// get data belanja
 		list_belanja_by_tahun_daerah_unit(id_unit)
 		.then(function(subkeg){
-			console.log('list_belanja_by_tahun_daerah_unit', subkeg.data);
 			// ubah status sub_keg_bl jadi tidak aktif semua agar jika ada sub keg yang dihapus, sipd lokal bisa ikut terupdate
 			new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
 				promise_nonactive[id_unit] = resolve_reduce_nonactive;
@@ -2240,7 +2221,6 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 				})
 			}).then(function(){
 				if(opsi_unit && opsi_unit.id_skpd){
-					var cat_wp = '';
 					var last = subkeg.data.length-1;
 					console.log('subkeg', subkeg.data);
 					subkeg.data.reduce(function(sequence, nextData){
@@ -2250,7 +2230,6 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 								if(
 									current_data.kode_sub_skpd
 								){
-									cat_wp = current_data.kode_sub_skpd+' '+current_data.nama_sub_skpd;
                                     var nama_skpd = current_data.nama_skpd;
 									singkron_rka_ke_lokal({
 										id_daerah: current_data.id_daerah,
@@ -2296,53 +2275,15 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 						if(callback){
 							return callback();
 						}else{
-							var opsi = { 
-								action: 'get_cat_url',
-								api_key: config.api_key,
-								category : cat_wp
-							};
-							var data = {
-								message:{
-									type: "get-url",
-									content: {
-										url: config.url_server_lokal,
-										type: 'post',
-										data: opsi,
-										return: true
-									}
-								}
-							};
-							chrome.runtime.sendMessage(data, function(response) {
-								console.log('responeMessage', response);
-							});
+							alert('Berhasil singkron data ke DB lokal!');
 						}
 					})
 					.catch(function(e){
 						console.log(e);
 					});
 				}else{
-					console.log('jika tidak ada  muncul data sub giat', subkeg.data);
+					console.log('jika tidak ada muncul data sub giat', subkeg.data);
 					open_modal_subgiat(id_unit);
-					// window.sub_keg_skpd = subkeg.data;
-					// var body = '';
-					// subkeg.data.map(function(b, i){
-					// 	if(
-					// 		b.sub_giat_locked == 0
-					// 		&& b.kode_sub_skpd
-					// 	){
-					// 		var keyword = b.kode_sbl;	
-					// 		rka_all[keyword] = b;						
-					// 		body += ''
-					// 			+'<tr>'								
-					// 				+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-					// 				+'<td>'+b.nama_sub_giat+'</td>'
-					// 				+'<td>-</td>'								
-					// 			+'</tr>';
-					// 	}
-					// });					
-					// jQuery('#table-extension tbody').html(body);
-					// run_script('show_modal_sm');
-					// hide_loading();
 				}
 			});	
 		});
@@ -2357,7 +2298,12 @@ function singkron_rka_ke_lokal(opsi, callback) {
 		) 
 		|| confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')
 	){
-		show_loading();
+		if(
+			!opsi 
+			|| !opsi.kode_bl
+		){
+			show_loading();
+		}
         pesan_loading('singkron_rka_ke_lokal kode_sbl='+opsi.kode_sbl+' nama_sub_skpd='+opsi.nama_sub_skpd);
 		var id_unit = opsi.id_skpd ? opsi.id_skpd : _token.unit;
 		if(
@@ -2824,7 +2770,6 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						_data_all.reduce(function(sequence, nextData){
 							return sequence.then(function(current_data){
 								return new Promise(function(resolve_reduce, reject_reduce){
-									console.log('current_data', current_data);
 									var sendData = current_data.map(function(rka, i){
 										return new Promise(function(resolve2, reject2){
 											var sendData2 = [];
@@ -3832,7 +3777,7 @@ function get_ket_sub_bl(id_ket_sub_bl){
     		window.global_ket_sub_bl = {};
     	}
     	if(!global_ket_sub_bl[id_ket_sub_bl]){
-    		show_loading('get_ket_sub_bl id_ket_sub_bl='+id_ket_sub_bl);
+    		pesan_loading('get_ket_sub_bl id_ket_sub_bl='+id_ket_sub_bl);
 			relayAjax({
 				url: config.sipd_url+'api/renja/ket_sub_bl/find_by_id_list',                                    
 				type: 'POST',	      				
@@ -3862,7 +3807,7 @@ function get_subs_sub_bl(id_subs_sub_bl){
     		window.global_subs_sub_bl = {};
     	}
     	if(!global_subs_sub_bl[id_subs_sub_bl]){
-    		show_loading('get_subs_sub_bl id_subs_sub_bl='+id_subs_sub_bl);
+    		pesan_loading('get_subs_sub_bl id_subs_sub_bl='+id_subs_sub_bl);
 			relayAjax({
 				url: config.sipd_url+'api/renja/subs_sub_bl/find_by_id_list',                                    
 				type: 'POST',	      				

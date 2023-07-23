@@ -55,15 +55,19 @@ function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
 };
 
 const show_loading = function(){
+	console.log('show_loading');
 	jQuery('#wrap-loading').show();
 	jQuery('#persen-loading').html('');
+	jQuery('#pesan-loading').html('');
 	jQuery('#persen-loading').attr('persen', '');
 	jQuery('#persen-loading').attr('total', '');
 }
 
 const hide_loading = function(){
+	console.log('hide_loading');
 	jQuery('#wrap-loading').hide();
 	jQuery('#persen-loading').html('');
+	jQuery('#pesan-loading').html('');
 	jQuery('#persen-loading').attr('persen', '');
 	jQuery('#persen-loading').attr('total', '');
 }
@@ -72,7 +76,7 @@ function pesan_loading(pesan, loading=false){
 	if(loading){
 		pesan = '<div style="padding: 20px;">LOADING...</div>'+pesan;
 	}
-	jQuery('#persen-loading').html(pesan);
+	jQuery('#pesan-loading').html(pesan);
 	console.log(pesan);
 }
 
