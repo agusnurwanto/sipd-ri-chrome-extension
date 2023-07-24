@@ -854,8 +854,14 @@ function cekUrl(current_url, nomor=1){
 				}		
 			}
 			// Renja Belanja
-			else if(current_url.indexOf('/perencanaan/renja/') != -1)
-			{		
+			else if(
+				current_url.indexOf('/perencanaan/renja/') != -1
+				|| current_url.indexOf('/penganggaran/anggaran/') != -1
+			){
+				window.global_is_anggaran = 0;
+				if(current_url.indexOf('/penganggaran/anggaran/') != -1){
+					window.global_is_anggaran = 1;
+				}
 				var id_skpd = getUrlVars("id_skpd");
 				var rekap_suber_dana = ''
 					+'<button style="margin-left: 20px;" class="btn btn-sm btn-success btn-outline" id="rekap_sumber_dana">'
@@ -869,7 +875,10 @@ function cekUrl(current_url, nomor=1){
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
 					+'</button>';
 				// idunit=_token.unit;				
-				if(current_url.indexOf('/perencanaan/renja/cascading/rincian/sub-kegiatan') != -1){
+				if(
+					current_url.indexOf('/perencanaan/renja/cascading/rincian/sub-kegiatan') != -1
+					|| current_url.indexOf('/penganggaran/anggaran/cascading/rincian/sub-kegiatan') != -1
+				){
 					console.log('halaman Rincian belanja SKPD');
 					var btn = ''
 						+'<div class="aksi-extension">'						
@@ -898,7 +907,10 @@ function cekUrl(current_url, nomor=1){
 							})
 						}
 					});
-				}else if(current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1){			
+				}else if(
+					current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1
+					|| current_url.indexOf('/penganggaran/anggaran/cascading/belanja?id_skpd='+id_skpd) != -1
+				){
 					console.log('halaman Renja per SKPD');
 					singkron_rka += ''
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="get_renja_lokal">'
@@ -1008,7 +1020,10 @@ function cekUrl(current_url, nomor=1){
 						});
 					}
 				}
-				else if(current_url.indexOf('/perencanaan/renja/cascading') != -1){				
+				else if(
+					current_url.indexOf('/perencanaan/renja/cascading') != -1
+					|| current_url.indexOf('/penganggaran/anggaran/cascading') != -1
+				){				
 					console.log('halaman Renja list SKPD oleh admin TAPD');
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
