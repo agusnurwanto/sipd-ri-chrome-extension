@@ -2684,29 +2684,13 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						data.data.map(function(rka, i){
 							var _rka = {};
 							_rka.action = rka.action;
-							_rka.created_user = rka.created_user;
+							_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;
 							_rka.createddate = rka.createddate;
 							_rka.createdtime = rka.createdtime;
-							_rka.harga_satuan = rka.harga_satuan;
 							_rka.harga_satuan_murni = rka.harga_satuan_murni;
-							_rka.id_daerah = rka.id_daerah;
-							_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;										
-							_rka.id_standar_nfs = rka.id_standar_nfs;
-							_rka.id_standar_harga = rka.id_standar_harga; //baru
-							_rka.id_dana = rka.id_dana; //baru
-							_rka.id_blt = rka.id_blt; //baru
-							_rka.id_usulan = rka.id_usulan; //baru
-							_rka.id_jenis_usul = rka.id_dana; //baru
 							_rka.is_locked = rka.is_locked;
-							_rka.jenis_bl = rka.jenis_bl;
-							
-							_rka.id_akun = rka.id_akun;
-							_rka.kode_akun = rka.kode_akun;
-							_rka.koefisien = rka.koefisien;
 							_rka.koefisien_murni = rka.koefisien_murni;
-							_rka.lokus_akun_teks = rka.lokus_akun_teks;
 							_rka.nama_akun = rka.nama_akun;
-							_rka.nama_standar_harga = rka.nama_standar_harga;
 							if(!rka.nama_standar_harga){
 								_rka.nama_standar_harga = rka.nama_akun;
 							}
@@ -2719,30 +2703,16 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							if(rka.satuan){
 								_rka.satuan = rka.satuan;
 							}else{
-								if(_rka.koefisien){
+								if(rka.koefisien){
 									_rka.satuan = rka.koefisien.split(' ');
 									_rka.satuan.shift();
 									_rka.satuan = _rka.satuan.join(' ');
 								}
 							}
-							_rka.sat1 = rka.sat_1;
-							_rka.sat2 = rka.sat_2;
-							_rka.sat3 = rka.sat_3;
-							_rka.sat4 = rka.sat_4;
-							_rka.spek = rka.spek;
-							_rka.volum1 = rka.vol_1;
-							_rka.volum2 = rka.vol_2;
-							_rka.volum3 = rka.vol_3;
-							_rka.volum4 = rka.vol_4;
-							_rka.volume = rka.volume;
 							_rka.volume_murni = rka.volume_murni;
-							_rka.total_harga = rka.total_harga;
 							_rka.rincian = rka.total_harga;
-							_rka.rincian_murni = rka.rkpd_murni; //baru
-							_rka.pajak = rka.pajak;
 							_rka.pajak_murni = rka.pajak_murni;
 							_rka.totalpajak = rka.totalpajak;
-							_rka.updated_user = rka.updated_user; 
 							_rka.updateddate = rka.updateddate;
 							_rka.updatedtime = rka.updatedtime;
 							_rka.user1 = rka.user1;
@@ -2753,8 +2723,6 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_rka.id_lurah_penerima = 0;
 							_rka.id_penerima = 0;
 							_rka.idkomponen = 0;
-							
-							_rka.set_sisa_kontrak = rka.set_sisa_kontrak; //baru
 							_data.push(_rka);
 							if((i+1)%_leng == 0){
 								_data_all.push(_data);
@@ -2765,58 +2733,225 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_data_all.push(_data);
 						}
 
-						var no_excel = 0;
 						var no_page = 0;
+						var no_rka = 0;
 						var total_page = _data_all.length;
 						var last = _data_all.length-1;
 
 						_data_all.reduce(function(sequence, nextData){
 							return sequence.then(function(current_data){
 								return new Promise(function(resolve_reduce, reject_reduce){
-									var sendData = current_data.map(function(rka, i){
-										return new Promise(function(resolve2, reject2){
-											var sendData2 = [];
-											if(rka.id_ket_sub_bl !=0){
-												sendData2.push(new Promise(function(resolve3, reject3){
-													get_ket_sub_bl(rka.id_ket_sub_bl).then(function(ket_sub_bl){
-														rka.ket_bl_teks = ket_sub_bl.data[0].ket_bl_teks;
-														return resolve3();
+
+									var last2 = current_data.length-1;
+									current_data.reduce(function(sequence2, nextData2){
+										return sequence2.then(function(_rka){
+											return new Promise(function(resolve_reduce2, reject_reduce2){
+												new Promise(function(resolve3, reject3){
+													detail_rincian_sub_bl(_rka).then(function(detail){
+														detail = detail.data[0];
+														_rka.id_rinci_sub_bl = detail.id_rinci_sub_bl;
+											            _rka.id_unik = detail.id_unik;
+											            _rka.tahun = detail.tahun;
+											            _rka.id_daerah = detail.id_daerah;
+											            _rka.id_unit = detail.id_unit;
+											            _rka.id_bl = detail.id_bl;
+											            _rka.id_sub_bl = detail.id_sub_bl;
+											            _rka.id_subs_sub_bl = detail.id_subs_sub_bl;
+											            _rka.id_ket_sub_bl = detail.id_ket_sub_bl;
+											            _rka.id_akun = detail.id_akun;
+											            _rka.id_standar_harga = detail.id_standar_harga;
+											            _rka.id_standar_nfs = detail.id_standar_nfs;
+											            _rka.pajak = detail.pajak;
+											            _rka.volume = detail.volume;
+											            _rka.harga_satuan = detail.harga_satuan;
+											            _rka.koefisien = detail.koefisien;
+											            _rka.total_harga = detail.total_harga;
+											            _rka.vol_1 = detail.vol_1;
+											            _rka.sat_1 = detail.sat_1;
+											            _rka.vol_2 = detail.vol_2;
+											            _rka.sat_2 = detail.sat_2;
+											            _rka.vol_3 = detail.vol_3;
+											            _rka.sat_3 = detail.sat_3;
+											            _rka.vol_4 = detail.vol_4;
+											            _rka.sat_4 = detail.sat_4;
+											            _rka.created_user = detail.created_user;
+											            _rka.created_at = detail.created_at;
+											            _rka.updated_user = detail.updated_user;
+											            _rka.updated_at = detail.updated_at;
+											            _rka.id_jadwal_murni = detail.id_jadwal_murni;
+											            _rka.is_lokus_akun = detail.is_lokus_akun;
+											            _rka.lokus_akun_teks = detail.lokus_akun_teks;
+											            _rka.jenis_bl = detail.jenis_bl;
+											            _rka.id_blt = detail.id_blt;
+											            _rka.id_usulan = detail.id_usulan;
+											            _rka.id_jenis_usul = detail.id_jenis_usul;
+											            _rka.id_skpd = detail.id_skpd;
+											            _rka.id_sub_skpd = detail.id_sub_skpd;
+											            _rka.id_program = detail.id_program;
+											            _rka.id_giat = detail.id_giat;
+											            _rka.id_sub_giat = detail.id_sub_giat;
+											            _rka.rkpd_murni = detail.rkpd_murni;
+											            _rka.rkpd_pak = detail.rkpd_pak;
+											            _rka.set_sisa_kontrak = detail.set_sisa_kontrak;
+											            _rka.nama_daerah = detail.nama_daerah;
+											            _rka.nama_unit = detail.nama_unit;
+											            _rka.nama_bl = detail.nama_bl;
+											            _rka.nama_sub_bl = detail.nama_sub_bl;
+											            _rka.nama_subs_sub_bl = detail.nama_subs_sub_bl;
+											            _rka.nama_ket_sub_bl = detail.nama_ket_sub_bl;
+											            _rka.nama_akun = detail.nama_akun;
+											            _rka.nama_standar_harga = detail.nama_standar_harga;
+											            _rka.nama_standar_nfs = detail.nama_standar_nfs;
+											            _rka.nama_jadwal_murni = detail.nama_jadwal_murni;
+											            _rka.nama_blt = detail.nama_blt;
+											            _rka.nama_usulan = detail.nama_usulan;
+											            _rka.nama_jenis_usul = detail.nama_jenis_usul;
+											            _rka.nama_skpd = detail.nama_skpd;
+											            _rka.nama_sub_skpd = detail.nama_sub_skpd;
+											            _rka.nama_program = detail.nama_program;
+											            _rka.nama_giat = detail.nama_giat;
+											            _rka.nama_sub_giat = detail.nama_sub_giat;
+											            _rka.kode_daerah = detail.kode_daerah;
+											            _rka.kode_unit = detail.kode_unit;
+											            _rka.kode_akun = detail.kode_akun;
+											            _rka.kode_standar_harga = detail.kode_standar_harga;
+											            _rka.kode_skpd = detail.kode_skpd;
+											            _rka.kode_sub_skpd = detail.kode_sub_skpd;
+											            _rka.kode_program = detail.kode_program;
+											            _rka.kode_giat = detail.kode_giat;
+											            _rka.kode_sub_giat = detail.kode_sub_giat;
+											            _rka.kua_murni = detail.kua_murni;
+											            _rka.kua_pak = detail.kua_pak;
+											            _rka.id_dana = detail.id_dana;
+											            _rka.id_jadwal = detail.id_jadwal;
+											            if(!detail.lokus_akun_teks){
+															return resolve3();
+											            }else{
+											            	detail_penerima_bantuan(_rka).then(function(penerima){
+											            		penerima = penerima.data[0];
+											            		_rka.id_penerima_bantuan = penerima.id_penerima_bantuan;
+													            _rka.jenis_bantuan = penerima.jenis_bantuan;
+													            _rka.lokus_akun = penerima.lokus_akun;
+													            _rka.id_profil = penerima.id_profil;
+													            _rka.id_parpol = penerima.id_parpol;
+													            _rka.id_prop = penerima.id_prop;
+													            _rka.id_kokab = penerima.id_kokab;
+													            _rka.id_camat = penerima.id_camat;
+													            _rka.id_lurah = penerima.id_lurah;
+												            	if(!penerima.id_kokab){
+												            		return resolve3();
+												            	}else{
+												            		if(penerima.id_camat){
+												            			detail_kecamatan(penerima).then(function(kecamatan){
+												            				kecamatan = kecamatan.data[0];
+												            				_rka.id_camat = kecamatan.id_camat;
+																            _rka.id_prop = kecamatan.id_prop;
+																            _rka.id_kab_kota = kecamatan.id_kab_kota;
+																            _rka.kode_camat = kecamatan.kode_camat;
+																            _rka.camat_teks = kecamatan.camat_teks;
+																            _rka.camat_kode_ddn = kecamatan.kode_ddn;
+																            _rka.camat_kode_ddn_2 = kecamatan.kode_ddn_2;
+												            			});
+												            		}
+												            		if(penerima.id_lurah){
+												            			detail_kelurahan(penerima).then(function(kelurahan){
+												            				kelurahan = kelurahan.data[0];
+												            				_rka.id_lurah = kelurahan.id_lurah;
+																            _rka.kode_lurah = kelurahan.kode_lurah;
+																            _rka.lurah_teks = kelurahan.lurah_teks;
+																            _rka.lurah_kode_ddn = kelurahan.kode_ddn;
+																            _rka.lurah_kode_ddn_2 = kelurahan.kode_ddn_2;
+																            _rka.is_desa = kelurahan.is_desa;
+												            			});
+												            		}
+
+												            		detail_daerah({ id_daerah: penerima.id_kokab }).then(function(daerah){
+												            			daerah = daerah.data[0];
+															            _rka.kode_prop = daerah.kode_prop;
+															            _rka.kode_kab = daerah.kode_kab;
+															            _rka.nama_daerah = daerah.nama_daerah;
+															            _rka.kokab_kode_ddn = daerah.kode_ddn;
+															            _rka.kokab_kode_ddn_2 = daerah.kode_ddn_2;
+															            _rka.is_pusat = daerah.is_pusat;
+															            _rka.is_prop = daerah.is_prop;
+															            _rka.id_prop = daerah.id_prop;
+															            _rka.jqm_code = daerah.jqm_code;
+															            _rka.jqm_path = daerah.jqm_path;
+															            _rka.is_deleted = daerah.is_deleted;
+															            _rka.is_rekap = daerah.is_rekap;
+															            _rka.set_zona = daerah.set_zona;
+															            _rka.set_waktu_zona = daerah.set_waktu_zona;
+															            _rka.set_gmt_zona = daerah.set_gmt_zona;
+															            _rka.kode_satker = daerah.kode_satker;
+															            _rka.kode_prov_djpk = daerah.kode_prov_djpk;
+															            _rka.kode_kab_djpk = daerah.kode_kab_djpk;
+															            _rka.will_migrated = daerah.will_migrated;
+															            return resolve3();
+												            		});
+												            	}
+											            	});
+											            }
 													});	
-												}));
-											}
-											if(rka.id_subs_sub_bl !=0){
-												sendData2.push(new Promise(function(resolve3, reject3){
-													get_subs_sub_bl(rka.id_subs_sub_bl).then(function(subs_sub_bl){
-														rka.subs_bl_teks = {
-															subs_asli: subs_sub_bl.data[0].subs_bl_teks,
-															substeks: subs_sub_bl.data[0].subs_bl_teks,
-															sumber_dana: {
-																id_dana: subs_sub_bl.data[0].id_dana,
-																nama_dana: '',
-																is_paket: subs_sub_bl.data[0].is_paket,
-																kode_dana: '',
-																id_subtitle: rka.id_subs_sub_bl,
-																subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
-															}
-														};
-														rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
-														rka.id_metode_barjas = subs_sub_bl.data[0].id_metode_barjas;
-														return resolve3();
-													});	
-												}));
-											}
-											Promise.all(sendData2)
-											.then(function(val_all){
-												data_rka.rka[i] = rka;
-												return resolve2();
+												})
+												.then(function(){
+													return new Promise(function(resolve3, reject3){
+														if(_rka.id_ket_sub_bl!=0){
+															get_ket_sub_bl(_rka.id_ket_sub_bl).then(function(ket_sub_bl){
+																_rka.ket_bl_teks = ket_sub_bl.data[0].ket_bl_teks;
+																return resolve3();
+															});	
+														}else{
+															return resolve3();
+														}
+													});
+												})
+												.then(function(){
+													return new Promise(function(resolve3, reject3){
+														if(_rka.id_subs_sub_bl!=0){
+															get_subs_sub_bl(_rka.id_subs_sub_bl).then(function(subs_sub_bl){
+																_rka.subs_bl_teks = {
+																	subs_asli: subs_sub_bl.data[0].subs_bl_teks,
+																	substeks: subs_sub_bl.data[0].subs_bl_teks,
+																	sumber_dana: {
+																		id_dana: subs_sub_bl.data[0].id_dana,
+																		nama_dana: '',
+																		is_paket: subs_sub_bl.data[0].is_paket,
+																		kode_dana: '',
+																		id_subtitle: _rka.id_subs_sub_bl,
+																		subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
+																	}
+																};
+																_rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
+																_rka.id_metode_barjas = subs_sub_bl.data[0].id_metode_barjas;
+																return resolve3();
+															});	
+														}else{
+															return resolve3();
+														}
+													});
+												})
+												.then(function(){
+													data_rka.rka[no_rka] = _rka;
+													no_rka++;
+													return resolve_reduce2(nextData2);
+												});
+											})
+											.catch(function(e){
+												console.log(e);
+												return Promise.resolve(nextData2);
 											});
+										})
+										.catch(function(e){
+											console.log(e);
+											return Promise.resolve(nextData2);
 										});
-									});
-									Promise.all(sendData)
-									.then(function(val_all){
+									}, Promise.resolve(current_data[last2]))
+									.then(function(data_last2){
 										no_page++;
 										data_rka.no_page = no_page;
 										data_rka.total_page = total_page;
+
+										// kirim rincian ke lokal
 										var data = {
 											message:{
 												type: "get-url",
@@ -2839,6 +2974,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										};
 										if(!opsi || !opsi.no_return){
 											continue_singkron_rka[kode_sbl].alert = true;
+										}else{
 										}
 										if(
 											total_page == 1
@@ -2848,11 +2984,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 											resolve_reduce(nextData);
 										}
 										chrome.runtime.sendMessage(data, function(response) {});
-									})
-									.catch(function(err){
-										console.log('err', err);
-										return resolve_reduce(nextData);
 									});
+
 								})
 								.catch(function(e){
 									console.log(e);
@@ -2892,13 +3025,11 @@ function singkron_rka_ke_lokal(opsi, callback) {
 								}
 								chrome.runtime.sendMessage(data, function(response) {});
 							}
-							console.log('selesai kirim data ke lokal!', opsi);
+							pesan_loading('selesai kirim data ke lokal sub kegiatan='+kode_sbl+' '+res_sub_bl_view.data[0].nama_sub_giat);
+							if(callback){
+								callback();
+							}
 						});
-
-						// langsung jalankan callback untuk proses ke sub keg selanjutnya
-						if(callback){
-							callback();
-						}
 					});
 				});
 			});
@@ -4770,5 +4901,123 @@ function validasi_pagu(opsi){
 				return resolve({});
 			}
 		});
+	});
+}
+
+// get rincian 
+function detail_rincian_sub_bl(opsi){
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/rinci_sub_bl/view/'+opsi.id_rinci_sub_bl,						
+			type: 'POST',	      				
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,
+				id_sub_bl: opsi.id_sub_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			}
+		});
+	});
+}
+
+// get rincian 
+function detail_penerima_bantuan(opsi){
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/penerima_bantuan/view_by_id_rinci_sub_bl/'+opsi.id_rinci_sub_bl,						
+			type: 'POST',	      				
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			}
+		});
+	});
+}
+
+// get detail daerah
+function detail_daerah(opsi){
+	return new Promise(function(resolve, reject){
+		if(typeof global_detail_daerah){
+			window.global_detail_daerah = {};
+		}
+		if(!global_detail_daerah[opsi.id_daerah]){
+			pesan_loading("Get detail daerah id_daerah="+opsi.id_daerah);
+			relayAjax({
+				url: config.sipd_url+'api/master/daerah/view/'+opsi.id_daerah,
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},
+				success: function(res){
+					global_detail_daerah[opsi.id_daerah] = res;
+					return resolve(res);
+				}
+			});
+		}else{
+			return resolve(global_detail_daerah[opsi.id_daerah]);
+		}
+	});
+}
+
+// get detail kecamatan
+function detail_kecamatan(opsi){
+	return new Promise(function(resolve, reject){
+		if(typeof global_detail_kecamatan){
+			window.global_detail_kecamatan = {};
+		}
+		if(!global_detail_kecamatan[opsi.tahun+'-'+opsi.id_camat]){
+			pesan_loading("Get detail kecamatan id="+opsi.id_camat+' tahun='+opsi.tahun);
+			relayAjax({
+				url: config.sipd_url+'api/master/kecamatan/view/'+opsi.tahun+'/'+opsi.id_camat,
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},
+				success: function(res){
+					global_detail_kecamatan[opsi.tahun+'-'+opsi.id_camat] = res;
+					return resolve(res);
+				}
+			});
+		}else{
+			return resolve(global_detail_kecamatan[opsi.tahun+'-'+opsi.id_camat]);
+		}
+	});
+}
+
+// get detail kelurahan
+function detail_kelurahan(opsi){
+	return new Promise(function(resolve, reject){
+		if(typeof global_detail_kelurahan){
+			window.global_detail_kelurahan = {};
+		}
+		if(!global_detail_kelurahan[opsi.tahun+'-'+opsi.id_lurah]){
+			pesan_loading("Get detail kelurahan id="+opsi.id_lurah+' tahun='+opsi.tahun);
+			relayAjax({
+				url: config.sipd_url+'api/master/kelurahan/view/'+opsi.tahun+'/'+opsi.id_lurah,
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},
+				success: function(res){
+					global_detail_kelurahan[opsi.tahun+'-'+opsi.id_lurah] = res;
+					return resolve(res);
+				}
+			});
+		}else{
+			return resolve(global_detail_kelurahan[opsi.tahun+'-'+opsi.id_lurah]);
+		}
 	});
 }
