@@ -41,7 +41,8 @@ function singkron_pembiayaan_lokal(tipe){
                                         data: {            
                                             id_daerah: _token.daerah_id,				                                            
                                             tahun: _token.tahun,					
-                                            id_unit: idskpd                                            
+                                            id_unit: idskpd,
+                                            tipe_pembiayaan: tipe,                                         
                                         },
                                         beforeSend: function (xhr) {			    
                                             xhr.setRequestHeader("X-API-KEY", apiKey);
@@ -197,7 +198,8 @@ function singkron_pembiayaan_lokal(tipe){
                                         data: {            
                                             id_daerah: _token.daerah_id,				                                            
                                             tahun: _token.tahun,					
-                                            id_unit: idskpd                                            
+                                            id_unit: idskpd,
+                                            tipe_pembiayaan: tipe,                                          
                                         },
                                         beforeSend: function (xhr) {			    
                                             xhr.setRequestHeader("X-API-KEY", apiKey);
