@@ -25,6 +25,7 @@ function singkron_pembiayaan_lokal(tipe){
                     pesan_loading('Get data Pembiayaan '+tipe+'  SKPD');	
                     console.log(skpd.data);
                     var last = skpd.data.length-1;
+                    var nomor = 0;
                     skpd.data.reduce(function(sequence, nextData){
                         return sequence.then(function(current_data){
                             return new Promise(function(resolve_reduce, reject_reduce){
@@ -40,7 +41,8 @@ function singkron_pembiayaan_lokal(tipe){
                                         data: {            
                                             id_daerah: _token.daerah_id,				                                            
                                             tahun: _token.tahun,					
-                                            id_unit: idskpd                                            
+                                            id_unit: idskpd,
+                                            tipe_pembiayaan: tipe,                                         
                                         },
                                         beforeSend: function (xhr) {			    
                                             xhr.setRequestHeader("X-API-KEY", apiKey);
@@ -120,13 +122,21 @@ function singkron_pembiayaan_lokal(tipe){
                                                                 data: data_pembiayaan,
                                                                 id_skpd: idskpd
                                                             },
-                                                            return: true
+                                                            return: false
                                                         }
                                                     }
                                                 };                                          
+                                                if(nomor == skpd.data.data.length-1){
+                                                    data.message.content.return = true;
+                                                }                                          
                                                 chrome.runtime.sendMessage(data, function(response) {
                                                     console.log('responeMessage', response);
                                                 });
+    
+                                                // dikasih jeda agar lebih aman di server
+                                                setTimeout(function(){
+                                                    resolve_reduce(nextData);
+                                                }, 1000);
                                             }
                                         },
                                         error: function(e) {
@@ -188,7 +198,8 @@ function singkron_pembiayaan_lokal(tipe){
                                         data: {            
                                             id_daerah: _token.daerah_id,				                                            
                                             tahun: _token.tahun,					
-                                            id_unit: idskpd                                            
+                                            id_unit: idskpd,
+                                            tipe_pembiayaan: tipe,                                          
                                         },
                                         beforeSend: function (xhr) {			    
                                             xhr.setRequestHeader("X-API-KEY", apiKey);
@@ -237,7 +248,8 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].rkpd_murni = b.rkpd_murni; //baru int
                                                     data_pembiayaan[i].rkpd_pak = b.rkpd_pak; //baru int
                                                     //   data_pembiayaan[i].nilaimurni = b.nilaimurni; //?                                              
-                                                      data_pembiayaan[i].rekening = b.kode_akun+' '+nama_akun;
+                                                    //   data_pembiayaan[i].rekening = b.rekening; //?
+                                                    data_pembiayaan[i].rekening = b.kode_akun+' '+nama_akun;
                                                     data_pembiayaan[i].satuan = b.satuan; //baru var
                                                     data_pembiayaan[i].skpd_koordinator = b.skpd_koordinator;
                                                     data_pembiayaan[i].total = b.total;
@@ -267,14 +279,22 @@ function singkron_pembiayaan_lokal(tipe){
                                                                 data: data_pembiayaan,
                                                                 id_skpd: idskpd
                                                             },
-                                                            return: true
+                                                            return: false
                                                         }
                                                     }
                                                 };                                          
+                                                if(nomor == skpd.data.data.length-1){
+                                                    data.message.content.return = true;
+                                                }                                          
                                                 chrome.runtime.sendMessage(data, function(response) {
                                                     console.log('responeMessage', response);
                                                 });
-                                            }                                            
+    
+                                                // dikasih jeda agar lebih aman di server
+                                                setTimeout(function(){
+                                                    resolve_reduce(nextData);
+                                                }, 1000);
+                                            }
                                         },
                                         error: function(e) {
                                             console.log(e);
