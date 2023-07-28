@@ -751,12 +751,12 @@ function set_mulit_rek(){
 			var body = '';
 			data_ssh = data_ssh.join(',');
 			akun.data.map(function(b, i){
-				if(b.kode_akun.split(',') >= 6){
+				if(b.kode_akun.split('.').length >= 6){
 					var keyword = data_ssh+'='+b.id_akun;
 					akun_all[keyword] = b;
 					body += ''
 						+'<tr>'
-							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"/><br>'+data_ssh+'</td>'
+							+'<td class="text-center" style="word-break: break-all; width: 100px;"><input type="checkbox" value="'+keyword+'"/><br>'+data_ssh.replace(/,/g, ', ')+'</td>'
 							+'<td>'+b.id_akun+'</td>'
 							+'<td>'+b.kode_akun+'</td>'
 							+'<td>'+b.nama_akun+'</td>'
@@ -848,9 +848,34 @@ function proses_simpan_multirek(){
 
 function simpan_rekening(idstandarharga, idakun){    
     return new Promise(function(resolve, reject){
-    	console.log('SIMPAN Rekening');
+    	pesan_loading('SIMPAN Rekening');
 		relayAjax({
 			url: config.sipd_url+'api/master/d_komponen_akun/add',                                    
+			type: 'POST',	      				
+			data: {            
+					tahun: _token.tahun,				
+					id_daerah: _token.daerah_id,	
+					id_user_log: _token.user_id,
+					id_daerah_log: _token.daerah_id,
+					id_standar_harga: idstandarharga,
+					id_akun: idakun
+				},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(simpanrekening){
+	      		return resolve(simpanrekening);
+	      	}
+	    });
+    });
+}
+
+function hapus_rekening(idstandarharga, idakun){    
+    return new Promise(function(resolve, reject){
+    	pesan_loading('HAPUS Rekening');
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen_akun/delete',                                    
 			type: 'POST',	      				
 			data: {            
 					tahun: _token.tahun,				
@@ -912,16 +937,17 @@ function show_akun_ssh(){
 }
 
 function get_rekening_all(){
-	pesan_loading("Get master Rekening");
 	return new Promise(function(resolve, reject){
 		if(typeof global_all_rekening == 'undefined'){
+			pesan_loading("Get master Rekening");
 			relayAjax({
 				url: config.sipd_url+'api/master/akun/listNew',
 				type: 'POST',
 				data: {
 					tahun: _token.tahun,
 					id_daerah: _token.daerah_id,
-	                length: 213070,
+                	deleted_data: true,
+	                length: 1213070,
 	                start: 0,
 				},
 				beforeSend: function (xhr) {			    
