@@ -37,6 +37,35 @@ function get_all_ssh_sipd(type_data_ssh, search_value=false){
 	})
 }
 
+function get_rekening_ssh(opsi) {
+	return new Promise(function(resolve, reject){
+		pesan_loading('Get rekening dari standar harga kode='+opsi.kode_standar_harga);
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/listRekening',
+			type: 'POST',
+			data: {
+				id_standar_harga: opsi.id_standar_harga,
+				kode_standar_harga: opsi.kode_standar_harga,
+				kelompok: opsi.kelompok,
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id
+			},
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("x-api-key", x_api_key());
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(ret){
+				val.rek_belanja = ret.data;
+				return resolve(val);
+			},
+			error: function(e) {
+				console.log(e);
+				return resolve(val);
+			}
+		});
+	})
+}
+
 function singkron_ssh_ke_lokal(type_data_ssh){
 	console.log('type_data_ssh', type_data_ssh);
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
@@ -78,29 +107,13 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 					return new Promise(function(resolve_redurce, reject_redurce){
 						var sendData = current_data.map(function(val, n){
 							return new Promise(function(resolve, reject){
-								console.log('rekening', val);
-								relayAjax({
-									url: config.sipd_url+'api/master/d_komponen/listRekening',
-									type: 'POST',
-									data: {
-										id_standar_harga: val.id_standar_harga,
-										kode_standar_harga: val.kode_standar_harga,
-										kelompok: kelompok,
-										tahun: _token.tahun,
-										id_daerah: _token.daerah_id
-									},
-									beforeSend: function (xhr) {
-										xhr.setRequestHeader("x-api-key", x_api_key());
-										xhr.setRequestHeader("x-access-token", _token.token);
-									},
-									success: function(ret){
-										val.rek_belanja = ret.data;
-										return resolve(val);
-									},
-									error: function(e) {
-										console.log(e);
-										return resolve(val);
-									}
+								get_rekening_ssh({
+									id_standar_harga: val.id_standar_harga,
+									kode_standar_harga: val.kode_standar_harga,
+									kelompok: kelompok
+								}).then(function(ret){
+									val.rek_belanja = ret.data;
+									return resolve(val);
 								});
 							})
 							.catch(function(e){
@@ -566,7 +579,7 @@ function cek_duplikat_ssh(){
 		kelompok = 3;
 	}else if (type_data_ssh =='SBU') {
 		kelompok = 4;
-	}		
+	}
 	relayAjax({
 		url: config.sipd_url+'api/master/d_komponen/listAll',
 		type: 'POST',
@@ -608,36 +621,28 @@ function cek_duplikat_ssh(){
 				l1++;
 			});
 			var no = 0;
-			for(var i in data_all_ssh){
+			for(var i in duplikat_ssh){
 				window.ssh_duplikat = {};
 				var id = [];
 				var url_hapus = [];
 				var ssh = duplikat_ssh[i].detail;
 				ssh.map(function(b, n){
-					id.push(b.id_standar_harga+' ( '+b.kode_standar_harga+' )');
-					// var url = b.action.split("hapusKomp('")[1].split("'")[0];
-					// url_hapus.push(url);
-					var keyword = b.id_standar_harga;
-					//ssh_duplikat[keyword] = b;
-				
 					no++;
 					html_duplikat += ''
 						+'<tr>'
-							+'<td>'+no+'</td>'
-							//+'<td><input type="checkbox" class="list-ssh-duplikat" data-nama="'+ssh[0].nama_standar_harga +'('+id.join(', ')+')'+'"><br>'+id.join('<br>')+'</td>'
-							+'<td class="text-center"><input type="checkbox" value="'+keyword+'"></td>'
-							+'<td>'+id.join('<br>')+'</td>'
-							//+'<td>'+ssh[0].id_standar_harga+' ( '+ssh[0].kode_standar_harga+' )</td>'
-							+'<td>'+ssh[0].kode_kel_standar_harga+'</td>'
-							+'<td>'+ssh[0].nama_standar_harga+'</td>'
-							+'<td>'+ssh[0].spek+'</td>'
-							+'<td>'+ssh[0].satuan+'</td>'
-							+'<td>'+ssh[0].harga+'</td>'
+							+'<td class="text-center">'+no+'</td>'
+							+'<td class="text-center"><input type="checkbox" value="'+b.id_standar_harga+'"></td>'
+							+'<td>'+b.id_standar_harga+'</td>'
+							+'<td>'+b.kode_standar_harga+'</td>'
+							+'<td>'+b.nama_standar_harga+'</td>'
+							+'<td>'+b.spek+'</td>'
+							+'<td>'+b.satuan+'</td>'
+							+'<td>'+b.harga+'</td>'
 						+'</tr>';
 				});
 			}
-			console.log('data_all_ssh = '+l1, 'duplikat_ssh = '+l2);
-			jQuery('#duplikat-komponen-akun .modal-title .info-title').html('( Jumlah Semua Data: '+l1+', Jumlah Duplikat: '+l2+' )');
+			pesan_loading('data_all_ssh = '+l1, 'duplikat_ssh = '+l2);
+			jQuery('#modal-extension .modal-title .info-title').html('( Jumlah Semua Data: '+l1+', Jumlah Duplikat: '+l2+' )');
 			jQuery('#table_duplikat tbody').html(html_duplikat);
 			run_script('show_modal_sm', {order: [[1, "asc"]]});			
 			hide_loading();
@@ -716,28 +721,74 @@ function find_rekening(opsi){
 	});
 }
 
-function set_mulit_rek(){
-	var toolbar = jQuery('.card-header .card-toolbar.text-end .ng-star-inserted.dropdown');
-	if(toolbar.find('.checkall-ssh').length == 0){
-		toolbar.prepend('<label style="margin-right: 20px;"><input type="checkbox" class="checkall-ssh"> Ceklist All</label>');
+function hapus_rek_all(type_data_ssh){
+	var kelompok;
+	if (type_data_ssh =='SSH') {
+		kelompok = 1;
+	}else if (type_data_ssh =='HSPK') {
+		kelompok = 2;
+	}else if (type_data_ssh =='ASB') {
+		kelompok = 3;
+	}else if (type_data_ssh =='SBU') {
+		kelompok = 4;
 	}
-	jQuery('.sipd-table tbody > tr').map(function(){
-		var td = jQuery(this).find('>td');
-		var uraian = td.eq(1).text().trim();
-		if(uraian){
-			var span = td.eq(0).find('span');
-			if(span.find('input[type="checkbox"]').length == 0){
-				span.prepend('<input class="checkbox_ssh" type="checkbox" value="'+span.text()+'"> ');
-			}
-		}
-	});
 	var data_ssh = [];
 	jQuery('.sipd-table tbody > tr > td input[type="checkbox"]').map(function(i, b){
 		var cek = jQuery(b).is(':checked');
 		if(cek){
 			var id = jQuery(b).val();
 			data_ssh.push(id);
-			console.log(id);
+		}
+	});
+	if(data_ssh.length == 0){
+		alert('Pilih dulu item Standar Harga!');
+	}else{
+		if(confirm('Apakah anda yakin untuk menghapus rekening dari item '+type_data_ssh+' ini? ID = ( '+data_ssh.join(', ')+' )')){
+			show_loading();
+			var last = data_ssh.length-1;				
+			data_ssh.reduce(function(sequence, nextData){
+				return sequence.then(function(id_standar_harga){
+					return new Promise(function(resolve_reduce, reject_reduce){
+						var kode_standar_harga = jQuery('input[value="'+id_standar_harga+'"]').closest('tr').find('td').eq(1).text();
+						get_rekening_ssh({
+							id_standar_harga: id_standar_harga,
+							kode_standar_harga: kode_standar_harga,
+							kelompok: kelompok
+						}).then(function(ret){
+							ret.data.map(function(b, i){
+								hapus_rekening(id_standar_harga, b.id_akun);
+							})
+							return resolve_reduce(nextData);
+						});
+					})
+					.catch(function(e){
+						console.log(e);
+						return Promise.resolve(nextData);
+					});
+				})
+				.catch(function(e){
+					console.log(e);
+					return Promise.resolve(nextData);
+				});
+			}, Promise.resolve(data_ssh[last]))
+			.then(function(last){
+				hide_loading();        
+				alert('Berhasil hapus Rekening!');
+			})
+			.catch(function(e){
+				console.log(e);
+			});
+		}
+	}
+}
+
+function set_mulit_rek(){
+	var data_ssh = [];
+	jQuery('.sipd-table tbody > tr > td input[type="checkbox"]').map(function(i, b){
+		var cek = jQuery(b).is(':checked');
+		if(cek){
+			var id = jQuery(b).val();
+			data_ssh.push(id);
 		}
 	});
 	
@@ -747,25 +798,59 @@ function set_mulit_rek(){
 		show_loading();
 		get_rekening_all()
 		.then(function(akun){
+			run_script('show_modal', {
+				id: 'modal-extension-rekening'
+			});
+
 			var akun_all = {};
-			var body = '';
+			var option_items = [];
 			data_ssh = data_ssh.join(',');
 			akun.data.map(function(b, i){
 				if(b.kode_akun.split('.').length >= 6){
 					var keyword = data_ssh+'='+b.id_akun;
 					akun_all[keyword] = b;
-					body += ''
-						+'<tr>'
-							+'<td class="text-center" style="word-break: break-all; width: 100px;"><input type="checkbox" value="'+keyword+'"/><br>'+data_ssh.replace(/,/g, ', ')+'</td>'
-							+'<td>'+b.id_akun+'</td>'
-							+'<td>'+b.kode_akun+'</td>'
-							+'<td>'+b.nama_akun+'</td>'
-						+'</tr>';
+					option_items.push({ id: keyword, text: b.kode_akun+' '+b.nama_akun });
 				}
 			});
-			jQuery('#table-extension-rekening tbody').html(body);
-			run_script('show_modal', {
-				id: 'modal-extension-rekening'
+			var body = 'ID Standar Harga = '+data_ssh.replace(/,/g, ', ')
+				+'<select id="table-extension-rekening" name="states[]" multiple="multiple"></select>';
+			jQuery('#table-extension-rekening-ket').html(body);
+			jQuery('#table-extension-rekening').select2({
+				width: '100%',
+				placeholder: 'Cari rekening',
+			    minimumInputLength: 4,
+			    allowClear: true,
+				dropdownParent: jQuery('#modal-extension-rekening'),
+				ajax: {
+					delay: 100,
+		            transport: function(params, success, failure) {
+		                let pageSize = 25;
+		                let term = (params.data.term || '').toLowerCase();
+		                let page = (params.data.page || 1);
+
+		                if(
+		                	typeof global_timer != 'undefined' 
+		                	&& global_timer != null
+		                ){
+		                    clearTimeout(global_timer);
+		                }
+
+		                window.global_timer = setTimeout(function(){
+		                    global_timer = null;
+		                    let results = option_items.filter(function(f){
+		                        return f.text.toLowerCase().includes(term);
+		                    });
+		                    let paged = results.slice((page -1) * pageSize, page * pageSize);
+		                    let options = {
+		                        results: paged,
+		                        pagination: {
+		                            more: results.length >= page * pageSize
+		                        }
+		                    };
+		                    success(options);
+		                }, params.delay);
+		            }
+		        }
 			});
 			hide_loading();			
 		});
@@ -773,14 +858,7 @@ function set_mulit_rek(){
 }
 
 function proses_simpan_multirek(){
-	var data_multirek_selected = [];	
-	jQuery('#table-extension-rekening tbody tr input[type="checkbox"]').map(function(i, b){
-		var cek = jQuery(b).is(':checked');
-		if(cek){
-			var id = jQuery(b).val();
-			data_multirek_selected.push(id);
-		}
-	});
+	var data_multirek_selected = jQuery('#table-extension-rekening').val();
 	if(data_multirek_selected.length == 0){
 		alert('Pilih dulu item Rekening yang akan ditambahkan!');
 	}else if (confirm('Apakah anda yakin menambahkan rekening ini ke item ? '+data_multirek_selected.join(','))) {
@@ -824,7 +902,7 @@ function proses_simpan_multirek(){
 					}).catch(function(err){
 						console.log('err', err);
 						return resolve_redurce(nextData);
-					});								
+					});
 				})
 				.catch(function(e){
 					console.log(e);

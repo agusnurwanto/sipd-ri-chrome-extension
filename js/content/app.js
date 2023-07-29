@@ -694,6 +694,7 @@ function cekUrl(current_url, nomor=1){
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_ssh_ke_lokal">Singkron '+type_data_ssh+' ke DB Lokal</button>'
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-info" id="singkron_kategori_ke_lokal">Singkron Kelompok '+type_data_ssh+' ke DB Lokal</button>'
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_satuan_ke_lokal">Singkron Satuan ke DB Lokal</button>'
+							+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="hapus_rek_all">Hapus Rekening '+type_data_ssh+'</button>'
 						+'</div>';
 					jQuery('.page-title').append(btn);
 					var btn2 = ''
@@ -722,6 +723,9 @@ function cekUrl(current_url, nomor=1){
 					});
 					jQuery('#hapus_arsip_ssh').on('click', function(){
 						hapus_arsip_ssh(type_data_ssh);
+					});
+					jQuery('#hapus_rek_all').on('click', function(){
+						hapus_rek_all(type_data_ssh);
 					});
 					jQuery('#cek_duplikat_ssh').on('click', function(){
 						cek_duplikat_ssh(type_data_ssh);
@@ -769,7 +773,7 @@ function cekUrl(current_url, nomor=1){
 					        +'</div>'
 					    +'</div>'
 						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
 								+'<div class="modal-content">'
 									+'<div class="modal-header bgpanel-theme">'													
 										+'<h4 class="modal-title text-center" style="font-weight: bold;" id="">Duplikat Standar Harga <span class="info-title"></span></h4>'
@@ -780,11 +784,11 @@ function cekUrl(current_url, nomor=1){
 											+'<thead>'
 												+'<tr>'
 													+'<th class="text-center" style="font-weight: bold;">No</th>'
-													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'												
+													+'<th class="text-center" style="font-weight: bold;"><input type="checkbox" id="select_all_hapus_ssh"></th>'
 													+'<th class="text-center" style="font-weight: bold;">ID</th>'
 													+'<th class="text-left" style="font-weight: bold;">Kode Standar Harga</th>'
-													+'<th class="text-left" style="font-weight: bold;">Uraian</th>'
-													+'<th class="text-left" style="font-weight: bold;">Spesifikasi</th>'
+													+'<th class="text-left" style="font-weight: bold; width: 200px">Uraian</th>'
+													+'<th class="text-left" style="font-weight: bold; width: 200px">Spesifikasi</th>'
 													+'<th class="text-center" style="font-weight: bold;">Satuan</th>'
 													+'<th class="text-left" style="font-weight: bold;">Harga</th>'										
 												+'</tr>'
@@ -799,33 +803,23 @@ function cekUrl(current_url, nomor=1){
 								+'</div>'
 							+'</div>'
 						+'</div>'
-						+'<div class="modal fade modal-extension" id="modal-extension-rekening" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-						+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
-							+'<div class="modal-content">'
-								+'<div class="modal-header bgpanel-theme">'
-									+'<h3 class="fw-bolder m-0">Tambah Rekening</h4>'
-									+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-								+'</div>'
-								+'<div class="modal-body">'
-									+'<table class="table table-bordered table-hover" id="table-extension-rekening">'											
-										+'<thead>'
-											+'<tr>'													
-												+'<th class="text-center" style="font-weight: bold; max-width: 200px;"><input type="checkbox" id="select_all_akun"></th>'
-												+'<th class="text-center" style="font-weight: bold;">Id Akun</th>'
-												+'<th class="text-left" style="font-weight: bold;">Kode</th>'
-												+'<th class="text-left" style="font-weight: bold;">Uraian</th>'							
-											+'</tr>'
-										+'</thead>'
-										+'<tbody></tbody>'
-									+'</table>'
-								+'</div>'
-								+'<div class="modal-footer">'
-									+'<button type="button" class="btn btn-primary" id="proses_simpan_multirek">Simpan</button>'
-									+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'							
+						+'<div class="modal fade modal-extension" id="modal-extension-rekening" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 1200px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Tambah Rekening</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<div id="table-extension-rekening-ket"></div>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-primary" id="proses_simpan_multirek">Simpan</button>'
+										+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'
+									+'</div>'
 								+'</div>'
 							+'</div>'
-						+'</div>'
-					+'</div>';
+						+'</div>';
 					jQuery('body').append(modal);
 					jQuery('#select_all_hapus_ssh').on('click', function(){
 						var cek = jQuery(this).is(':checked');
