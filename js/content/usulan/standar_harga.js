@@ -39,7 +39,7 @@ function get_all_ssh_sipd(type_data_ssh, search_value=false){
 
 function get_rekening_ssh(opsi) {
 	return new Promise(function(resolve, reject){
-		pesan_loading('Get rekening dari standar harga kode='+opsi.kode_standar_harga);
+		pesan_loading('Get rekening dari standar harga kode = '+opsi.kode_standar_harga);
 		relayAjax({
 			url: config.sipd_url+'api/master/d_komponen/listRekening',
 			type: 'POST',
@@ -55,12 +55,11 @@ function get_rekening_ssh(opsi) {
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(ret){
-				val.rek_belanja = ret.data;
-				return resolve(val);
+				return resolve(ret);
 			},
 			error: function(e) {
 				console.log(e);
-				return resolve(val);
+				return resolve({});
 			}
 		});
 	})
@@ -951,7 +950,7 @@ function simpan_rekening(idstandarharga, idakun){
 
 function hapus_rekening(idstandarharga, idakun){    
     return new Promise(function(resolve, reject){
-    	pesan_loading('HAPUS Rekening');
+    	pesan_loading('HAPUS Rekening idstandarharga = '+idstandarharga+' , idakun = '+idakun);
 		relayAjax({
 			url: config.sipd_url+'api/master/d_komponen_akun/delete',                                    
 			type: 'POST',	      				
@@ -967,8 +966,8 @@ function hapus_rekening(idstandarharga, idakun){
 				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
-	      	success: function(simpanrekening){
-	      		return resolve(simpanrekening);
+	      	success: function(){
+	      		return resolve();
 	      	}
 	    });
     });
