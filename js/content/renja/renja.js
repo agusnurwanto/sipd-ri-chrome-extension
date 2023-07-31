@@ -19,6 +19,7 @@ function list_skpd_sub_bl(offset=0){
 			},
 			success: function(units){
 				var data_all = { data: [] };
+				units.data = decrip(units.data);
 				var last = units.data.length-1;
 				units.data.reduce(function(sequence, nextData){
 		            return sequence.then(function(current_data){

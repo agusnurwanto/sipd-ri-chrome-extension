@@ -248,6 +248,22 @@ function intervalSession_lama(no){
 	}
 }
 
+function decrip(t) {
+    let e = atob(t)
+      , n = e.length - 1
+      , s = "";
+    for (; n >= 0; )
+        s += e.charAt(n),
+        n--;
+    let o = atob(s)
+      , l = o.length - 1
+      , _ = "";
+    for (; l >= 0; )
+        _ += o.charAt(l),
+        l--;
+    return JSON.parse(_)
+}
+
 function de(data){
 	return atob(atob(data));
 }
