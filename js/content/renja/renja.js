@@ -186,6 +186,7 @@ function open_modal_renja(res, run_proses = false){
 		list_belanja_by_tahun_daerah_unit(idunitskpd)
 		.then(function(sub_keg_exist){
 			window.rka_sipd = {};
+			sub_keg_exist.data = decrip(sub_keg_exist.data);
 			sub_keg_exist.data.map(function(b, i){
 				rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
 			});
@@ -264,6 +265,7 @@ function proses_hapus_modal_renja(res) {
 	}
 	list_belanja_by_tahun_daerah_unit(idunitskpd)
 	.then(function(sub_keg_exist){
+		sub_keg_exist.data = decrip(sub_keg_exist.data);
 		window.rka_sipd = {};
 		sub_keg_exist.data.map(function(b, i){
 			rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
@@ -465,6 +467,7 @@ function proses_modal_renja(data_selected_asli = false) {
 								new Promise(function(resolve2, reject2){
 									list_belanja_by_tahun_daerah_unit(idunitskpd)
 									.then(function(sub_keg_exist){
+										sub_keg_exist.data = decrip(sub_keg_exist.data);
 										var rka_sipd = {};
 										sub_keg_exist.data.map(function(b, i){
 											rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
@@ -700,6 +703,7 @@ function proses_modal_renja(data_selected_asli = false) {
 									list_belanja_by_tahun_daerah_unit(idunitskpd)
 									.then(function(sub_keg_exist){
 										var kegiatan_sipd = {};
+										sub_keg_exist.data = decrip(sub_keg_exist.data);
 										sub_keg_exist.data.map(function(b, i){
 											b.exist = false;
 											kegiatan_sipd[b.kode_sub_skpd+' '+b.kode_giat+' '+removeNewlines(b.nama_giat)] = b;
@@ -1904,7 +1908,9 @@ function open_modal_subgiat(idunit){
 	show_loading();
 	list_belanja_by_tahun_daerah_unit(id_unit)
 	.then(function(subkeg){
+		subkeg.data = decrip(subkeg.data);
 		console.log('list_belanja_by_tahun_daerah_unit', subkeg.data);
+		
 		// ubah status sub_keg_bl jadi tidak aktif semua agar jika ada sub keg yang dihapus, sipd lokal bisa ikut terupdate
 		new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
 			if(typeof promise_nonactive == 'undefined'){
@@ -2116,6 +2122,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 						var nilairincian = 0;
 						var rinci_giat = 0;
 						var nilaipagu = 0;
+						sub_keg_exist.data = decrip(sub_keg_exist.data);
 						sub_keg_exist.data.map(function(b, i){
 							nilaipagu += b.pagu;
 							nilairincian += b.rincian;
@@ -2192,6 +2199,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 			new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
 				promise_nonactive[id_unit] = resolve_reduce_nonactive;
 				var subkeg_aktif = [];
+				subkeg.data = decrip(subkeg.data);
 				subkeg.data.map(function(b, i){
 					// console.log('map',b);
 					if(
@@ -2223,6 +2231,7 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 				})
 			}).then(function(){
 				if(opsi_unit && opsi_unit.id_skpd){
+					// subkeg.data = decrip(subkeg.data);
 					var last = subkeg.data.length-1;
 					console.log('subkeg', subkeg.data);
 					subkeg.data.reduce(function(sequence, nextData){
@@ -2599,13 +2608,13 @@ function singkron_rka_ke_lokal(opsi, callback) {
 								});		
 							}
 							data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
-							if(labelbl.data[0].id_label_prov != 0){
-								get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
-									if(label_prov.length >= 1){
-										data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
-									}
-								});		
-							}
+							// if(labelbl.data[0].id_label_prov != 0){
+							// 	get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
+							// 		if(label_prov.length >= 1){
+							// 			data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
+							// 		}
+							// 	});		
+							// }
 							data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
 							if(labelbl.data[0].id_label_pusat != 0){
 								get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){
@@ -2749,7 +2758,10 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										return sequence2.then(function(_rka){
 											return new Promise(function(resolve_reduce2, reject_reduce2){
 												new Promise(function(resolve3, reject3){
-													detail_rincian_sub_bl(_rka).then(function(detail){
+													detail_rincian_sub_bl(_rka).then(function(detail){																											
+													if(detail.message == "Data tidak ditemukan"){
+														return resolve3();
+													}else{
 														detail = detail.data[0];
 														_rka.id_rinci_sub_bl = detail.id_rinci_sub_bl;
 											            _rka.id_unik = detail.id_unik;
@@ -2829,6 +2841,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 											            if(detail.is_lokus_akun == 0){
 															return resolve3();
 											            }else{
+															// return resolve3();
 											            	detail_penerima_bantuan(_rka).then(function(penerima){
 											            		penerima = penerima.data[0];
 											            		_rka.id_penerima_bantuan = penerima.id_penerima_bantuan;
@@ -2893,13 +2906,17 @@ function singkron_rka_ke_lokal(opsi, callback) {
 												            	}
 											            	});
 											            }
+													}
 													});	
 												})
 												.then(function(){
 													return new Promise(function(resolve3, reject3){
 														if(_rka.id_ket_sub_bl!=0){
 															get_ket_sub_bl(_rka.id_ket_sub_bl).then(function(ket_sub_bl){
-																_rka.ket_bl_teks = ket_sub_bl.data[0].ket_bl_teks;
+																if(ket_sub_bl.data.length > 0){
+																	_rka.ket_bl_teks = ket_sub_bl.data[0].ket_bl_teks;
+																	return resolve3();
+																}
 																return resolve3();
 															});	
 														}else{
@@ -2911,6 +2928,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 													return new Promise(function(resolve3, reject3){
 														if(_rka.id_subs_sub_bl!=0){
 															get_subs_sub_bl(_rka.id_subs_sub_bl).then(function(subs_sub_bl){
+															if(subs_sub_bl.data.length > 0){
 																_rka.subs_bl_teks = {
 																	subs_asli: subs_sub_bl.data[0].subs_bl_teks,
 																	substeks: subs_sub_bl.data[0].subs_bl_teks,
@@ -2922,9 +2940,10 @@ function singkron_rka_ke_lokal(opsi, callback) {
 																		id_subtitle: _rka.id_subs_sub_bl,
 																		subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
 																	}
-																};
+																};															
 																_rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
 																_rka.id_metode_barjas = subs_sub_bl.data[0].id_metode_barjas;
+															}
 																return resolve3();
 															});	
 														}else{
