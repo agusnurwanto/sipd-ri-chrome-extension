@@ -31,7 +31,7 @@ function singkron_pendapatan_lokal(){
                                 
                                     console.log('current_data.nama_skpd', current_data.nama_skpd);
                                     pesan_loading('Simpan data Pendapatan '+current_data.nama_skpd+' ke DB Lokal!');
-                                    var idskpd = current_data.id_unit;
+                                    var idskpd = current_data.id_skpd;
                                     relayAjax({
                                         url: config.sipd_url+'api/renja/pendapatan/listByIdUnit',                                    
                                         type: 'POST',
@@ -179,7 +179,7 @@ function singkron_pendapatan_lokal(){
                                 
                                     console.log('current_data.nama_skpd', current_data.nama_skpd);
                                     pesan_loading('Simpan data Pendapatan '+current_data.nama_skpd+' ke DB Lokal!');
-                                    var idskpd = current_data.id_unit;
+                                    var idskpd = current_data.id_skpd;
                                     relayAjax({
                                         url: config.sipd_url+'api/renja/pendapatan/listByIdUnit',                                    
                                         type: 'POST',

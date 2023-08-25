@@ -2608,13 +2608,13 @@ function singkron_rka_ke_lokal(opsi, callback) {
 								});		
 							}
 							data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
-							// if(labelbl.data[0].id_label_prov != 0){
-							// 	get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
-							// 		if(label_prov.length >= 1){
-							// 			data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
-							// 		}
-							// 	});		
-							// }
+							if(labelbl.data[0].id_label_prov != 0){
+								get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
+									if(label_prov.length >= 1){
+										data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
+									}
+								});		
+							}
 							data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
 							if(labelbl.data[0].id_label_pusat != 0){
 								get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){

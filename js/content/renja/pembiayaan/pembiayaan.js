@@ -24,6 +24,8 @@ function singkron_pembiayaan_lokal(tipe){
 				success: function(skpd){
                     pesan_loading('Get data Pembiayaan '+tipe+'  SKPD');	
                     console.log(skpd.data);
+                    // var last = skpd.data.length-1;
+                    // var nomor = 0;
                     var last = skpd.data.length-1;
                     var nomor = 0;
                     skpd.data.reduce(function(sequence, nextData){
@@ -34,7 +36,7 @@ function singkron_pembiayaan_lokal(tipe){
                                 }else{
                                     console.log('nama_skpd', current_data.nama_skpd);
                                     pesan_loading('Simpan data Pembiayaan '+tipe+'  '+current_data.nama_skpd+' ke DB Lokal!');
-                                    var idskpd = current_data.id_unit;
+                                    var idskpd = current_data.id_skpd;
                                     relayAjax({
                                         url: config.sipd_url+'api/renja/pembiayaan/listByIdUnit',                                    
                                         type: 'POST',
@@ -126,7 +128,7 @@ function singkron_pembiayaan_lokal(tipe){
                                                         }
                                                     }
                                                 };                                          
-                                                if(nomor == skpd.data.data.length-1){
+                                                if(nomor == skpd.data.length-1){
                                                     data.message.content.return = true;
                                                 }                                          
                                                 chrome.runtime.sendMessage(data, function(response) {
@@ -182,7 +184,9 @@ function singkron_pembiayaan_lokal(tipe){
 				success: function(skpd){
                     pesan_loading('Get data Pembiayaan '+tipe+'  SKPD');
                     console.log(skpd.data);
+                    // var last = skpd.data.length-1;
                     var last = skpd.data.length-1;
+                    var nomor = 0;
                     skpd.data.reduce(function(sequence, nextData){
                         return sequence.then(function(current_data){
                             return new Promise(function(resolve_reduce, reject_reduce){
@@ -191,7 +195,7 @@ function singkron_pembiayaan_lokal(tipe){
                                 }else{
                                     console.log('nama_skpd', current_data.nama_skpd);
                                     pesan_loading('Simpan data Pembiayaan '+tipe+'  '+current_data.nama_skpd+' ke DB Lokal!');
-                                    var idskpd = current_data.id_unit;
+                                    var idskpd = current_data.id_skpd;
                                     relayAjax({
                                         url: config.sipd_url+'api/renja/pembiayaan/listByIdUnit',                                    
                                         type: 'POST',
@@ -206,14 +210,10 @@ function singkron_pembiayaan_lokal(tipe){
                                             xhr.setRequestHeader("x-access-token", _token.token);
                                         },				          	
                                         success: function(data){
-                                            console.log(data.length);
-                                            if(!data.length){
-                                                resolve_reduce(nextData);
-                                            }
-                                            else
-                                            {
-                                                var data_pembiayaan = [];                                            
-                                                data.data.map(function(b, i){
+                                            console.log('data', data);
+                                            if(data.data.length > 0){
+                                                var data_pembiayaan = [];                                                                                        
+                                                data.data.map(function(b, i){                                                
                                                     const bulan = ["01","02","03","04","05","06","07","08","09","10","11","12"];                                                
                                                     const cd = new Date(b.created_at);
                                                     let ctgl = cd.getDate();
@@ -249,7 +249,7 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].rkpd_pak = b.rkpd_pak; //baru int
                                                     //   data_pembiayaan[i].nilaimurni = b.nilaimurni; //?                                              
                                                     //   data_pembiayaan[i].rekening = b.rekening; //?
-                                                    data_pembiayaan[i].rekening = b.kode_akun+' '+nama_akun;
+                                                    data_pembiayaan[i].rekening = b.kode_akun+' '+b.nama_akun;
                                                     data_pembiayaan[i].satuan = b.satuan; //baru var
                                                     data_pembiayaan[i].skpd_koordinator = b.skpd_koordinator;
                                                     data_pembiayaan[i].total = b.total;
@@ -261,7 +261,6 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].uraian = b.uraian;
                                                     data_pembiayaan[i].urusan_koordinator = b.urusan_koordinator;
                                                     data_pembiayaan[i].volume = b.volume; //baru int
-                                                    data_pembiayaan[i].type = tipe;
                                                     //   data_pembiayaan[i].user1 = b.user1;
                                                     //   data_pembiayaan[i].user2 = b.user2;
                                                 });
@@ -282,14 +281,15 @@ function singkron_pembiayaan_lokal(tipe){
                                                             return: false
                                                         }
                                                     }
-                                                };                                          
-                                                if(nomor == skpd.data.data.length-1){
+                                                };
+
+                                                if(nomor == skpd.data.length-1){
                                                     data.message.content.return = true;
                                                 }                                          
                                                 chrome.runtime.sendMessage(data, function(response) {
                                                     console.log('responeMessage', response);
                                                 });
-    
+
                                                 // dikasih jeda agar lebih aman di server
                                                 setTimeout(function(){
                                                     resolve_reduce(nextData);
