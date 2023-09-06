@@ -860,10 +860,10 @@ function cekUrl(current_url, nomor=1){
 				var rekap_suber_dana = ''
 					+'<button style="margin-left: 20px;" class="btn btn-sm btn-success btn-outline" id="rekap_sumber_dana">'
 						+'<i class="menu-eye m-r-5"></i> <span>Lihat Rekap Sumber Dana</span>'
-					+'</button>'
-					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="singkron_indikator_sub">'
-						+'<i class="menu-download m-r-5"></i> <span>Singkron Master Indikator ke DB Lokal</span>'
 					+'</button>';
+					// +'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="singkron_indikator_sub">'
+					// 	+'<i class="menu-download m-r-5"></i> <span>Singkron Master Indikator ke DB Lokal</span>'
+					// +'</button>';
 				var singkron_rka = ''
 					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="open_modal_skpd">'
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
@@ -905,12 +905,15 @@ function cekUrl(current_url, nomor=1){
 					current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1
 					|| current_url.indexOf('/penganggaran/anggaran/cascading/belanja?id_skpd='+id_skpd) != -1
 				){
+					// run_script('window.ext_url = "'+chrome.runtime.getURL('')+'"');					
+					// injectScript( chrome.runtime.getURL('/js/content/renja/renja.js'), 'html');
 					console.log('halaman Renja per SKPD');
 					singkron_rka += ''
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger btn-outline" id="get_renja_lokal">'
 							+'<i class="menu-download m-r-5"></i> <span>Tarik RENJA dari DB lokal</span>'
 						+'</button>';
 					window.idunitskpd = id_skpd;
+					
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
@@ -967,20 +970,69 @@ function cekUrl(current_url, nomor=1){
 									+'</div>'
 								+'</div>'
 							+'</div>'
-						+'</div>';
+						+'</div>'
+						+'<div class="modal fade modal-extension" id="modal-extension-rekap-sumber-dana-sub-keg" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="width: 1500px;" role="document">'
+							+'<div class="modal-content">'
+								+'<div class="modal-header bgpanel-theme">'
+								+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
+								+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+								+'</div>'
+								+'<div class="modal-body">'
+									+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana_rekap">'
+										+'<thead>'
+											+'<tr class="bg-grey-600">'
+												+'<th class="text-white text-center" colspan="2">Total Pagu Validasi</th>'
+												+'<th class="text-white text-right" id="rekap_total_pagu_validasi"></th>'
+											+'</tr>'
+											+'<tr class="bg-grey-600">'
+												+'<th class="text-white text-center" colspan="2">Total Pagu Rincian</th>'
+												+'<th class="text-white text-right" id="rekap_total_pagu_rincian"></th>'
+											+'</tr>'
+											+'<tr class="bg-grey-600">'
+												+'<th class="text-white text-center">Sumber Dana</th>'
+												+'<th class="text-white text-center">Pagu Sumber Dana Sub Kegiatan</th>'
+												+'<th class="text-white text-center">Pagu Sumber Dana Rincian</th>'
+											+'</tr>'
+										+'</thead>'
+										+'<tbody></tbody>'
+										+'<tfoot>'
+											+'<tr class="bg-grey-600">'
+												+'<th class="text-white text-center">Total</th>'
+												+'<th class="text-white text-right" id="rekap_total_sumber_dana_pagu"></th>'
+												+'<th class="text-white text-right" id="rekap_total_sumber_dana_rinci"></th>'
+											+'</tr>'
+										+'</tfoot>'
+									+'</table>'
+									+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana">'
+										+'<thead>'
+											+'<tr class="bg-grey-600">'
+												+'<th class="text-left">Sub Kegiatan</th>'
+												+'<th class="text-whrightite">Pagu Validasi</th>'
+												+'<th class="text-right">Pagu Rincian</th>'
+												+'<th class="text-center">Sumber Dana</th>'
+											+'</tr>'
+										+'</thead>'
+										+'<tbody></tbody>'
+									+'</table>'
+								+'</div>'
+								+'<div class="modal-footer">'
+								+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'	
+								+'</div>'
+							+'</div>'
+						+'</div>'
+					+'</div>';
 					jQuery('body').append(modal);			
 					jQuery('body').on('click', '#modal_cek_all', function(){
 						var cek = jQuery(this).is(':checked');
 						jQuery(this).closest('table').find('tbody tr input[type="checkbox"]').prop('checked', cek);
-					});	
-					jQuery('#proses-extension').on('click', function(){
-						singkron_subgiat_modal();
-					});
+					});				
 					jQuery('.aksi-extension').remove();
 					var btn = ''
 						+'<div class="aksi-extension">'						
 							+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
 							+singkron_rka
+							+rekap_suber_dana
 						+'</div>';				
 					jQuery('.page-title').append(btn);
 					jQuery('#get_renja_lokal').on('click', function(){
@@ -995,6 +1047,16 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#hapus-sub-keg').on('click', function(){
 						hapus_modal_renja();
 					});
+					
+					jQuery('#proses-extension').on('click', function(){
+						singkron_subgiat_modal();
+					});
+					jQuery('#rekap_sumber_dana').on('click', function(){					
+						rekap_sumber_dana_sub_kegiatan_rinci();
+					});
+					jQuery('#rekap_sumber_dana').on('click', function(){						
+						rekap_sumber_dana_sub_kegiatan();
+					});		
 					if(jQuery('#singkron_master_cse').length == 0){
 						var master_html = ''
 							+'<button onclick="return false;" class="btn btn-sm btn-primary" id="singkron_master_cse" style="margin-left: 5px;">Singkron Data Master ke DB Lokal</button>'
@@ -1060,6 +1122,9 @@ function cekUrl(current_url, nomor=1){
 					});	
 					jQuery('#proses-extension').on('click', function(){
 						singkron_skpd_modal();
+					});
+					jQuery('#rekap_sumber_dana').on('click', function(){						
+						rekap_sumber_dana_sub_kegiatan();
 					});
 					jQuery('.setting-kegiatan').on('click', function(){
 						var id = jQuery(this).attr('id');
