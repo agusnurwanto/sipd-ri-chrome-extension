@@ -2843,67 +2843,71 @@ function singkron_rka_ke_lokal(opsi, callback) {
 											            }else{
 															// return resolve3();
 											            	detail_penerima_bantuan(_rka).then(function(penerima){
-											            		penerima = penerima.data[0];
-											            		_rka.id_penerima_bantuan = penerima.id_penerima_bantuan;
-													            _rka.jenis_bantuan = penerima.jenis_bantuan;
-													            _rka.lokus_akun = penerima.lokus_akun;
-													            _rka.id_profil = penerima.id_profil;
-													            _rka.id_parpol = penerima.id_parpol;
-													            _rka.id_prop = penerima.id_prop;
-													            _rka.id_kokab = penerima.id_kokab;
-													            _rka.id_camat = penerima.id_camat;
-													            _rka.id_lurah = penerima.id_lurah;
-												            	if(!penerima.id_kokab){
-												            		return resolve3();
-												            	}else{
-												            		if(penerima.id_camat){
-												            			detail_kecamatan(penerima).then(function(kecamatan){
-												            				kecamatan = kecamatan.data[0];
-												            				_rka.id_camat = kecamatan.id_camat;
-																            _rka.id_prop = kecamatan.id_prop;
-																            _rka.id_kab_kota = kecamatan.id_kab_kota;
-																            _rka.kode_camat = kecamatan.kode_camat;
-																            _rka.camat_teks = kecamatan.camat_teks;
-																            _rka.camat_kode_ddn = kecamatan.kode_ddn;
-																            _rka.camat_kode_ddn_2 = kecamatan.kode_ddn_2;
-												            			});
-												            		}
-												            		if(penerima.id_lurah){
-												            			detail_kelurahan(penerima).then(function(kelurahan){
-												            				kelurahan = kelurahan.data[0];
-												            				_rka.id_lurah = kelurahan.id_lurah;
-																            _rka.kode_lurah = kelurahan.kode_lurah;
-																            _rka.lurah_teks = kelurahan.lurah_teks;
-																            _rka.lurah_kode_ddn = kelurahan.kode_ddn;
-																            _rka.lurah_kode_ddn_2 = kelurahan.kode_ddn_2;
-																            _rka.is_desa = kelurahan.is_desa;
-												            			});
-												            		}
+											            		if(penerima.message == "Data tidak ditemukan"){
+																	return resolve3();
+																}else{
+												            		penerima = penerima.data[0];
+												            		_rka.id_penerima_bantuan = penerima.id_penerima_bantuan;
+														            _rka.jenis_bantuan = penerima.jenis_bantuan;
+														            _rka.lokus_akun = penerima.lokus_akun;
+														            _rka.id_profil = penerima.id_profil;
+														            _rka.id_parpol = penerima.id_parpol;
+														            _rka.id_prop = penerima.id_prop;
+														            _rka.id_kokab = penerima.id_kokab;
+														            _rka.id_camat = penerima.id_camat;
+														            _rka.id_lurah = penerima.id_lurah;
+													            	if(!penerima.id_kokab){
+													            		return resolve3();
+													            	}else{
+													            		if(penerima.id_camat){
+													            			detail_kecamatan(penerima).then(function(kecamatan){
+													            				kecamatan = kecamatan.data[0];
+													            				_rka.id_camat = kecamatan.id_camat;
+																	            _rka.id_prop = kecamatan.id_prop;
+																	            _rka.id_kab_kota = kecamatan.id_kab_kota;
+																	            _rka.kode_camat = kecamatan.kode_camat;
+																	            _rka.camat_teks = kecamatan.camat_teks;
+																	            _rka.camat_kode_ddn = kecamatan.kode_ddn;
+																	            _rka.camat_kode_ddn_2 = kecamatan.kode_ddn_2;
+													            			});
+													            		}
+													            		if(penerima.id_lurah){
+													            			detail_kelurahan(penerima).then(function(kelurahan){
+													            				kelurahan = kelurahan.data[0];
+													            				_rka.id_lurah = kelurahan.id_lurah;
+																	            _rka.kode_lurah = kelurahan.kode_lurah;
+																	            _rka.lurah_teks = kelurahan.lurah_teks;
+																	            _rka.lurah_kode_ddn = kelurahan.kode_ddn;
+																	            _rka.lurah_kode_ddn_2 = kelurahan.kode_ddn_2;
+																	            _rka.is_desa = kelurahan.is_desa;
+													            			});
+													            		}
 
-												            		detail_daerah({ id_daerah: penerima.id_kokab }).then(function(daerah){
-												            			daerah = daerah.data[0];
-															            _rka.kode_prop = daerah.kode_prop;
-															            _rka.kode_kab = daerah.kode_kab;
-															            _rka.nama_daerah = daerah.nama_daerah;
-															            _rka.kokab_kode_ddn = daerah.kode_ddn;
-															            _rka.kokab_kode_ddn_2 = daerah.kode_ddn_2;
-															            _rka.is_pusat = daerah.is_pusat;
-															            _rka.is_prop = daerah.is_prop;
-															            _rka.id_prop = daerah.id_prop;
-															            _rka.jqm_code = daerah.jqm_code;
-															            _rka.jqm_path = daerah.jqm_path;
-															            _rka.is_deleted = daerah.is_deleted;
-															            _rka.is_rekap = daerah.is_rekap;
-															            _rka.set_zona = daerah.set_zona;
-															            _rka.set_waktu_zona = daerah.set_waktu_zona;
-															            _rka.set_gmt_zona = daerah.set_gmt_zona;
-															            _rka.kode_satker = daerah.kode_satker;
-															            _rka.kode_prov_djpk = daerah.kode_prov_djpk;
-															            _rka.kode_kab_djpk = daerah.kode_kab_djpk;
-															            _rka.will_migrated = daerah.will_migrated;
-															            return resolve3();
-												            		});
-												            	}
+													            		detail_daerah({ id_daerah: penerima.id_kokab }).then(function(daerah){
+													            			daerah = daerah.data[0];
+																            _rka.kode_prop = daerah.kode_prop;
+																            _rka.kode_kab = daerah.kode_kab;
+																            _rka.nama_daerah = daerah.nama_daerah;
+																            _rka.kokab_kode_ddn = daerah.kode_ddn;
+																            _rka.kokab_kode_ddn_2 = daerah.kode_ddn_2;
+																            _rka.is_pusat = daerah.is_pusat;
+																            _rka.is_prop = daerah.is_prop;
+																            _rka.id_prop = daerah.id_prop;
+																            _rka.jqm_code = daerah.jqm_code;
+																            _rka.jqm_path = daerah.jqm_path;
+																            _rka.is_deleted = daerah.is_deleted;
+																            _rka.is_rekap = daerah.is_rekap;
+																            _rka.set_zona = daerah.set_zona;
+																            _rka.set_waktu_zona = daerah.set_waktu_zona;
+																            _rka.set_gmt_zona = daerah.set_gmt_zona;
+																            _rka.kode_satker = daerah.kode_satker;
+																            _rka.kode_prov_djpk = daerah.kode_prov_djpk;
+																            _rka.kode_kab_djpk = daerah.kode_kab_djpk;
+																            _rka.will_migrated = daerah.will_migrated;
+																            return resolve3();
+													            		});
+													            	}
+													            }
 											            	});
 											            }
 													}
