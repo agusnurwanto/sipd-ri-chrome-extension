@@ -871,7 +871,7 @@ function get_view_daerah(iddaerah){
 			processData: false,
 			contentType : 'application/json',
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 	      	success: function(daerah){
@@ -889,7 +889,7 @@ function get_view_kecamatan(idkecamatan){
 			processData: false,
 			contentType : 'application/json',
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 	      	success: function(kecamatan){
@@ -907,7 +907,7 @@ function get_view_desa_kel(idkelurahan){
 			processData: false,
 			contentType : 'application/json',
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 	      	success: function(kelurahan){

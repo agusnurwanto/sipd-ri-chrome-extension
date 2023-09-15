@@ -138,6 +138,7 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     		&& jqXHR.status != '502'
     		&& jqXHR.status != '503'
     		&& jqXHR.status != '500'
+    		&& jqXHR.status != '403'
     	){
     		if(jqXHR.responseJSON){
     			options.success(jqXHR.responseJSON);
@@ -145,9 +146,20 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     			options.success(jqXHR.responseText);
     		}
     	}else if (retries > 0) {
-            console.log('Koneksi error. Coba lagi '+retries, options);
+            console.log('Koneksi error. Coba lagi '+retries, options, jqXHR, exception);
             var new_delay = Math.random() * (delay/1000);
-            setTimeout(function(){ 
+            setTimeout(function(){
+            	if(jqXHR.status == '403'){
+            		var res = JSON.parse(jqXHR.responseText);
+            		console.log('res', res);
+            		if(res.message == '"\'token_key_1\'"'){
+            			console.log('update beforeSend ajax!');
+	            		options.beforeSend = function (xhr) {			    
+							xhr.setRequestHeader("X-API-KEY", x_api_key2());
+							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+						}
+            		}
+            	} 
                 relayAjax(options, --retries, delay, timeout);
             }, new_delay * 1000);
         } else {
@@ -173,6 +185,46 @@ function x_api_key(){
 		"security_key":_token.daerah_id+"|"+_token.tahun+"|"+btoa(time)
 	};
 	return en(JSON.stringify(apiKey));
+}
+
+function x_api_key2(){
+	var time = new Date();
+	time = Math.ceil(time.getTime()/1000);
+	var key = {
+		"sidx":en(_token.user_id),
+		"sidl":en(_token.level_id),
+		"sidd":en(_token.daerah_id),
+		"idd":en(_token.daerah_id)
+	};
+	var key_1 = CryptoJS.SHA1(CryptoJS.MD5(window.navigator.userAgent).toString()).toString() + CryptoJS.MD5("kdx" + _token.daerah_id).toString();
+    var key_2 = CryptoJS.SHA1("T#2Kc&us" + CryptoJS.MD5("mDx" + _token.daerah_id).toString()).toString();
+	var apiKey = {
+		"token": makeid(15),
+		"id_daerah":_token.daerah_id,
+		"tahun":_token.tahun,
+		"id_app": makeNUMBER(1e5),
+		"is_app":1,
+		"secret_key":en(JSON.stringify(key)),
+		"security_key":_token.daerah_id+"|"+_token.tahun+"|"+btoa(time)+"|"+makeid(10)+"|"+makeNUMBER(1e5),
+		"token_key_1": key_1,
+        "token_key_2": key_2
+	};
+	return en(JSON.stringify(apiKey));
+}
+
+function makeid(z) {
+	let P = "";
+    const N = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+      , G = N.length;
+    let O = 0;
+    for (; O < z; )
+        P += N.charAt(Math.floor(Math.random() * G)),
+        O += 1;
+    return P;
+}
+
+function makeNUMBER(z) {
+	return Math.floor(Math.random() * z);
 }
 
 function intervalSession(no){
