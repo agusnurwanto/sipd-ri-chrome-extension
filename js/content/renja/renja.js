@@ -14,7 +14,7 @@ function list_skpd_sub_bl(offset=0){
 				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 			success: function(units){
@@ -3165,7 +3165,7 @@ function setup_unit(idunit){
 				id_unit: idunit
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 	      	success: function(opd){
@@ -3182,7 +3182,7 @@ function get_pagu_validasi(tahun, iddaerah, idskpd){
 			type: 'GET',	      							
 			contentType : 'application/json',
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},	
 	      	success: function(data){
@@ -3837,7 +3837,7 @@ function get_setup_unit(units) {
 				id_unit: units.id_skpd
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", x_api_key());
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 			success: function(res){

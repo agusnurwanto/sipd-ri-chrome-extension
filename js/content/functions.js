@@ -152,7 +152,7 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
             	if(jqXHR.status == '403'){
             		var res = JSON.parse(jqXHR.responseText);
             		console.log('res', res);
-            		if(res.message == '"\'token_key_1\'"'){
+            		if(res.message == "'token_key_1'"){
             			console.log('update beforeSend ajax!');
 	            		options.beforeSend = function (xhr) {			    
 							xhr.setRequestHeader("X-API-KEY", x_api_key2());
