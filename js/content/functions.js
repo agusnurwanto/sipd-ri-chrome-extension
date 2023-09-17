@@ -169,6 +169,7 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
 }
 
 function x_api_key(){
+	return x_api_key2();
 	var time = new Date();
 	time = Math.ceil(time.getTime()/1000);
 	var key = {
