@@ -73,7 +73,6 @@ function singkron_prioritas_kab_lokal(){
 function singkron_prioritas_prov_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-        var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/label_prov/list',
 			type: 'POST',
@@ -84,7 +83,7 @@ function singkron_prioritas_prov_lokal(){
 				start: 0,
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){
@@ -145,7 +144,6 @@ function singkron_prioritas_prov_lokal(){
 function singkron_prioritas_pusat_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-        var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/label_pusat/list',
 			type: 'POST',
@@ -156,7 +154,7 @@ function singkron_prioritas_pusat_lokal(){
 				start: 0,
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){
@@ -219,7 +217,6 @@ function singkron_prioritas_pusat_lokal(){
 function singkron_label_giat(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-        var apiKey = x_api_key();
 		relayAjax({
             url: config.sipd_url+'api/master/label_giat/list',
 			type: 'POST',
@@ -230,7 +227,7 @@ function singkron_label_giat(){
                 start: 0,
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){

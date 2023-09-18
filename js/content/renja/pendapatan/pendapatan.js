@@ -2,7 +2,6 @@ function singkron_pendapatan_lokal(){
     if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
         var idunit = _token.unit;
-		var apiKey = x_api_key();
         if (idunit >= 1)
 		{
 			relayAjax({
@@ -17,7 +16,7 @@ function singkron_pendapatan_lokal(){
 				    start: 0,
 				},
 				beforeSend: function (xhr) {			    
-					xhr.setRequestHeader("X-API-KEY", apiKey);
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
 					xhr.setRequestHeader("x-access-token", _token.token);
 				},
 				success: function(skpd){
@@ -41,7 +40,7 @@ function singkron_pendapatan_lokal(){
                                             id_unit: idskpd                                            
                                         },
                                         beforeSend: function (xhr) {			    
-                                            xhr.setRequestHeader("X-API-KEY", apiKey);
+                                            xhr.setRequestHeader("X-API-KEY", x_api_key());
                                             xhr.setRequestHeader("x-access-token", _token.token);
                                         },				          	
                                         success: function(data){
@@ -168,7 +167,7 @@ function singkron_pendapatan_lokal(){
 				    start: 0,
 				},
 				beforeSend: function (xhr) {			    
-					xhr.setRequestHeader("X-API-KEY", apiKey);
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
 					xhr.setRequestHeader("x-access-token", _token.token);
 				},
 				success: function(skpd){
@@ -193,7 +192,7 @@ function singkron_pendapatan_lokal(){
                                             id_unit: idskpd                                            
                                         },
                                         beforeSend: function (xhr) {			    
-                                            xhr.setRequestHeader("X-API-KEY", apiKey);
+                                            xhr.setRequestHeader("X-API-KEY", x_api_key());
                                             xhr.setRequestHeader("x-access-token", _token.token);
                                         },				          	
                                         success: function(data){

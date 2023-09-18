@@ -228,7 +228,6 @@ function send_to_lokal(val){
 function singkron_satuan_ke_lokal(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
 		show_loading();
-		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/satuan/list',
 			type: 'POST',
@@ -238,7 +237,7 @@ function singkron_satuan_ke_lokal(){
 				length: 100000
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){
@@ -281,7 +280,6 @@ function singkron_kategori_ke_lokal(page=0, per_page=500){
 		global_kategory_ssh = {};
 	}
 	return new Promise(function(resolve, reduce){
-		var apiKey = x_api_key();
 	    relayAjax({
 			url: config.sipd_url+'api/master/kel_standar_harga/list',
 			type: 'post',
@@ -292,7 +290,7 @@ function singkron_kategori_ke_lokal(page=0, per_page=500){
 				start: (page*per_page)
 			},
 			beforeSend: function (xhr) {
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(ret){
@@ -373,7 +371,6 @@ function singkron_kategori_ke_lokal(page=0, per_page=500){
 function singkron_kategori_ke_lokal_tanpa_page(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){		
 		show_loading();
-		var apiKey = x_api_key();
 		relayAjax({
 			url: config.sipd_url+'api/master/kel_standar_harga/list',
 			type: 'POST',
@@ -384,7 +381,7 @@ function singkron_kategori_ke_lokal_tanpa_page(){
 				start: 0
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(data){

@@ -1,7 +1,6 @@
 function backup_rpjmd(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-		var apiKey = x_api_key();		
 		jadwal_rpjmd_aktif(_token.tahun, _token.daerah_id).then(function(rpjmd_aktif){
             relayAjax({
                 url: config.sipd_url+'api/rpjm/rpjm_program/list',
@@ -14,7 +13,7 @@ function backup_rpjmd(){
 					id_tahap: rpjmd_aktif.data[0].id_tahap,					
 				},
 				beforeSend: function (xhr) {			    
-					xhr.setRequestHeader("X-API-KEY", apiKey);
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
 					xhr.setRequestHeader("x-access-token", _token.token);
 				},
                 success: function (data) {
@@ -114,7 +113,7 @@ function backup_rpjmd(){
                             id_tahap: rpjmd_aktif.data[0].id_tahap,					
                         },
                         beforeSend: function (xhr) {			    
-                            xhr.setRequestHeader("X-API-KEY", apiKey);
+                            xhr.setRequestHeader("X-API-KEY", x_api_key());
                             xhr.setRequestHeader("x-access-token", _token.token);
                         },
                         success: function (data) {
@@ -166,7 +165,7 @@ function backup_rpjmd(){
                                     id_tahap: rpjmd_aktif.data[0].id_tahap,					
                                 },
                                 beforeSend: function (xhr) {			    
-                                    xhr.setRequestHeader("X-API-KEY", apiKey);
+                                    xhr.setRequestHeader("X-API-KEY", x_api_key());
                                     xhr.setRequestHeader("x-access-token", _token.token);
                                 },
                                 success: function (data) {
@@ -213,7 +212,7 @@ function backup_rpjmd(){
                                             id_tahap: rpjmd_aktif.data[0].id_tahap,					
                                         },
                                         beforeSend: function (xhr) {			    
-                                            xhr.setRequestHeader("X-API-KEY", apiKey);
+                                            xhr.setRequestHeader("X-API-KEY", x_api_key());
                                             xhr.setRequestHeader("x-access-token", _token.token);
                                         },
                                         success: function (data) {
@@ -244,7 +243,7 @@ function backup_rpjmd(){
                                                     id_tahap: rpjmd_aktif.data[0].id_tahap,					
                                                 },
                                                 beforeSend: function (xhr) {			    
-                                                    xhr.setRequestHeader("X-API-KEY", apiKey);
+                                                    xhr.setRequestHeader("X-API-KEY", x_api_key());
                                                     xhr.setRequestHeader("x-access-token", _token.token);
                                                 },
                                                 success: function (data) {

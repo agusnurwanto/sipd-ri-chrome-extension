@@ -12,7 +12,6 @@ function singkron_skpd_ke_lokal(tampil_renja){
 	}
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-        var apiKey = x_api_key();	
 		relayAjax({
 			url: config.sipd_url+'api/master/skpd/listNew',
 			type: 'POST',
@@ -27,7 +26,7 @@ function singkron_skpd_ke_lokal(tampil_renja){
                 start: 0,
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			success: function(unit){

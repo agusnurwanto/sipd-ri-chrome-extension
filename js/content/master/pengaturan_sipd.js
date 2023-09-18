@@ -1,7 +1,6 @@
 function singkron_pengaturan_sipd_lokal(){
     if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-        var apiKey = x_api_key();	
 		relayAjax({
 			url: config.sipd_url+'api/renja/setup_anggaran/get_pengaturan_sipd',
 			type: 'POST',
@@ -10,7 +9,7 @@ function singkron_pengaturan_sipd_lokal(){
 				id_daerah: _token.daerah_id,																	
 			},			
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);
+				xhr.setRequestHeader("X-API-KEY", x_api_key());
 				xhr.setRequestHeader("x-access-token", _token.token);
 			},
 			

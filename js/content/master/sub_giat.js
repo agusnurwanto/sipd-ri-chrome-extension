@@ -1,7 +1,6 @@
 function singkron_data_giat_lokal() {
     if (confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')) {
         show_loading();
-        var apiKey = x_api_key();
         relayAjax({
             url: config.sipd_url+'api/master/sub_giat/list',
 			type: 'POST',
@@ -16,7 +15,7 @@ function singkron_data_giat_lokal() {
                 start: 0,
 			},
 			beforeSend: function (xhr) {			    
-				xhr.setRequestHeader("X-API-KEY", apiKey);				
+				xhr.setRequestHeader("X-API-KEY", x_api_key());				
                 xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
             success: function (ret) {

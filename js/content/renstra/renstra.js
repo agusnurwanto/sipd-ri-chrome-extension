@@ -1,7 +1,6 @@
 function backup_renstra(){
 	if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 		show_loading();
-		var apiKey = x_api_key();
 		var sendData = [];
 		jadwal_renstra_aktif(_token.tahun, _token.daerah_id).then(function(renstra_aktif){			
 			sendData.push( new Promise(function(resolve, reject){								
@@ -16,7 +15,7 @@ function backup_renstra(){
 							length: 100000,
 						},
 						beforeSend: function (xhr) {			    
-							xhr.setRequestHeader("X-API-KEY", apiKey);
+							xhr.setRequestHeader("X-API-KEY", x_api_key());
 							xhr.setRequestHeader("x-access-token", _token.token);
 						},
 						success: function (data) {
@@ -39,7 +38,7 @@ function backup_renstra(){
 											length: 100000,
 										},
 										beforeSend: function (xhr) {			    
-											xhr.setRequestHeader("X-API-KEY", apiKey);
+											xhr.setRequestHeader("X-API-KEY", x_api_key());
 											xhr.setRequestHeader("x-access-token", _token.token);
 										},
 										success: function (kamus) {											
@@ -131,7 +130,7 @@ function backup_renstra(){
 							length: 100000,
 						},
 					beforeSend: function (xhr) {			    
-						xhr.setRequestHeader("X-API-KEY", apiKey);
+						xhr.setRequestHeader("X-API-KEY", x_api_key());
 						xhr.setRequestHeader("x-access-token", _token.token);
 					},
 					success: function (data) {
@@ -229,7 +228,7 @@ function backup_renstra(){
 							length: 100000,
 						},
 					beforeSend: function (xhr) {			    
-						xhr.setRequestHeader("X-API-KEY", apiKey);
+						xhr.setRequestHeader("X-API-KEY", x_api_key());
 						xhr.setRequestHeader("x-access-token", _token.token);
 					},
 					success: function (data) {
@@ -362,7 +361,7 @@ function backup_renstra(){
 							length: 100000,
 						},
 					beforeSend: function (xhr) {			    
-						xhr.setRequestHeader("X-API-KEY", apiKey);
+						xhr.setRequestHeader("X-API-KEY", x_api_key());
 						xhr.setRequestHeader("x-access-token", _token.token);
 					},
 					success: function (data) {
@@ -507,7 +506,7 @@ function backup_renstra(){
 			// 				length: 100000,
 			// 			},
 			// 		beforeSend: function (xhr) {			    
-			// 			xhr.setRequestHeader("X-API-KEY", apiKey);
+			// 			xhr.setRequestHeader("X-API-KEY", x_api_key());
 			// 			xhr.setRequestHeader("x-access-token", _token.token);
 			// 		},
 			// 		success: function (data) {

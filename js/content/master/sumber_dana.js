@@ -56,7 +56,6 @@ function singkron_sumber_dana_lokal() {
 function get_sumber_dana_master(){
     return new Promise(function(resolve, reject){
         if(typeof global_all_sumber_dana == 'undefined'){
-            var apiKey = x_api_key();
             relayAjax({
                 url: config.sipd_url+'api/master/sumber_dana/listNew',
                 type: 'POST',
@@ -71,7 +70,7 @@ function get_sumber_dana_master(){
                     start: 0,
                 },
                 beforeSend: function (xhr) {                
-                    xhr.setRequestHeader("X-API-KEY", apiKey);
+                    xhr.setRequestHeader("X-API-KEY", x_api_key());
                     xhr.setRequestHeader("x-access-token", _token.token);
                 },
                 success: function (res) {
