@@ -190,7 +190,7 @@ function x_api_key(){
 
 function x_api_key2(){
 	var time = new Date();
-	time = Math.ceil(time.getTime()/1000);
+	time = Math.ceil(time.getTime()/1000)+30;
 	var key = {
 		"sidx":en(_token.user_id),
 		"sidl":en(_token.level_id),
