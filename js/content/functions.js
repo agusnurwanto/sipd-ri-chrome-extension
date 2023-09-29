@@ -141,38 +141,40 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     		};
     	}
     	if(
-    		jqXHR.status != '0' 
-    		&& jqXHR.status != '502'
-    		&& jqXHR.status != '503'
-    		&& (
+    		jqXHR.status == '0' 
+    		|| jqXHR.status == '502'
+    		|| jqXHR.status == '503'
+    		|| (
     			jqXHR.status == '500'
-    			&& res.message == 'Request tidak diperbolehkan'
+    			&& res.message != 'Request tidak diperbolehkan'
     		)
-    		&& jqXHR.status != '403'
+    		|| jqXHR.status == '403'
     	){
+    		if (retries > 0) {
+	            console.log('Koneksi error. Coba lagi '+retries, options, jqXHR, exception);
+	            var new_delay = Math.random() * (delay/1000);
+	            setTimeout(function(){
+	            	if(jqXHR.status == '403'){
+	            		console.log('res', res);
+	            		if(res.message == "'token_key_1'"){
+	            			console.log('update beforeSend ajax!');
+		            		options.beforeSend = function (xhr) {			    
+								xhr.setRequestHeader("X-API-KEY", x_api_key2());
+								xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+							}
+	            		}
+	            	} 
+	                relayAjax(options, --retries, delay, timeout);
+	            }, new_delay * 1000);
+	        }else{
+            	alert('Capek. Sudah dicoba berkali-kali error terus. Maaf, berhenti mencoba.');
+	        }
+        } else {
     		if(jqXHR.responseJSON){
     			options.success(jqXHR.responseJSON);
     		}else{
     			options.success(jqXHR.responseText);
     		}
-    	}else if (retries > 0) {
-            console.log('Koneksi error. Coba lagi '+retries, options, jqXHR, exception);
-            var new_delay = Math.random() * (delay/1000);
-            setTimeout(function(){
-            	if(jqXHR.status == '403'){
-            		console.log('res', res);
-            		if(res.message == "'token_key_1'"){
-            			console.log('update beforeSend ajax!');
-	            		options.beforeSend = function (xhr) {			    
-							xhr.setRequestHeader("X-API-KEY", x_api_key2());
-							xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-						}
-            		}
-            	} 
-                relayAjax(options, --retries, delay, timeout);
-            }, new_delay * 1000);
-        } else {
-            alert('Capek. Sudah dicoba berkali-kali error terus. Maaf, berhenti mencoba.');
         }
     });
 }
