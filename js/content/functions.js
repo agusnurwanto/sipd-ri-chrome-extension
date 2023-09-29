@@ -133,7 +133,13 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     jQuery.ajax(options)
     .fail(function(jqXHR, exception){
     	// console.log('jqXHR, exception', jqXHR, exception);
-        var res = JSON.parse(jqXHR.responseText);
+    	try{
+        	var res = JSON.parse(jqXHR.responseText);
+    	} catch (e) {
+    		var res = {
+    			message: ''
+    		};
+    	}
     	if(
     		jqXHR.status != '0' 
     		&& jqXHR.status != '502'
