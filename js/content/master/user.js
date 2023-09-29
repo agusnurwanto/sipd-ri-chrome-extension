@@ -426,6 +426,22 @@ function singkron_user_mitra_lokal(level, model){
 									data_dewan.data.nama = detil.data.nama_user;
 									data_dewan.data.nip = detil.data.nip;								
 
+									var data = {
+										message:{
+											type: "get-url",
+											content: {
+												url: config.url_server_lokal,
+												type: 'post',
+												data: data_dewan,
+												return: false
+											}
+										}
+									};
+									chrome.runtime.sendMessage(data, function(response) {
+										console.log('responeMessage', response);
+										resolve_reduce(nextData);
+									});
+
 									var idusers = detil.data.id_user;
 									get_skpd_pemangku(idusers, model).then(function(skpd){
 											
@@ -469,22 +485,6 @@ function singkron_user_mitra_lokal(level, model){
 												resolve_reduce(nextData);
 											});
 										}
-
-										var data = {
-											message:{
-												type: "get-url",
-												content: {
-													url: config.url_server_lokal,
-													type: 'post',
-													data: data_dewan,
-													return: false
-												}
-											}
-										};
-										chrome.runtime.sendMessage(data, function(response) {
-											console.log('responeMessage', response);
-											resolve_reduce(nextData);
-										});
 										
 									})
 								});							

@@ -133,11 +133,15 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     jQuery.ajax(options)
     .fail(function(jqXHR, exception){
     	// console.log('jqXHR, exception', jqXHR, exception);
+        var res = JSON.parse(jqXHR.responseText);
     	if(
     		jqXHR.status != '0' 
     		&& jqXHR.status != '502'
     		&& jqXHR.status != '503'
-    		&& jqXHR.status != '500'
+    		&& (
+    			jqXHR.status == '500'
+    			&& res.message == 'Request tidak diperbolehkan'
+    		)
     		&& jqXHR.status != '403'
     	){
     		if(jqXHR.responseJSON){
@@ -150,7 +154,6 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
             var new_delay = Math.random() * (delay/1000);
             setTimeout(function(){
             	if(jqXHR.status == '403'){
-            		var res = JSON.parse(jqXHR.responseText);
             		console.log('res', res);
             		if(res.message == "'token_key_1'"){
             			console.log('update beforeSend ajax!');
