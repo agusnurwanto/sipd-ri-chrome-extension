@@ -1,3 +1,10 @@
+window.Image2 = Image;
+window.Image = function(){ return {} };
+setTimeout(function(){
+	window.Image = Image2;
+	console.log('set Image');
+}, 1500);
+
 window.addEventListener('message', function(event) {
 	var command = event.data.command;
 	var opsi = event.data.data;
