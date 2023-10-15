@@ -3,10 +3,35 @@ window._interval = false;
 jQuery('body').on('click', '.listen-me', function(){
 	var time = new Date();
 	time = Math.ceil((time.getTime()+5000000)/1000);
-	x_api_key2({
+	var key_ri = x_api_key2({
 		time: time,
 		show: true
 	});
+	if(config.private){
+		var data_ri = { 
+			action: 'singkron_token_ri',
+			api_key: config.api_key,
+			token: _token.token,
+			key: key_ri,
+			tahun: _token.tahun,
+			id_daerah: _token.daerah_id,
+			user_agent: window.navigator.userAgent
+		};
+		var data = {
+			message:{
+				type: "get-url",
+				content: {
+					url: config.url_server_lokal,
+					type: 'post',
+					data: data_ri,
+					return: false
+				}
+			}
+		};
+		chrome.runtime.sendMessage(data, function(response) {
+			console.log('kirim token ke lokal', response);
+		});
+	}
 });
 
 let previousUrl = "";
