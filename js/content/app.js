@@ -1,5 +1,14 @@
 window._interval = false;
 
+jQuery('body').on('click', '.listen-me', function(){
+	var time = new Date();
+	time = Math.ceil((time.getTime()+5000000)/1000);
+	x_api_key2({
+		time: time,
+		show: true
+	});
+});
+
 let previousUrl = "";
 const observer = new MutationObserver(() => {
   	if (window.location.href !== previousUrl) {
@@ -16,6 +25,7 @@ function cekUrl(current_url, nomor=1){
 		console.log('Run ulang cekUrl() ke '+nomor+' URL: '+current_url);
 	}else{
 		cekLisensi();
+		run_script('cek_extension', 'image');
 	}
 
 	getToken();
@@ -23,9 +33,6 @@ function cekUrl(current_url, nomor=1){
 	// untuk menjaga session
 	clearInterval(_interval);
 	intervalSession();
-	if(_token.daerah_id == 101){
-		return alert('Hubungi Pak Pur');
-	}
 	
 	var loading = ''
 		+'<div id="wrap-loading">'
@@ -41,6 +48,11 @@ function cekUrl(current_url, nomor=1){
 	jQuery('#modal-extension').remove();
 
 	setTimeout(function(){
+		var img_logo = jQuery('.d-flex.align-items-stretch.flex-shrink-0 img').eq(0);
+		if(!img_logo.hasClass('listen-me')){
+			img_logo.addClass('listen-me');
+		}
+
 		var cek_reload = true;
 		var title_admin = jQuery('#kt_header .menu-title.text-white');
 		// jika halaman admin

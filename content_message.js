@@ -1,15 +1,17 @@
-window.Image2 = Image;
-window.Image = function(){ return {} };
-setTimeout(function(){
-	window.Image = Image2;
-	console.log('set Image');
-}, 1500);
-
 window.addEventListener('message', function(event) {
 	var command = event.data.command;
 	var opsi = event.data.data;
 	console.log('run_script', event.data);
 	switch(command) {
+		case 'cek_extension':
+			if(opsi == 'image'){
+				window.Image2 = Image;
+				window.Image = function(){ return {} };
+				setTimeout(function(){
+					window.Image = Image2;
+					console.log('set Image');
+				}, 1500);
+			}
     	case 'show_modal':
     		if(!opsi){
 	    		window.options_datatable = {

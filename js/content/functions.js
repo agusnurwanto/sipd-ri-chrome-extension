@@ -199,9 +199,14 @@ function x_api_key(){
 	return en(JSON.stringify(apiKey));
 }
 
-function x_api_key2(){
-	var time = new Date();
-	time = Math.ceil(time.getTime()/1000);
+function x_api_key2(opsi={}){
+	if(opsi.time){
+		console.log(opsi, new Date(opsi.time*1000));
+		time = opsi.time;
+	}else{
+		var time = new Date();
+		time = Math.ceil(time.getTime()/1000);
+	}
 	var key = {
 		"sidx":en(_token.user_id),
 		"sidl":en(_token.level_id),
@@ -221,7 +226,11 @@ function x_api_key2(){
 		"token_key_1": key_1,
         "token_key_2": key_2
 	};
-	return en(JSON.stringify(apiKey));
+	var ret = en(JSON.stringify(apiKey));
+	if(opsi.show){
+		console.log({ token: _token.token, key: ret });
+	}
+	return ret;
 }
 
 function makeid(z) {
