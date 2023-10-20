@@ -2571,7 +2571,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						data_rka.dataBl[i].nama_program = d.nama_program;
 						data_rka.dataBl[i].nama_giat = d.nama_giat;
 						data_rka.dataBl[i].nama_bl = d.nama_bl; //baru
-						data_rka.dataBl[i].nama_sub_giat = d.nama_sub_giat;
+						data_rka.dataBl[i].nama_sub_giat = d.kode_sub_giat+' '+d.nama_sub_giat;
 						data_rka.dataBl[i].nama_pptk = d.nama_pptk; //baru
 						data_rka.dataBl[i].nama_urusan_pusat = d.nama_urusan_pusat; //baru
 						data_rka.dataBl[i].nama_bidang_urusan_pusat = d.nama_bidang_urusan_pusat; //baru
@@ -2702,8 +2702,11 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_rka.is_locked = rka.is_locked;
 							_rka.koefisien_murni = rka.koefisien_murni;
 							_rka.nama_akun = rka.nama_akun;
-							if(!rka.nama_standar_harga){
-								_rka.nama_standar_harga = rka.nama_akun;
+							if(
+								!rka.nama_standar_harga
+								|| rka.nama_standar_harga == ''
+							){
+								rka.nama_standar_harga = rka.nama_akun;
 							}
 							_rka.nama_komponen = rka.nama_standar_harga;
 							_rka.spek_komponen = rka.spek;
@@ -2813,7 +2816,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 											            _rka.nama_sub_bl = detail.nama_sub_bl;
 											            _rka.nama_subs_sub_bl = detail.nama_subs_sub_bl;
 											            _rka.nama_ket_sub_bl = detail.nama_ket_sub_bl;
-											            _rka.nama_akun = detail.nama_akun;
+											            _rka.nama_akun = detail.kode_akun+' '+detail.nama_akun;
 											            _rka.nama_standar_harga = detail.nama_standar_harga;
 											            _rka.nama_standar_nfs = detail.nama_standar_nfs;
 											            _rka.nama_jadwal_murni = detail.nama_jadwal_murni;
@@ -2921,7 +2924,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 														if(_rka.id_ket_sub_bl!=0){
 															get_ket_sub_bl(_rka.id_ket_sub_bl).then(function(ket_sub_bl){
 																if(ket_sub_bl.data.length > 0){
-																	_rka.ket_bl_teks = ket_sub_bl.data[0].ket_bl_teks;
+																	_rka.ket_bl_teks = '[-] '+ket_sub_bl.data[0].ket_bl_teks;
 																	return resolve3();
 																}
 																return resolve3();
@@ -2936,6 +2939,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 														if(_rka.id_subs_sub_bl!=0){
 															get_subs_sub_bl(_rka.id_subs_sub_bl).then(function(subs_sub_bl){
 															if(subs_sub_bl.data.length > 0){
+																subs_sub_bl.data[0].subs_bl_teks = '[#] '+subs_sub_bl.data[0].subs_bl_teks;
 																_rka.subs_bl_teks = {
 																	subs_asli: subs_sub_bl.data[0].subs_bl_teks,
 																	substeks: subs_sub_bl.data[0].subs_bl_teks,
