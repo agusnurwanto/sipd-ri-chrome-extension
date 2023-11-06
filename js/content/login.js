@@ -1,6 +1,9 @@
 function get_prov_login(){
 	return new Promise(function(resolve, reduce){
 		if(typeof prov_login_global == 'undefined'){
+			var formDataCustom = new FormData();
+			formDataCustom.append('search[value]', '');
+			formDataCustom.append('tipe', 'prov');
 			relayAjax({
 				url: config.sipd_url+'api/master/provinsi/findlistpusat',
 				type: 'post',
@@ -17,10 +20,9 @@ function get_prov_login(){
 			        }
 			        return xhr;
 			    },
-				data: {
-					'search[value]': '',
-					tipe: 'prov'
-				},
+				data: formDataCustom,
+		        processData: false,
+		        contentType: false,
 				success: function(ret){
 					prov_login_global = ret.data;
 					resolve(prov_login_global);

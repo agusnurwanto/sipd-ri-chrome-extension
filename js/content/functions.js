@@ -148,7 +148,11 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     			jqXHR.status == '500'
     			&& res.message != 'Request tidak diperbolehkan'
     		)
-    		|| jqXHR.status == '403'
+    		|| (
+    			jqXHR.status == '403'
+    			&& res.message.toLowerCase() != 'login dibatasi'
+    			&& res.message.toLowerCase() != 'invalid username or password'
+    		)
     	){
     		if (retries > 0) {
 	            console.log('Koneksi error. Coba lagi '+retries, options, jqXHR, exception);
@@ -205,7 +209,8 @@ function x_api_key2(opsi={}){
 		time = opsi.time;
 	}else{
 		var time = new Date();
-		time = Math.ceil(time.getTime()/1000);
+		time = Math.ceil((time.getTime()+5000000)/1000);
+		// time = Math.ceil(time.getTime()/1000);
 	}
 	var key = {
 		"sidx":en(_token.user_id),

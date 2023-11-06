@@ -34,13 +34,23 @@ function login_sipd(){
 		success: function(ret){
 			console.log(ret);
 			jQuery('#wrap-loading').hide();
-			localStorage.setItem(auth_key, JSON.stringify(ret));
-			localStorage.setItem('login-detail', JSON.stringify({
-				username: user,
-				password: pass,
-				id_daerah: config.id_daerah
-			}));
-			window.location.href = config.sipd_url;
+			if(
+				ret.message
+				&& (
+					ret.message == 'login dibatasi'
+					|| ret.message == 'invalid username or password'
+				)
+			){
+				alert(res.message);
+			}else{
+				localStorage.setItem(auth_key, JSON.stringify(ret));
+				localStorage.setItem('login-detail', JSON.stringify({
+					username: user,
+					password: pass,
+					id_daerah: config.id_daerah
+				}));
+				window.location.href = config.sipd_url;
+			}
 		}
 	});
 }
