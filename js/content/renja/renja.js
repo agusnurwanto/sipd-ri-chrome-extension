@@ -2710,6 +2710,14 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							}
 							_rka.nama_komponen = rka.nama_standar_harga;
 							_rka.spek_komponen = rka.spek;
+							_rka.volum1 = rka.vol_1;
+							_rka.volum2 = rka.vol_2;
+							_rka.volum3 = rka.vol_3;
+							_rka.volum4 = rka.vol_4;
+							_rka.sat1 = rka.sat_1;
+							_rka.sat2 = rka.sat_2;
+							_rka.sat3 = rka.sat_3;
+							_rka.sat4 = rka.sat_4;
 							_rka.id_subs_sub_bl = rka.id_subs_sub_bl; //baru
 							_rka.id_ket_sub_bl = rka.id_ket_sub_bl; //baru
 							_rka.idketerangan = rka.id_ket_sub_bl;
@@ -2783,14 +2791,14 @@ function singkron_rka_ke_lokal(opsi, callback) {
 											            _rka.harga_satuan = detail.harga_satuan;
 											            _rka.koefisien = detail.koefisien;
 											            _rka.total_harga = detail.total_harga;
-											            _rka.vol_1 = detail.vol_1;
-											            _rka.sat_1 = detail.sat_1;
-											            _rka.vol_2 = detail.vol_2;
-											            _rka.sat_2 = detail.sat_2;
-											            _rka.vol_3 = detail.vol_3;
-											            _rka.sat_3 = detail.sat_3;
-											            _rka.vol_4 = detail.vol_4;
-											            _rka.sat_4 = detail.sat_4;
+											            _rka.volum1 = detail.vol_1;
+											            _rka.sat1 = detail.sat_1;
+											            _rka.volum2 = detail.vol_2;
+											            _rka.sat2 = detail.sat_2;
+											            _rka.volum3 = detail.vol_3;
+											            _rka.sat3 = detail.sat_3;
+											            _rka.volum4 = detail.vol_4;
+											            _rka.sat4 = detail.sat_4;
 											            _rka.created_user = detail.created_user;
 											            _rka.created_at = detail.created_at;
 											            _rka.updated_user = detail.updated_user;
