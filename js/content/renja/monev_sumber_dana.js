@@ -89,254 +89,208 @@ function rekap_sumber_dana_sub_kegiatan(){
                 return sequence.then(function(current_data){
             		return new Promise(function(resolve_reduce, reject_reduce){
             			console.log('current_data subkeg', current_data);
-                    	if(
-                    		// current_data.nama_sub_giat.mst_lock == 0 
-                    		// && current_data.kode_sub_skpd
-                    		current_data.kode_sub_skpd
-                    	){
-                    		// untuk testing saja, biar tidak menunggu lama
-                    		if(
-                    			no_tes >= 3
-                    			&& false
-                    		){
-                    			resolve_reduce(nextData);
-                    		}
-                    		no_tes++;
-                    		id_sub_bl = current_data.id_sub_bl;
-                    		id_skpd = current_data.id_skpd;
-							// kode_get = current_data.action.split("detilGiat('")[1].split("'")[0];
-							// get detail sub kegiatan
-							relayAjax({
-								url: config.sipd_url+'api/renja/rinci_sub_bl/get_by_id_sub_bl',                                    
-								type: 'POST',	      				
-								data: {            
-									id_daerah: _token.daerah_id,				
-									tahun: _token.tahun,
-									id_sub_bl: id_sub_bl,
-									id_unit: id_skpd,
-									is_anggaran: global_is_anggaran
-								},
-								beforeSend: function (xhr) {			    
-									xhr.setRequestHeader("X-API-KEY", x_api_key());
-									xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-								},
-								success: function(subkeg){
-									var pagudana_sub_keg = 0;
-									var pagudana_rincian = 0;
-									var html_sumbedana = '';
-									new Promise(function(resolve2, reject2){
-										console.log('get detail sub kegiatan',subkeg.data);
-										// var aksi = current_data.action.split("main?");
-										if(subkeg.data.length > 2){
-											var kode_go_hal_rinci = {};
-											kode_go_hal_rinci.go_rinci = true;
-											// kode_go_hal_rinci.kode = 'main?'+aksi[1].split("'")[0];
-											go_halaman_detail_rincian(kode_go_hal_rinci)
-											.then(function(kode_get_rinci_all){
-												var kode_get_rinci = kode_get_rinci_all.kode_get_rinci;
-												var kode_get_rinci_subtitle = kode_get_rinci_all.kode_get_rinci_subtitle;
-												// get halaman rincian
-												relayAjax({
-													url: kode_get_rinci,
-													type: 'post',
-													data: formData,
-													processData: false,
-													contentType: false,
-													success: function(data){
-														var substeks_all = {};
-														data.data.map(function(rka, i){
-															var substeks = jQuery('<textarea>'+rka.subs_bl_teks.substeks+'</textarea>').val();
-															if(!substeks_all[substeks]){
-																rka.subs_bl_teks.pagu = 0;
-																substeks_all[substeks] = rka.subs_bl_teks;
-															}
-															substeks_all[substeks].pagu += +rka.rincian;
-															pagudana_rincian += +rka.rincian;
-														});
-														getSumberDanaBelanja(substeks_all, kode_get_rinci_subtitle)
-														.then(function(substeks_all_new){
-															console.log('substeks_all_new', substeks_all_new, subkeg.dataDana);
-															var check_all = false;
-															var pagu_rinci = 0;
-															var sumber_dana_rinci = '<td class="text-center">-</td>';
-															for(var i in substeks_all){
-																var nama_sumber_dana_rinci = '['+substeks_all_new[i].sumber_dana.kode_dana+'] '+substeks_all_new[i].sumber_dana.nama_dana+'';
-																if(!html_rekap_dana_all[substeks_all_new[i].sumber_dana.id_dana]){
-																	html_rekap_dana_all[substeks_all_new[i].sumber_dana.id_dana] = {
-																		nama_dana: nama_sumber_dana_rinci,
-																		pagu: 0,
-																		rinci: 0
-																	}
-																}
-																html_rekap_dana_all[substeks_all_new[i].sumber_dana.id_dana].rinci += +substeks_all_new[i].pagu;
-
-																var check = false;
-																subkeg.dataDana.map(function(d, ii){
-																	if(d.iddana == substeks_all_new[i].sumber_dana.id_dana){
-																		check = true;
-																	}
-																});
-																if(check == false){
-																	if(check_all == false){
-																		check_all = [];
-																	}
-																	check_all.push(''
-																		+'<tr>'
-																			+'<td>'+i+'</td>'
-																			+'<td class="text-right">'+formatRupiah(substeks_all_new[i].pagu)+'</td>'
-																		+'</tr>');
-																	sumber_dana_rinci = '['+substeks_all_new[i].sumber_dana.kode_dana+'] '+substeks_all_new[i].sumber_dana.nama_dana+'';
-																	pagu_rinci += substeks_all_new[i].pagu;
-									    							console.log('Sumber dana ada di rincian tapi tidak ada di sub kegiatan!', substeks_all_new[i]);
-																}
-															}
-															if(check_all){
-																sumber_dana_rinci = ''
-																	+'<td>'
-																		+sumber_dana_rinci
-																		+'<br>'
-																		+'<table class="table table-bordered">'
-																			+'<thead>'
-																				+'<tr>'
-																					+'<th>Nama Kelompok</th>'
-																					+'<th>Pagu</th>'
-																				+'</tr>'
-																			+'</thead>'
-																			+'<tbody>'
-																				+check_all.join('')
-																			+'</tbody>'
-																		+'</table>'
-																	+'</td>';
-																html_sumbedana += ''
-																	+'<tr iddana="" iddanasubbl="" style="background: #ff00003b;">'
-										                          		+'<td class="text-center">-</td>'
-										                          		+'<td class="text-center">-</td>'
-										                          		+sumber_dana_rinci
-										                          		+'<td class="text-right">'+formatRupiah(pagu_rinci)+'</td>'
-																	+'</tr>';
-									    						console.log('sub kegiatan', subkeg);
-															}
-															subkeg.dataDana.map(function(d, ii){
-																var nama_sumber_dana_pagu = '['+d.kodedana+'] '+d.namadana+'';
-																if(!html_rekap_dana_all[d.iddana]){
-																	html_rekap_dana_all[d.iddana] = {
-																		nama_dana: nama_sumber_dana_pagu,
-																		pagu: 0,
-																		rinci: 0
-																	}
-																}
-																html_rekap_dana_all[d.iddana].pagu += +d.pagudana;
-
-																var check = false;
-																var pagu_rinci = 0;
-																var sumber_dana_rinci = '<td class="text-center">-</td>';
-																pagudana_sub_keg += +d.pagudana;
-																for(var i in substeks_all){
-																	if(d.iddana == substeks_all_new[i].sumber_dana.id_dana){
-																		if(check == false){
-																			check = [];
-																		}
-																		check.push(''
-																			+'<tr>'
-																				+'<td>'+i+'</td>'
-																				+'<td class="text-right">'+formatRupiah(substeks_all_new[i].pagu)+'</td>'
-																			+'</tr>');
-																		sumber_dana_rinci = '['+d.kodedana+'] '+d.namadana+'';
-																		pagu_rinci += substeks_all_new[i].pagu;
-																	}
-																}
-																var warning3 = '';
-																if(check){
-																	sumber_dana_rinci = ''
-																		+'<td>'
-																			+sumber_dana_rinci
-																			+'<br>'
-																			+'<table class="table table-bordered">'
-																				+'<thead>'
-																					+'<tr>'
-																						+'<th>Nama Kelompok</th>'
-																						+'<th>Pagu</th>'
-																					+'</tr>'
-																				+'</thead>'
-																				+'<tbody>'
-																					+check.join('')
-																				+'</tbody>'
-																			+'</table>'
-																		+'</td>';
-																}else{
-																	warning3 = 'background: #ff00003b;';
-																}
-																html_sumbedana += ''
-																	+'<tr style="'+warning3+'" iddana="'+d.iddana+'" iddanasubbl="'+d.iddanasubbl+'">'
-										                          		+'<td>['+d.kodedana+'] '+d.namadana+'</td>'
-										                          		+'<td class="text-right">'+formatRupiah(d.pagudana)+'</td>'
-										                          		+sumber_dana_rinci
-										                          		+'<td class="text-right">'+formatRupiah(pagu_rinci)+'</td>'
-																	+'</tr>';
-															});
-										    				resolve2();
-														});
-													}
-												});
-											});
-										}else{
-											subkeg.dataDana.map(function(d, i){
-												html_sumbedana += ''
-													+'<tr iddana="'+d.iddana+'" iddanasubbl="'+d.iddanasubbl+'">'
-						                          		+'<td>'+d.kodedana+' '+d.namadana+'</td>'
-						                          		+'<td class="text-right">'+formatRupiah(d.pagudana)+'</td>'
-						                          		+'<td class="text-center">-</td>'
-						                          		+'<td class="text-center">-</td>'
-													+'</tr>';
-											});
-										    console.log('RENJA tanpa rincian!', subkeg);
-										    resolve2();
-										}
-									}).then(function(){
-										var warning = "";
-										if(pagudana_sub_keg != pagudana_rincian){
-											warning = "background: #ff00003b;";
-										}
-										html_sumbedana += ''
-											+'<tr style="'+warning+'">'
-				                          		+'<td colspan="2" class="text-right">'+formatRupiah(pagudana_sub_keg)+'</td>'
-				                          		+'<td colspan="2" class="text-right">'+formatRupiah(pagudana_rincian)+'</td>'
-											+'</tr>';
-
-										var warning2 = "";
-										if(current_data.nama_sub_giat.pagu != current_data.nama_sub_giat.rincian){
-											warning2 = "background: #ff00003b;";
-										}
-										total_pagu_validasi += +current_data.nama_sub_giat.pagu;
-										total_pagu_rinci += +current_data.nama_sub_giat.rincian;
-										html_rekap_dana += ''
-											+'<tr kode_sbl="'+current_data.kode_sbl+'">'
-												+'<td>'+current_data.nama_sub_giat.nama_sub_giat+'</td>'
-				                          		+'<td style="'+warning2+'">'+formatRupiah(current_data.nama_sub_giat.pagu)+'</td>'
-				                          		+'<td style="'+warning2+'">'+formatRupiah(current_data.nama_sub_giat.rincian)+'</td>'
-				                          		+'<td>'
-				                          			+'<table class="table table-bordered">'
-				                          				+'<thead>'
-				                          					+'<tr>'
-				                          						+'<th class="text-center">Sumber Dana Sub Kegiatan</th>'
-				                          						+'<th class="text-center">Pagu Sumber Dana Sub Kegiatan</th>'
-				                          						+'<th class="text-center">Sumber Dana Rincian</th>'
-				                          						+'<th class="text-center">Pagu Sumber Dana Rincian</th>'
-				                          					+'</tr>'
-				                          				+'</thead>'
-				                          				+'<tbody>'
-				                          					+html_sumbedana
-				                          				+'</tbody>'
-				                          			+'</table>'
-				                          		+'</td>'
-											+'</tr>';
-									    resolve_reduce(nextData);
-									})
+						var pagudana_sub_keg = 0;
+						var pagudana_rincian = 0;
+						var html_sumbedana = '';
+						var opsi = {
+							tidak_kirim_ke_lokal : true,
+							id_daerah: current_data.id_daerah,
+							tahun: current_data.tahun,
+							id_unit: current_data.id_unit,
+							id_skpd: current_data.id_skpd,
+							id_sub_skpd: current_data.id_sub_skpd,
+							id_giat: current_data.id_giat,
+							id_program: current_data.id_program,
+							id_sub_giat: current_data.id_sub_giat,
+							id_urusan: current_data.id_urusan,
+							id_bidang_urusan: current_data.id_bidang_urusan,
+							kode_bl: current_data.kode_bl,
+							kode_sbl: current_data.kode_sbl,
+							idbl: current_data.id_bl,
+							idsubbl: current_data.id_sub_bl,
+							kode_skpd: current_data.kode_skpd,
+							nama_skpd: current_data.nama_skpd,
+							kode_sub_skpd: current_data.kode_sub_skpd,
+							nama_sub_skpd: current_data.nama_sub_skpd,
+							pagumurni: current_data.pagumurni,
+							pagu: current_data.pagu,
+							no_return: true
+						};
+						singkron_rka_ke_lokal(opsi, function(data_rka){
+							var substeks_all = {};
+							data_rka.rka_all.map(function(rka, i){
+								var substeks = jQuery('<textarea>'+rka.subs_bl_teks.substeks+'</textarea>').val();
+								if(!substeks_all[substeks]){
+									rka.subs_bl_teks.pagu = 0;
+									substeks_all[substeks] = rka.subs_bl_teks;
 								}
+								substeks_all[substeks].pagu += +rka.rincian;
+								pagudana_rincian += +rka.rincian;
 							});
-						}else{
+							var dataDana = [];
+							for(var i in data_rka.dataDana){
+								dataDana.push(data_rka.dataDana[i]);
+							}
+							console.log('dataDana', dataDana, data_rka);
+							var check_all = false;
+							var pagu_rinci = 0;
+							var sumber_dana_rinci = '<td class="text-center">-</td>';
+							for(var i in substeks_all){
+								var nama_sumber_dana_rinci = '['+substeks_all[i].sumber_dana.kode_dana+'] '+substeks_all[i].sumber_dana.nama_dana+'';
+								if(!html_rekap_dana_all[substeks_all[i].sumber_dana.id_dana]){
+									html_rekap_dana_all[substeks_all[i].sumber_dana.id_dana] = {
+										nama_dana: nama_sumber_dana_rinci,
+										pagu: 0,
+										rinci: 0
+									}
+								}
+								html_rekap_dana_all[substeks_all[i].sumber_dana.id_dana].rinci += +substeks_all[i].pagu;
+
+								var check = false;
+								dataDana.map(function(d, ii){
+									if(d.iddana == substeks_all[i].sumber_dana.id_dana){
+										check = true;
+									}
+								});
+								if(check == false){
+									if(check_all == false){
+										check_all = [];
+									}
+									check_all.push(''
+										+'<tr>'
+											+'<td>'+i+'</td>'
+											+'<td class="text-right">'+formatMoney(substeks_all[i].pagu)+'</td>'
+										+'</tr>');
+									sumber_dana_rinci = '['+substeks_all[i].sumber_dana.kode_dana+'] '+substeks_all[i].sumber_dana.nama_dana+'';
+									pagu_rinci += substeks_all[i].pagu;
+	    							console.log('Sumber dana ada di rincian tapi tidak ada di sub kegiatan!', substeks_all[i]);
+								}
+							}
+							if(check_all){
+								sumber_dana_rinci = ''
+									+'<td>'
+										+sumber_dana_rinci
+										+'<br>'
+										+'<table class="table table-bordered">'
+											+'<thead>'
+												+'<tr>'
+													+'<th>Nama Kelompok</th>'
+													+'<th>Pagu</th>'
+												+'</tr>'
+											+'</thead>'
+											+'<tbody>'
+												+check_all.join('')
+											+'</tbody>'
+										+'</table>'
+									+'</td>';
+								html_sumbedana += ''
+									+'<tr iddana="" iddanasubbl="" style="background: #ff00003b;">'
+		                          		+'<td class="text-center">-</td>'
+		                          		+'<td class="text-center">-</td>'
+		                          		+sumber_dana_rinci
+		                          		+'<td class="text-right">'+formatMoney(pagu_rinci)+'</td>'
+									+'</tr>';
+	    						console.log('sub kegiatan', subkeg);
+							}
+							dataDana.map(function(d, ii){
+								var nama_sumber_dana_pagu = '['+d.kodedana+'] '+d.namadana+'';
+								if(!html_rekap_dana_all[d.iddana]){
+									html_rekap_dana_all[d.iddana] = {
+										nama_dana: nama_sumber_dana_pagu,
+										pagu: 0,
+										rinci: 0
+									}
+								}
+								html_rekap_dana_all[d.iddana].pagu += +d.pagudana;
+
+								var check = false;
+								var pagu_rinci = 0;
+								var sumber_dana_rinci = '<td class="text-center">-</td>';
+								pagudana_sub_keg += +d.pagudana;
+								for(var i in substeks_all){
+									if(d.iddana == substeks_all[i].sumber_dana.id_dana){
+										if(check == false){
+											check = [];
+										}
+										check.push(''
+											+'<tr>'
+												+'<td>'+i+'</td>'
+												+'<td class="text-right">'+formatMoney(substeks_all[i].pagu)+'</td>'
+											+'</tr>');
+										sumber_dana_rinci = '['+d.kodedana+'] '+d.namadana+'';
+										pagu_rinci += substeks_all[i].pagu;
+									}
+								}
+								var warning3 = '';
+								if(check){
+									sumber_dana_rinci = ''
+										+'<td>'
+											+sumber_dana_rinci
+											+'<br>'
+											+'<table class="table table-bordered">'
+												+'<thead>'
+													+'<tr>'
+														+'<th>Nama Kelompok</th>'
+														+'<th>Pagu</th>'
+													+'</tr>'
+												+'</thead>'
+												+'<tbody>'
+													+check.join('')
+												+'</tbody>'
+											+'</table>'
+										+'</td>';
+								}else{
+									warning3 = 'background: #ff00003b;';
+								}
+								html_sumbedana += ''
+									+'<tr style="'+warning3+'" iddana="'+d.iddana+'" iddanasubbl="'+d.iddanasubbl+'">'
+		                          		+'<td>['+d.kodedana+'] '+d.namadana+'</td>'
+		                          		+'<td class="text-right">'+formatMoney(d.pagudana)+'</td>'
+		                          		+sumber_dana_rinci
+		                          		+'<td class="text-right">'+formatMoney(pagu_rinci)+'</td>'
+									+'</tr>';
+							});
+
+							var warning = "";
+							if(pagudana_sub_keg != pagudana_rincian){
+								warning = "background: #ff00003b;";
+							}
+							html_sumbedana += ''
+								+'<tr style="'+warning+'">'
+	                          		+'<td colspan="2" class="text-right">'+formatMoney(pagudana_sub_keg)+'</td>'
+	                          		+'<td colspan="2" class="text-right">'+formatMoney(pagudana_rincian)+'</td>'
+								+'</tr>';
+
+							var warning2 = "";
+							if(current_data.pagu != current_data.rincian){
+								warning2 = "background: #ff00003b;";
+							}
+							total_pagu_validasi += +current_data.pagu;
+							total_pagu_rinci += +current_data.rincian;
+							html_rekap_dana += ''
+								+'<tr kode_sbl="'+current_data.kode_sbl+'">'
+									+'<td>'+current_data.kode_sub_giat+' '+current_data.nama_sub_giat+'</td>'
+	                          		+'<td style="'+warning2+'">'+formatMoney(current_data.pagu)+'</td>'
+	                          		+'<td style="'+warning2+'">'+formatMoney(current_data.rincian)+'</td>'
+	                          		+'<td>'
+	                          			+'<table class="table table-bordered">'
+	                          				+'<thead>'
+	                          					+'<tr>'
+	                          						+'<th class="text-center">Sumber Dana Sub Kegiatan</th>'
+	                          						+'<th class="text-center">Pagu Sumber Dana Sub Kegiatan</th>'
+	                          						+'<th class="text-center">Sumber Dana Rincian</th>'
+	                          						+'<th class="text-center">Pagu Sumber Dana Rincian</th>'
+	                          					+'</tr>'
+	                          				+'</thead>'
+	                          				+'<tbody>'
+	                          					+html_sumbedana
+	                          				+'</tbody>'
+	                          			+'</table>'
+	                          		+'</td>'
+								+'</tr>';
+
 							resolve_reduce(nextData);
-						}
+						});
 	                })
                     .catch(function(e){
                         console.log(e);
@@ -360,15 +314,15 @@ function rekap_sumber_dana_sub_kegiatan(){
             		html_rekap_dana_all_table += ''
             			+'<tr style="'+warning+'">'
             				+'<td>'+html_rekap_dana_all[i].nama_dana+'</td>'
-            				+'<td class="text-right">'+formatRupiah(html_rekap_dana_all[i].pagu)+'</td>'
-            				+'<td class="text-right">'+formatRupiah(html_rekap_dana_all[i].rinci)+'</td>'
+            				+'<td class="text-right">'+formatMoney(html_rekap_dana_all[i].pagu)+'</td>'
+            				+'<td class="text-right">'+formatMoney(html_rekap_dana_all[i].rinci)+'</td>'
             			+'</tr>';
             		rekap_dana_all_pagu += html_rekap_dana_all[i].pagu;
             		rekap_dana_all_rinci += html_rekap_dana_all[i].rinci;
             	}
             	console.log('html_rekap_dana_all', html_rekap_dana_all);
-            	jQuery('#rekap_total_pagu_validasi').text(formatRupiah(total_pagu_validasi));
-            	jQuery('#rekap_total_pagu_rincian').text(formatRupiah(total_pagu_rinci));
+            	jQuery('#rekap_total_pagu_validasi').text(formatMoney(total_pagu_validasi));
+            	jQuery('#rekap_total_pagu_rincian').text(formatMoney(total_pagu_rinci));
             	if(total_pagu_validasi != total_pagu_rinci){
             		jQuery('#rekap_total_pagu_validasi').css('background', '#ff000082');
             		jQuery('#rekap_total_pagu_rincian').css('background', '#ff000082');
@@ -376,8 +330,8 @@ function rekap_sumber_dana_sub_kegiatan(){
             		jQuery('#rekap_total_pagu_validasi').css('background', 'transparent');
             		jQuery('#rekap_total_pagu_rincian').css('background', 'transparent');
             	}
-            	jQuery('#rekap_total_sumber_dana_pagu').text(formatRupiah(rekap_dana_all_pagu));
-            	jQuery('#rekap_total_sumber_dana_rinci').text(formatRupiah(rekap_dana_all_rinci));
+            	jQuery('#rekap_total_sumber_dana_pagu').text(formatMoney(rekap_dana_all_pagu));
+            	jQuery('#rekap_total_sumber_dana_rinci').text(formatMoney(rekap_dana_all_rinci));
             	jQuery('#table_sub_keg_modal_sumber_dana_rekap tbody').html(html_rekap_dana_all_table);
             	if(rekap_dana_all_pagu != rekap_dana_all_rinci){
             		jQuery('#rekap_total_sumber_dana_pagu').css('background', '#ff000082');
@@ -387,10 +341,8 @@ function rekap_sumber_dana_sub_kegiatan(){
             		jQuery('#rekap_total_sumber_dana_rinci').css('background', 'transparent');
             	}
 
-				run_script('jQuery("#table_sub_keg_modal_sumber_dana").DataTable().destroy();');
+				run_script('show_modal_sumber_dana');
 				jQuery('#table_sub_keg_modal_sumber_dana tbody').html(html_rekap_dana);
-				run_script('jQuery("#table_sub_keg_modal_sumber_dana").DataTable({lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]]});');
-				run_script('jQuery("#mod-rekap-sumber-dana-sub-keg").modal("show");');
             	jQuery('#wrap-loading').hide();
             })
             .catch(function(e){
@@ -557,7 +509,7 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 															check_all.push(''
 																+'<tr>'
 																	+'<td>'+i+'</td>'
-																	+'<td class="text-right">'+formatRupiah(substeks_all_new[i].pagu)+'</td>'
+																	+'<td class="text-right">'+formatMoney(substeks_all_new[i].pagu)+'</td>'
 																+'</tr>');
 															sumber_dana_rinci = '['+substeks_all_new[i].kodedana+'] '+substeks_all_new[i].nama_dana+'';
 															pagu_rinci += substeks_all_new[i].pagu;
@@ -586,7 +538,7 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 								                          		+'<td class="text-center">-</td>'
 								                          		+'<td class="text-center">-</td>'
 								                          		+sumber_dana_rinci
-								                          		+'<td class="text-right">'+formatRupiah(pagu_rinci)+'</td>'
+								                          		+'<td class="text-right">'+formatMoney(pagu_rinci)+'</td>'
 															+'</tr>';
 							    						console.log('sub kegiatan', subkeg);
 													}
@@ -613,7 +565,7 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 																check.push(''
 																	+'<tr>'
 																		+'<td style="word-break: break-all;">'+i+'</td>'
-																		+'<td class="text-right">'+formatRupiah(substeks_all_new[i].pagu)+'</td>'
+																		+'<td class="text-right">'+formatMoney(substeks_all_new[i].pagu)+'</td>'
 																	+'</tr>');
 																sumber_dana_rinci = '['+d.kodedana+'] '+d.namadana+'';
 																pagu_rinci += substeks_all_new[i].pagu;
@@ -643,9 +595,9 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 														html_sumbedana += ''
 															+'<tr style="'+warning3+'" iddana="'+d.iddana+'" iddanasubbl="'+d.iddanasubbl+'">'
 								                          		+'<td>['+d.kodedana+'] '+d.namadana+'</td>'
-								                          		+'<td class="text-right">'+formatRupiah(d.pagudana)+'</td>'
+								                          		+'<td class="text-right">'+formatMoney(d.pagudana)+'</td>'
 								                          		+sumber_dana_rinci
-								                          		+'<td class="text-right">'+formatRupiah(pagu_rinci)+'</td>'
+								                          		+'<td class="text-right">'+formatMoney(pagu_rinci)+'</td>'
 															+'</tr>';
 													});
 								    				resolve();
@@ -785,7 +737,7 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 							// 								check_all.push(''
 							// 									+'<tr>'
 							// 										+'<td>'+i+'</td>'
-							// 										+'<td class="text-right">'+formatRupiah(substeks_all_new[i].pagu)+'</td>'
+							// 										+'<td class="text-right">'+formatMoney(substeks_all_new[i].pagu)+'</td>'
 							// 									+'</tr>');
 							// 								sumber_dana_rinci = '['+substeks_all_new[i].sumber_dana.kode_dana+'] '+substeks_all_new[i].sumber_dana.nama_dana+'';
 							// 								pagu_rinci += substeks_all_new[i].pagu;
@@ -814,7 +766,7 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 							// 	                          		+'<td class="text-center">-</td>'
 							// 	                          		+'<td class="text-center">-</td>'
 							// 	                          		+sumber_dana_rinci
-							// 	                          		+'<td class="text-right">'+formatRupiah(pagu_rinci)+'</td>'
+							// 	                          		+'<td class="text-right">'+formatMoney(pagu_rinci)+'</td>'
 							// 								+'</tr>';
 							//     						console.log('sub kegiatan', subkeg);
 							// 						}
@@ -841,7 +793,7 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 							// 									check.push(''
 							// 										+'<tr>'
 							// 											+'<td style="word-break: break-all;">'+i+'</td>'
-							// 											+'<td class="text-right">'+formatRupiah(substeks_all_new[i].pagu)+'</td>'
+							// 											+'<td class="text-right">'+formatMoney(substeks_all_new[i].pagu)+'</td>'
 							// 										+'</tr>');
 							// 									sumber_dana_rinci = '['+d.kodedana+'] '+d.namadana+'';
 							// 									pagu_rinci += substeks_all_new[i].pagu;
@@ -871,9 +823,9 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 							// 							html_sumbedana += ''
 							// 								+'<tr style="'+warning3+'" iddana="'+d.iddana+'" iddanasubbl="'+d.iddanasubbl+'">'
 							// 	                          		+'<td>['+d.kodedana+'] '+d.namadana+'</td>'
-							// 	                          		+'<td class="text-right">'+formatRupiah(d.pagudana)+'</td>'
+							// 	                          		+'<td class="text-right">'+formatMoney(d.pagudana)+'</td>'
 							// 	                          		+sumber_dana_rinci
-							// 	                          		+'<td class="text-right">'+formatRupiah(pagu_rinci)+'</td>'
+							// 	                          		+'<td class="text-right">'+formatMoney(pagu_rinci)+'</td>'
 							// 								+'</tr>';
 							// 						});
 							// // 	    				resolve2();
@@ -889,8 +841,8 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 							// 	}
 							// 	html_sumbedana += ''
 							// 		+'<tr style="'+warning+'">'
-			                //       		+'<td colspan="2" class="text-right">'+formatRupiah(pagudana_sub_keg)+'</td>'
-			                //       		+'<td colspan="2" class="text-right">'+formatRupiah(pagudana_rincian)+'</td>'
+			                //       		+'<td colspan="2" class="text-right">'+formatMoney(pagudana_sub_keg)+'</td>'
+			                //       		+'<td colspan="2" class="text-right">'+formatMoney(pagudana_rincian)+'</td>'
 							// 		+'</tr>';
 
 							// 	var warning2 = "";
@@ -900,8 +852,8 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 							// 	html_rekap_dana += ''
 							// 		+'<tr kode_sbl="'+subkeg.kode_sbl+'">'
 							// 			+'<td>'+subkeg.dataBl[0].nama_sub_giat+'</td>'
-			                //       		+'<td style="'+warning2+'">'+formatRupiah(subkeg.dataBl[0].pagu)+'</td>'
-			                //       		+'<td style="'+warning2+'">'+formatRupiah(pagudana_rincian)+'</td>'
+			                //       		+'<td style="'+warning2+'">'+formatMoney(subkeg.dataBl[0].pagu)+'</td>'
+			                //       		+'<td style="'+warning2+'">'+formatMoney(pagudana_rincian)+'</td>'
 			                //       		+'<td>'
 			                //       			+'<table class="table table-bordered">'
 			                //       				+'<thead>'
@@ -930,15 +882,15 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 				            // 		html_rekap_dana_all_table += ''
 				            // 			+'<tr style="'+warning+'">'
 				            // 				+'<td>'+html_rekap_dana_all[i].nama_dana+'</td>'
-				            // 				+'<td class="text-right">'+formatRupiah(html_rekap_dana_all[i].pagu)+'</td>'
-				            // 				+'<td class="text-right">'+formatRupiah(html_rekap_dana_all[i].rinci)+'</td>'
+				            // 				+'<td class="text-right">'+formatMoney(html_rekap_dana_all[i].pagu)+'</td>'
+				            // 				+'<td class="text-right">'+formatMoney(html_rekap_dana_all[i].rinci)+'</td>'
 				            // 			+'</tr>';
 				            // 		rekap_dana_all_pagu += html_rekap_dana_all[i].pagu;
 				            // 		rekap_dana_all_rinci += html_rekap_dana_all[i].rinci;
 				            // 	}
 				            // 	console.log('html_rekap_dana_all', html_rekap_dana_all);
-				            // 	jQuery('#rekap_total_pagu_validasi').text(formatRupiah(subkeg.dataBl[0].pagu));
-				            // 	jQuery('#rekap_total_pagu_rincian').text(formatRupiah(pagudana_rincian));
+				            // 	jQuery('#rekap_total_pagu_validasi').text(formatMoney(subkeg.dataBl[0].pagu));
+				            // 	jQuery('#rekap_total_pagu_rincian').text(formatMoney(pagudana_rincian));
 				            // 	if(subkeg.dataBl[0].pagu != pagudana_rincian){
 				            // 		jQuery('#rekap_total_pagu_validasi').css('background', '#ff000082');
 				            // 		jQuery('#rekap_total_pagu_rincian').css('background', '#ff000082');
@@ -946,8 +898,8 @@ function rekap_sumber_dana_sub_kegiatan_rinci(){
 				            // 		jQuery('#rekap_total_pagu_validasi').css('background', 'transparent');
 				            // 		jQuery('#rekap_total_pagu_rincian').css('background', 'transparent');
 				            // 	}
-				            // 	jQuery('#rekap_total_sumber_dana_pagu').text(formatRupiah(rekap_dana_all_pagu));
-				            // 	jQuery('#rekap_total_sumber_dana_rinci').text(formatRupiah(rekap_dana_all_rinci));
+				            // 	jQuery('#rekap_total_sumber_dana_pagu').text(formatMoney(rekap_dana_all_pagu));
+				            // 	jQuery('#rekap_total_sumber_dana_rinci').text(formatMoney(rekap_dana_all_rinci));
 				            // 	jQuery('#table_sub_keg_modal_sumber_dana_rekap tbody').html(html_rekap_dana_all_table);
 				            // 	if(rekap_dana_all_pagu != rekap_dana_all_rinci){
 				            // 		jQuery('#rekap_total_sumber_dana_pagu').css('background', '#ff000082');
