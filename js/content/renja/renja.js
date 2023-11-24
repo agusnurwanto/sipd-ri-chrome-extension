@@ -2490,13 +2490,13 @@ function singkron_rka_ke_lokal(opsi, callback) {
 					});
 
 					dana_sub_bl_res.data.map(function(d, i){
-						data_rka.dataDana[i] = {};
-						data_rka.dataDana[i].namadana = d.nama_dana;
-						data_rka.dataDana[i].kodedana = d.kodedana;
-						data_rka.dataDana[i].iddana = d.id_dana;
-						data_rka.dataDana[i].iddanasubbl = d.id_dana_sub_bl;
-						data_rka.dataDana[i].pagudana = d.pagu_dana;
-						data_rka.dataDana[i].id_sub_bl = d.id_sub_bl; //baru	
+						data_rka.dataDana[d.id_dana] = {};
+						data_rka.dataDana[d.id_dana].namadana = d.nama_dana;
+						data_rka.dataDana[d.id_dana].kodedana = d.kode_dana;
+						data_rka.dataDana[d.id_dana].iddana = d.id_dana;
+						data_rka.dataDana[d.id_dana].iddanasubbl = d.id_dana_sub_bl;
+						data_rka.dataDana[d.id_dana].pagudana = d.pagu_dana;
+						data_rka.dataDana[d.id_dana].id_sub_bl = d.id_sub_bl; //baru	
 					});
 
 					//output sub giat
@@ -2945,7 +2945,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 														if(_rka.id_ket_sub_bl!=0){
 															get_ket_sub_bl(_rka.id_ket_sub_bl).then(function(ket_sub_bl){
 																if(ket_sub_bl.data.length > 0){
-																	_rka.ket_bl_teks = '[-] '+ket_sub_bl.data[0].ket_bl_teks;
+																	_rka.ket_bl_teks = ket_sub_bl.data[0].ket_bl_teks;
 																	return resolve3();
 																}
 																return resolve3();
@@ -2958,24 +2958,24 @@ function singkron_rka_ke_lokal(opsi, callback) {
 												.then(function(){
 													return new Promise(function(resolve3, reject3){
 														if(_rka.id_subs_sub_bl!=0){
-															get_subs_sub_bl(_rka.id_subs_sub_bl).then(function(subs_sub_bl){
-															if(subs_sub_bl.data.length > 0){
-																subs_sub_bl.data[0].subs_bl_teks = '[#] '+subs_sub_bl.data[0].subs_bl_teks;
-																_rka.subs_bl_teks = {
-																	subs_asli: subs_sub_bl.data[0].subs_bl_teks,
-																	substeks: subs_sub_bl.data[0].subs_bl_teks,
-																	sumber_dana: {
-																		id_dana: subs_sub_bl.data[0].id_dana,
-																		nama_dana: '',
-																		is_paket: subs_sub_bl.data[0].is_paket,
-																		kode_dana: '',
-																		id_subtitle: _rka.id_subs_sub_bl,
-																		subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
-																	}
-																};															
-																_rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
-																_rka.id_metode_barjas = subs_sub_bl.data[0].id_metode_barjas;
-															}
+															get_subs_sub_bl(_rka.id_subs_sub_bl)
+															.then(function(subs_sub_bl){
+																if(subs_sub_bl.data.length > 0){
+																	_rka.subs_bl_teks = {
+																		subs_asli: subs_sub_bl.data[0].subs_bl_teks,
+																		substeks: subs_sub_bl.data[0].subs_bl_teks,
+																		sumber_dana: {
+																			id_dana: data_rka.dataDana[_rka.id_dana].iddana,
+																			nama_dana: data_rka.dataDana[_rka.id_dana].namadana,
+																			is_paket: subs_sub_bl.data[0].is_paket,
+																			kode_dana: data_rka.dataDana[_rka.id_dana].kodedana,
+																			id_subtitle: _rka.id_subs_sub_bl,
+																			subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
+																		}
+																	};
+																	_rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
+																	_rka.id_metode_barjas = subs_sub_bl.data[0].id_metode_barjas;
+																}
 																return resolve3();
 															});	
 														}else{
@@ -4001,6 +4001,9 @@ function get_ket_sub_bl(id_ket_sub_bl){
 					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 				},
 		      	success: function(ket_sub_bl){
+					if(ket_sub_bl.data.length > 0){
+						ket_sub_bl.data[0].ket_bl_teks = '[-] '+ket_sub_bl.data[0].ket_bl_teks;
+					}
 		      		global_ket_sub_bl[id_ket_sub_bl] = ket_sub_bl;
 		      		return resolve(ket_sub_bl);
 		      	}
@@ -4032,6 +4035,9 @@ function get_subs_sub_bl(id_subs_sub_bl){
 					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 				},
 		      	success: function(subs_sub_bl){
+		      		if(subs_sub_bl.data.length > 0){
+		      			subs_sub_bl.data[0].subs_bl_teks = '[#] '+subs_sub_bl.data[0].subs_bl_teks;
+		      		}
 		      		global_subs_sub_bl[id_subs_sub_bl] = subs_sub_bl;
 		      		return resolve(subs_sub_bl);
 		      	}

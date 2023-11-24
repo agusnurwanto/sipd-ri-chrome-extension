@@ -131,7 +131,7 @@ function rekap_sumber_dana_sub_kegiatan(){
 							for(var i in data_rka.dataDana){
 								dataDana.push(data_rka.dataDana[i]);
 							}
-							console.log('dataDana', dataDana, data_rka);
+							console.log('dataDana', dataDana, data_rka, substeks_all);
 							var check_all = false;
 							var pagu_rinci = 0;
 							var sumber_dana_rinci = '<td class="text-center">-</td>';
