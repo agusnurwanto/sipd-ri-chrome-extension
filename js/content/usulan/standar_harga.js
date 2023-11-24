@@ -37,6 +37,33 @@ function get_all_ssh_sipd(type_data_ssh, search_value=false){
 	})
 }
 
+function detail_ssh(opsi){
+	return new Promise(function(resolve, reject){
+		pesan_loading('Get Detail standar harga kode = '+opsi.kode_standar_harga);
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/view',
+			type: 'POST',
+			data: {
+				id_standar_harga: opsi.id_standar_harga,
+				id_kel_standar_harga: opsi.id_kel_standar_harga,
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id
+			},
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("x-api-key", x_api_key());
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(ret){
+				return resolve(ret);
+			},
+			error: function(e) {
+				console.log(e);
+				return resolve({});
+			}
+		});
+	})
+}
+
 function get_rekening_ssh(opsi) {
 	return new Promise(function(resolve, reject){
 		pesan_loading('Get rekening dari standar harga kode = '+opsi.kode_standar_harga);
@@ -105,7 +132,18 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 				return sequence.then(function(current_data){
 					return new Promise(function(resolve_redurce, reject_redurce){
 						var sendData = current_data.map(function(val, n){
+							
 							return new Promise(function(resolve, reject){
+								detail_ssh({
+                                        id_standar_harga: val.id_standar_harga,
+										kode_standar_harga: val.kode_standar_harga,
+										id_kel_standar_harga: val.id_kel_standar_harga,
+										kelompok: kelompok
+                                    })
+                                    .then(function(det){     
+                                    	val.detail_ssh = det.data;	                                    
+                                        
+                                    });
 								get_rekening_ssh({
 									id_standar_harga: val.id_standar_harga,
 									kode_standar_harga: val.kode_standar_harga,
@@ -201,6 +239,19 @@ function send_to_lokal(val){
 		data_ssh.ssh[i].nilai_tkdn	= b.nilai_tkdn;
 		data_ssh.ssh[i].is_pdn	= b.is_pdn;
 		data_ssh.ssh[i].kd_belanja	= {};
+		data_ssh.ssh[i].detail_ssh	= {};
+		b.detail_ssh.map(function(f, e){
+			data_ssh.ssh[i].detail_ssh[e]	= {};
+			data_ssh.ssh[i].detail_ssh[e].id_standar_harga	= f.id_standar_harga;
+			data_ssh.ssh[i].detail_ssh[e].is_deleted	= f.is_deleted;
+			data_ssh.ssh[i].detail_ssh[e].is_locked	= f.is_locked;
+			data_ssh.ssh[i].detail_ssh[e].created_at	= new Date(f.created_at).toLocaleString();
+			data_ssh.ssh[i].detail_ssh[e].harga_2	= f.harga_2;
+			data_ssh.ssh[i].detail_ssh[e].harga_3	= f.harga_3;
+			data_ssh.ssh[i].detail_ssh[e].is_pdn		= f.is_pdn;
+			data_ssh.ssh[i].detail_ssh[e].nilai_tkdn	= f.nilai_tkdn;
+			data_ssh.ssh[i].detail_ssh[e].created_user	= f.created_user;			
+		});	
 		b.rek_belanja.map(function(d, c){
 			data_ssh.ssh[i].kd_belanja[c]	= {};
 			data_ssh.ssh[i].kd_belanja[c].id_akun	= d.id_akun;
