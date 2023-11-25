@@ -44,6 +44,7 @@
 				"js/content/usulan/data_asmas.js",
 				"js/content/usulan/data_pokir.js",
 				"js/content/renja/renja.js",
+				"js/content/renja/input_renja.js",
 				"js/content/renja/monev_sumber_dana.js",
 				"js/content/renja/pendapatan/pendapatan.js",
 				"js/content/renja/pembiayaan/pembiayaan.js",				
