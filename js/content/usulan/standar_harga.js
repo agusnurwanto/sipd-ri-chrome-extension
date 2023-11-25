@@ -128,6 +128,7 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 
 			var i = 0;
 			var last = data_all.length-1;
+			var page = 0;
 			data_all.reduce(function(sequence, nextData){
 				return sequence.then(function(current_data){
 					return new Promise(function(resolve_redurce, reject_redurce){
@@ -135,15 +136,15 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 							
 							return new Promise(function(resolve, reject){
 								detail_ssh({
-                                        id_standar_harga: val.id_standar_harga,
-										kode_standar_harga: val.kode_standar_harga,
-										id_kel_standar_harga: val.id_kel_standar_harga,
-										kelompok: kelompok
-                                    })
-                                    .then(function(det){     
-                                    	val.detail_ssh = det.data;	                                    
-                                        
-                                    });
+                                    id_standar_harga: val.id_standar_harga,
+									kode_standar_harga: val.kode_standar_harga,
+									id_kel_standar_harga: val.id_kel_standar_harga,
+									kelompok: kelompok
+                                })
+                                .then(function(det){     
+                                	val.detail_ssh = det.data;	                                    
+                                    
+                                });
 								get_rekening_ssh({
 									id_standar_harga: val.id_standar_harga,
 									kode_standar_harga: val.kode_standar_harga,
@@ -160,8 +161,12 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 						});
 
 						Promise.all(sendData)
-						.then(function(val_all){								
-							send_to_lokal(val_all);								
+						.then(function(val_all){
+							page++;
+							send_to_lokal(val_all, {
+								kelompok: kelompok,
+								page: page
+							});								
 							var c_persen = +jQuery('#persen-loading').attr('persen');
 							c_persen++;
 							jQuery('#persen-loading').attr('persen', c_persen);
@@ -197,12 +202,14 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 	}
 }
 
-function send_to_lokal(val){
+function send_to_lokal(val, opsi){
 	var data_ssh = {
 		action: 'singkron_ssh',
 		type: 'ri',
 		tahun_anggaran: _token.tahun,
 		api_key: config.api_key,
+		kelompok: opsi.kelompok,
+		page: opsi.page,
 		ssh : {}
 	};
 	val.map(function(b, i){
