@@ -738,7 +738,7 @@ function cekUrl(current_url, nomor=1){
 						+'<div class="aksi-extension">'
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
-							+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_dari_db_lokal">Singkron '+type_data_ssh.toUpperCase()+' dari Lokal</button>'
+							+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_dari_db_lokal">Tarik '+type_data_ssh.toUpperCase()+' dari DB Lokal</button>'
 						+'</div>';
 					jQuery('#aksi-admin').append(btn2);				
 					jQuery('#singkron_dari_db_lokal').on('click', function(){
