@@ -1386,7 +1386,7 @@ function simpan_usulan_ssh(list_usulan_selected){
 					api_key: config.api_key,
 					type: 'ri',
 					data_id : id_all,
-					tahun_anggaran : config.tahun_anggaran
+					tahun_anggaran : _token.tahun
 				};
 				var data = {
 				    message:{
