@@ -37,6 +37,33 @@ function get_all_ssh_sipd(type_data_ssh, search_value=false){
 	})
 }
 
+function detail_ssh(opsi){
+	return new Promise(function(resolve, reject){
+		pesan_loading('Get Detail standar harga kode = '+opsi.kode_standar_harga);
+		relayAjax({
+			url: config.sipd_url+'api/master/d_komponen/view',
+			type: 'POST',
+			data: {
+				id_standar_harga: opsi.id_standar_harga,
+				id_kel_standar_harga: opsi.id_kel_standar_harga,
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id
+			},
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("x-api-key", x_api_key());
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
+			success: function(ret){
+				return resolve(ret);
+			},
+			error: function(e) {
+				console.log(e);
+				return resolve({});
+			}
+		});
+	})
+}
+
 function get_rekening_ssh(opsi) {
 	return new Promise(function(resolve, reject){
 		pesan_loading('Get rekening dari standar harga kode = '+opsi.kode_standar_harga);
@@ -101,11 +128,23 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 
 			var i = 0;
 			var last = data_all.length-1;
+			var page = 0;
 			data_all.reduce(function(sequence, nextData){
 				return sequence.then(function(current_data){
 					return new Promise(function(resolve_redurce, reject_redurce){
 						var sendData = current_data.map(function(val, n){
+							
 							return new Promise(function(resolve, reject){
+								detail_ssh({
+                                    id_standar_harga: val.id_standar_harga,
+									kode_standar_harga: val.kode_standar_harga,
+									id_kel_standar_harga: val.id_kel_standar_harga,
+									kelompok: kelompok
+                                })
+                                .then(function(det){     
+                                	val.detail_ssh = det.data;	                                    
+                                    
+                                });
 								get_rekening_ssh({
 									id_standar_harga: val.id_standar_harga,
 									kode_standar_harga: val.kode_standar_harga,
@@ -122,8 +161,12 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 						});
 
 						Promise.all(sendData)
-						.then(function(val_all){								
-							send_to_lokal(val_all);								
+						.then(function(val_all){
+							page++;
+							send_to_lokal(val_all, {
+								kelompok: kelompok,
+								page: page
+							});								
 							var c_persen = +jQuery('#persen-loading').attr('persen');
 							c_persen++;
 							jQuery('#persen-loading').attr('persen', c_persen);
@@ -159,12 +202,14 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 	}
 }
 
-function send_to_lokal(val){
+function send_to_lokal(val, opsi){
 	var data_ssh = {
 		action: 'singkron_ssh',
 		type: 'ri',
 		tahun_anggaran: _token.tahun,
 		api_key: config.api_key,
+		kelompok: opsi.kelompok,
+		page: opsi.page,
 		ssh : {}
 	};
 	val.map(function(b, i){
@@ -201,6 +246,19 @@ function send_to_lokal(val){
 		data_ssh.ssh[i].nilai_tkdn	= b.nilai_tkdn;
 		data_ssh.ssh[i].is_pdn	= b.is_pdn;
 		data_ssh.ssh[i].kd_belanja	= {};
+		data_ssh.ssh[i].detail_ssh	= {};
+		b.detail_ssh.map(function(f, e){
+			data_ssh.ssh[i].detail_ssh[e]	= {};
+			data_ssh.ssh[i].detail_ssh[e].id_standar_harga	= f.id_standar_harga;
+			data_ssh.ssh[i].detail_ssh[e].is_deleted	= f.is_deleted;
+			data_ssh.ssh[i].detail_ssh[e].is_locked	= f.is_locked;
+			data_ssh.ssh[i].detail_ssh[e].created_at	= new Date(f.created_at).toLocaleString();
+			data_ssh.ssh[i].detail_ssh[e].harga_2	= f.harga_2;
+			data_ssh.ssh[i].detail_ssh[e].harga_3	= f.harga_3;
+			data_ssh.ssh[i].detail_ssh[e].is_pdn		= f.is_pdn;
+			data_ssh.ssh[i].detail_ssh[e].nilai_tkdn	= f.nilai_tkdn;
+			data_ssh.ssh[i].detail_ssh[e].created_user	= f.created_user;			
+		});	
 		b.rek_belanja.map(function(d, c){
 			data_ssh.ssh[i].kd_belanja[c]	= {};
 			data_ssh.ssh[i].kd_belanja[c].id_akun	= d.id_akun;
@@ -1151,118 +1209,161 @@ function simpan_usulan_ssh(list_usulan_selected){
 				var val = opsi.val();
 				kelompok_id[kode] = val;
 			});
+			var pesan_all = [];
 			var id_all = [];
 			var last = list_usulan_selected.length - 1;
 			list_usulan_selected.reduce(function(sequence, nextData){
 		        return sequence.then(function(current_data){
 		    		return new Promise(function(resolve_reduce, reject_reduce){
+		    			// cek apakah usulan sudah ada rekeing akunnya
 		    			if(current_data.akun.length == 0){
-		    				console.log('Data akun tidak boleh kosong!', current_data);
-		    				return resolve_reduce();
+		    				var pesan = 'Data akun tidak boleh kosong!';
+		    				console.log(pesan, current_data);
+		    				pesan_all.push(pesan+' nama_standar_harga = '+current_data.nama_standar_harga+', Spek = '+current_data.spek+', jenis_usulan = '+current_data.status_jenis_usulan);
+		    				return resolve_reduce(nextData);
 		    			}
 	    				var id_duplikat = current_data.kode_kel_standar_harga+''+current_data.nama_standar_harga+''+current_data.spek+''+current_data.satuan+''+current_data.harga;
-	    				if(!ssh_unik[id_duplikat]){
-	    					if(kelompok_id[current_data.kode_kel_standar_harga]){
-	    						var param_ssh = {
-	    							tahun: _token.tahun,
-									id_daerah: _token.daerah_id,
-									id_kel_standar_harga: kelompok_id[current_data.kode_kel_standar_harga],
-									kode_kel_standar_harga: current_data.kelompok,
-									nama_standar_harga: current_data.nama_standar_harga,
-									spek: current_data.spek,
-									satuan: current_data.satuan,
-									id_satuan: '',
-									harga: current_data.harga,
-									is_pdn: current_data.jenis_produk,
-									nilai_tkdn: current_data.tkdn,
-									kelompok: current_data.kelompok,
-									tipe_standar_harga: type_data_ssh,
-									id_user_log: _token.user_id,
-									id_daerah_log: _token.daerah_id,
-									created_user: _token.user_id,
-									id_akun: ''
-	    						};
-					    		if(current_data.akun.length >= 1){
-					    			var lokal_akun = current_data.akun.shift();
-					    			if(akun_all[lokal_akun.kode_akun]){
-					    				param_ssh['id_akun'] = akun_all[lokal_akun.kode_akun].id_akun;
-					    			}else{
-					    				console.log('Data akun tidak ditemukan di SIPD!', lokal_akun);
+	    				new Promise(function(resolve2, reject2){
+
+	    					// cek jika standar harga belum ada di SIPD
+	    					if(!ssh_unik[id_duplikat]){
+
+	    						// cek apakah kelompok standar harga ada di SIPD
+		    					if(kelompok_id[current_data.kode_kel_standar_harga]){
+		    						var param_ssh = {
+		    							tahun: _token.tahun,
+										id_daerah: _token.daerah_id,
+										id_kel_standar_harga: kelompok_id[current_data.kode_kel_standar_harga],
+										kode_kel_standar_harga: current_data.kelompok,
+										nama_standar_harga: current_data.nama_standar_harga,
+										spek: current_data.spek,
+										satuan: current_data.satuan,
+										id_satuan: '',
+										harga: current_data.harga,
+										is_pdn: current_data.jenis_produk,
+										nilai_tkdn: current_data.tkdn,
+										kelompok: current_data.kelompok,
+										tipe_standar_harga: type_data_ssh,
+										id_user_log: _token.user_id,
+										id_daerah_log: _token.daerah_id,
+										created_user: _token.user_id,
+										id_akun: ''
+		    						};
+
+		    						current_data.akun.map(function(b, i){
+		    							if(
+		    								param_ssh['id_akun'] == '' 
+		    								&& akun_all[b.kode_akun]
+		    							){
+		    								param_ssh['id_akun'] = akun_all[b.kode_akun].id_akun;
+		    							}
+		    						});
+
+		    						// cek apakah akun ada di master sipd
+					    			if(param_ssh['id_akun'] == ''){
+					    				var pesan = 'Data akun tidak ditemukan di SIPD!';
+					    				console.log(pesan, current_data);
+					    				return resolve2({
+								    		status: 'error',
+								    		code: 4,
+								    		pesan: pesan
+								    	});
 					    			}
-					    		}
-								console.log('SIMPAN SSH', current_data);
-					    		relayAjax({
-									url: config.sipd_url+'api/master/d_komponen/add',
-									type: 'post',
-									data: param_ssh,
-									beforeSend: function (xhr) {			    
-										xhr.setRequestHeader("X-API-KEY", x_api_key());
-										xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-									},
-									success: function(html){
-										id_all.push(current_data.id);
-										get_all_ssh_sipd(type_data_ssh, current_data.nama_standar_harga)
-										.then(function(data_ssh){
-				    						var promise_all = [];
-											if(current_data.akun.length >= 1){
-												var cek_id = false;
-												data_ssh.data.data.map(function(b, i){
-													var id_sipd = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
-													if(id_sipd == id_duplikat){
-														cek_id = b.id_standar_harga;
+
+									console.log('SIMPAN SSH', current_data);
+						    		relayAjax({
+										url: config.sipd_url+'api/master/d_komponen/add',
+										type: 'post',
+										data: param_ssh,
+										beforeSend: function (xhr) {			    
+											xhr.setRequestHeader("X-API-KEY", x_api_key());
+											xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+										},
+										success: function(html){
+											get_all_ssh_sipd(type_data_ssh, current_data.nama_standar_harga)
+											.then(function(data_ssh){
+												if(current_data.akun.length >= 1){
+													var cek_id = false;
+													data_ssh.data.data.map(function(b, i){
+														var id_sipd = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
+														if(id_sipd == id_duplikat){
+															cek_id = b.id_standar_harga;
+														}
+													});
+													if(cek_id){
+														return resolve2({
+												    		status: 'success',
+												    		code: 3,
+												    		pesan: 'Berhasil simpan SSH baru!',
+												    		id_standar_harga: cek_id
+												    	});
+													}else{
+														var pesan = 'Id standar harga SIPD tidak ditemukan!';
+														console.log(pesan, current_data, data_ssh);
+						    							return resolve2({
+												    		status: 'error',
+												    		code: 5,
+												    		pesan: pesan
+												    	});
 													}
-												});
-												if(cek_id){
-									    			promise_all = current_data.akun.map(function(b, i){
-									    				return new Promise(function(resolve2, reject2){
-									    					simpan_rekening(cek_id, b.id_akun)
-									    					.then(function(){
-									    						resolve2();
-									    					});
-									    				});
-									    			});
-												}else{
-													console.log('Id standar harga SIPD tidak ditemukan!', current_data, data_ssh);
-												}
-								    		}
-								    		Promise.all(promise_all)
-					    					.then(function(){
-												resolve_reduce(nextData);
+									    		}
 											});
-										});
-				            		}
-				            	});
-			    			}else{
-			    				console.log('Kelompok SSH tidak ditemukan!', current_data);
-			    				resolve_reduce(nextData);
-			    			}
-	    				}else if(current_data.status_jenis_usulan == 'tambah_akun'){
-	    					var id_standar_harga = ssh_unik[id_duplikat].id_standar_harga;
-			    			var promise_all = [];
-				    		if(current_data.akun.length >= 1){
-				    			promise_all = current_data.akun.map(function(lokal_akun, i){
-				    				return new Promise(function(resolve2, reject2){
-				    					if(akun_all[lokal_akun.kode_akun]){
-						    				simpan_rekening(id_standar_harga, akun_all[lokal_akun.kode_akun].id_akun)
-						    				.then(function(){
-						    					resolve2();
-						    				});
-				    					}else{
-				    						console.log('Data akun tidak ditemukan di SIPD!', lokal_akun);
-				    						resolve2();
-				    					}
-				    				})
-				    			});
-				    		}
+										}
+									})
+						    	}else{
+						    		var pesan = 'Kelompok SSH tidak ditemukan!';
+				    				resolve2({
+							    		status: 'error',
+							    		code: 2,
+							    		pesan: pesan
+							    	});
+				    			}
+						    }else{
+						    	resolve2({
+						    		status: 'success',
+						    		code: 1,
+						    		pesan: 'Item SSH sudah ada!',
+						    		id_standar_harga: ssh_unik[id_duplikat].id_standar_harga
+						    	});
+						    }
+
+						// proses simpan data akun rekening
+	    				}).then(function(pesan_sebelumnya){
+		    				console.log(pesan_sebelumnya, current_data);
+		    				pesan_all.push(pesan_sebelumnya.pesan+' nama_standar_harga = '+current_data.nama_standar_harga+', Spek = '+current_data.spek+', jenis_usulan = '+current_data.status_jenis_usulan);
+	    					if(pesan_sebelumnya.status == 'error'){
+	    						return resolve_reduce(nextData);
+	    					}
+
+	    					var id_standar_harga = pesan_sebelumnya.id_standar_harga;
+	    					var promise_all = [];
+	    					var cek_insert_akun = true;
+			    			promise_all = current_data.akun.map(function(b, i){
+			    				return new Promise(function(resolve2, reject2){
+			    					if(akun_all[b.kode_akun]){
+					    				simpan_rekening(id_standar_harga, akun_all[b.kode_akun].id_akun)
+					    				.then(function(){
+					    					resolve2();
+					    				});
+			    					}else{
+			    						cek_insert_akun = false;
+			    						var pesan = 'Data akun tidak ditemukan di SIPD!';
+			    						console.log(pesan, b);
+		    							pesan_all.push(pesan+' nama_akun = '+b.nama_akun+' nama_standar_harga = '+current_data.nama_standar_harga+', Spek = '+current_data.spek+', jenis_usulan = '+current_data.status_jenis_usulan);
+			    						resolve2();
+			    					}
+			    				});
+			    			});
 				    		Promise.all(promise_all)
-				    		.then(function(){
-								id_all.push(current_data.id);
-				    			resolve_reduce(nextData);
-				    		});
-				    	}else{
-		    				console.log('Item SSH sudah ada!', current_data, ssh_unik[id_duplikat]);
-		    				resolve_reduce(nextData);
-				    	}
+	    					.then(function(){
+
+	    						// jika akun berhasil disimpan maka proses selesai
+	    						if(cek_insert_akun){
+									id_all.push(current_data.id);
+	    						}
+								resolve_reduce(nextData);
+							});
+	    				});
 		    		})
 		            .catch(function(e){
 		                console.log(e);
@@ -1275,12 +1376,17 @@ function simpan_usulan_ssh(list_usulan_selected){
 		        });
 		    }, Promise.resolve(list_usulan_selected[last]))
 		    .then(function(data_last){
-				run_script('hide_modal', 'usulan-ssh');
+				run_script('hide_modal', {
+					id: 'usulan-ssh'
+				});
+
+				// update status data usulan di lokal
 		    	var opsi = { 
 					action: 'update_usulan_ssh_sipd',
 					api_key: config.api_key,
+					type: 'ri',
 					data_id : id_all,
-					tahun_anggaran : config.tahun_anggaran
+					tahun_anggaran : _token.tahun
 				};
 				var data = {
 				    message:{
@@ -1296,6 +1402,11 @@ function simpan_usulan_ssh(list_usulan_selected){
 				chrome.runtime.sendMessage(data, function(response) {
 				    console.log('responeMessage', response);
 				});
+
+				// tampilkan pesan error jika ada
+				if(pesan_all.length >= 1){
+					alert(pesan_all.join(' | '));
+				}
 		    })
 		    .catch(function(e){
 		        console.log(e);

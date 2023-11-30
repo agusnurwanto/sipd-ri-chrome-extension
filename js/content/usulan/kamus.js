@@ -108,6 +108,10 @@ function get_detail_kamus_pokir(iddaerah, idusulan, tahun){
 			type: 'GET',	      				
 			processData: false,
 			contentType : 'application/json',
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("x-api-key", x_api_key());
+				xhr.setRequestHeader("x-access-token", _token.token);
+			},
 	      	success: function(data){
 	      		return resolve(data);
 	      	}

@@ -738,7 +738,7 @@ function cekUrl(current_url, nomor=1){
 						+'<div class="aksi-extension">'
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="cek_duplikat_ssh">Cek Duplikat '+type_data_ssh+'</button>'
 							+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="set_mulit_rek">Set Multi Rek. Belanja '+type_data_ssh+'</button>'
-							+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_dari_db_lokal">Singkron '+type_data_ssh.toUpperCase()+' dari Lokal</button>'
+							+'<button style="margin-left: 20px;" class="btn btn-sm btn-primary" id="singkron_dari_db_lokal">Tarik '+type_data_ssh.toUpperCase()+' dari DB Lokal</button>'
 						+'</div>';
 					jQuery('#aksi-admin').append(btn2);				
 					jQuery('#singkron_dari_db_lokal').on('click', function(){
@@ -911,10 +911,69 @@ function cekUrl(current_url, nomor=1){
 					|| current_url.indexOf('/penganggaran/anggaran/cascading/rincian/sub-kegiatan') != -1
 				){
 					console.log('halaman Rincian belanja SKPD');
+					var modal = ''
+						+'<div class="modal fade modal-extension" id="modal-extension-rekap-sumber-dana-sub-keg" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="min-width: 1500px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+									+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
+									+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<div class="no_datatable">'
+											+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana_rekap">'
+												+'<thead>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center" colspan="2">Total Pagu Validasi</th>'
+														+'<th class="text-right" id="rekap_total_pagu_validasi"></th>'
+													+'</tr>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center" colspan="2">Total Pagu Rincian</th>'
+														+'<th class="text-right" id="rekap_total_pagu_rincian"></th>'
+													+'</tr>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center">Sumber Dana</th>'
+														+'<th class="text-center">Pagu Sumber Dana Sub Kegiatan</th>'
+														+'<th class="text-center">Pagu Sumber Dana Rincian</th>'
+													+'</tr>'
+												+'</thead>'
+												+'<tbody></tbody>'
+												+'<tfoot>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center">Total</th>'
+														+'<th class="text-right" id="rekap_total_sumber_dana_pagu"></th>'
+														+'<th class="text-right" id="rekap_total_sumber_dana_rinci"></th>'
+													+'</tr>'
+												+'</tfoot>'
+											+'</table>'
+										+'</div>'
+										+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana">'
+											+'<thead>'
+												+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+													+'<th class="text-left">Sub Kegiatan</th>'
+													+'<th class="text-whrightite">Pagu Validasi</th>'
+													+'<th class="text-right">Pagu Rincian</th>'
+													+'<th class="text-center">Sumber Dana</th>'
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+									+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'	
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';
+					jQuery('body').append(modal);
+					var rekap_suber_dana = ''
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-success btn-outline" id="rekap_sumber_dana_hal_rinci">'
+							+'<i class="menu-eye m-r-5"></i> <span>Lihat Rekap Sumber Dana</span>'
+						+'</button>';
 					var btn = ''
-						+'<div class="aksi-extension">'						
-							+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
+						+'<div class="aksi-extension">'
 							+singkron_rka
+							+rekap_suber_dana
 						+'</div>';				
 					jQuery('.page-title').append(btn);
 					jQuery('#open_modal_skpd').on('click', function(){
@@ -933,10 +992,26 @@ function cekUrl(current_url, nomor=1){
 										b.pagumurni = 0;
 									}
 									newData.push(b);
-								})
+								});
 								singkron_subgiat_modal(newData);
 							})
 						}
+					});
+
+					// rekap sumber dana halaman rincian
+					jQuery('#rekap_sumber_dana_hal_rinci').on('click', function(){
+						var id_sub_bl = current_url.split('/').pop();
+						sub_bl_view(id_sub_bl)
+						.then(function(res){
+							var id_sub_skpd = '';
+							res.data.map(function(b, i){
+								id_sub_skpd = b.id_sub_skpd;
+							});
+							rekap_sumber_dana_sub_kegiatan({
+								id_sub_bl: id_sub_bl,
+								id_sub_skpd: id_sub_skpd
+							});
+						});
 					});
 				}else if(
 					current_url.indexOf('/perencanaan/renja/cascading/belanja?id_skpd='+id_skpd) != -1
@@ -1009,56 +1084,58 @@ function cekUrl(current_url, nomor=1){
 							+'</div>'
 						+'</div>'
 						+'<div class="modal fade modal-extension" id="modal-extension-rekap-sumber-dana-sub-keg" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
-							+'<div class="modal-dialog" style="width: 1500px;" role="document">'
-							+'<div class="modal-content">'
-								+'<div class="modal-header bgpanel-theme">'
-								+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
-								+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
-								+'</div>'
-								+'<div class="modal-body">'
-									+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana_rekap">'
-										+'<thead>'
-											+'<tr class="bg-grey-600">'
-												+'<th class="text-white text-center" colspan="2">Total Pagu Validasi</th>'
-												+'<th class="text-white text-right" id="rekap_total_pagu_validasi"></th>'
-											+'</tr>'
-											+'<tr class="bg-grey-600">'
-												+'<th class="text-white text-center" colspan="2">Total Pagu Rincian</th>'
-												+'<th class="text-white text-right" id="rekap_total_pagu_rincian"></th>'
-											+'</tr>'
-											+'<tr class="bg-grey-600">'
-												+'<th class="text-white text-center">Sumber Dana</th>'
-												+'<th class="text-white text-center">Pagu Sumber Dana Sub Kegiatan</th>'
-												+'<th class="text-white text-center">Pagu Sumber Dana Rincian</th>'
-											+'</tr>'
-										+'</thead>'
-										+'<tbody></tbody>'
-										+'<tfoot>'
-											+'<tr class="bg-grey-600">'
-												+'<th class="text-white text-center">Total</th>'
-												+'<th class="text-white text-right" id="rekap_total_sumber_dana_pagu"></th>'
-												+'<th class="text-white text-right" id="rekap_total_sumber_dana_rinci"></th>'
-											+'</tr>'
-										+'</tfoot>'
-									+'</table>'
-									+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana">'
-										+'<thead>'
-											+'<tr class="bg-grey-600">'
-												+'<th class="text-left">Sub Kegiatan</th>'
-												+'<th class="text-whrightite">Pagu Validasi</th>'
-												+'<th class="text-right">Pagu Rincian</th>'
-												+'<th class="text-center">Sumber Dana</th>'
-											+'</tr>'
-										+'</thead>'
-										+'<tbody></tbody>'
-									+'</table>'
-								+'</div>'
-								+'<div class="modal-footer">'
-								+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'	
+							+'<div class="modal-dialog" style="min-width: 1500px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+									+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
+									+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<div class="no_datatable">'
+											+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana_rekap">'
+												+'<thead>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center" colspan="2">Total Pagu Validasi</th>'
+														+'<th class="text-right" id="rekap_total_pagu_validasi"></th>'
+													+'</tr>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center" colspan="2">Total Pagu Rincian</th>'
+														+'<th class="text-right" id="rekap_total_pagu_rincian"></th>'
+													+'</tr>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center">Sumber Dana</th>'
+														+'<th class="text-center">Pagu Sumber Dana Sub Kegiatan</th>'
+														+'<th class="text-center">Pagu Sumber Dana Rincian</th>'
+													+'</tr>'
+												+'</thead>'
+												+'<tbody></tbody>'
+												+'<tfoot>'
+													+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+														+'<th class="text-center">Total</th>'
+														+'<th class="text-right" id="rekap_total_sumber_dana_pagu"></th>'
+														+'<th class="text-right" id="rekap_total_sumber_dana_rinci"></th>'
+													+'</tr>'
+												+'</tfoot>'
+											+'</table>'
+										+'</div>'
+										+'<table class="table table-hover table-striped" id="table_sub_keg_modal_sumber_dana">'
+											+'<thead>'
+												+'<tr style="background: #666; font-weight: bold;" class="text-white">'
+													+'<th class="text-left">Sub Kegiatan</th>'
+													+'<th class="text-whrightite">Pagu Validasi</th>'
+													+'<th class="text-right">Pagu Rincian</th>'
+													+'<th class="text-center">Sumber Dana</th>'
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+									+'<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>'	
+									+'</div>'
 								+'</div>'
 							+'</div>'
-						+'</div>'
-					+'</div>';
+						+'</div>';
 					jQuery('body').append(modal);			
 					jQuery('body').on('click', '#modal_cek_all', function(){
 						var cek = jQuery(this).is(':checked');
@@ -1070,7 +1147,7 @@ function cekUrl(current_url, nomor=1){
 							+'<label><input type="checkbox" id="only_pagu"> Hanya Pagu SKPD</label>'
 							+singkron_rka
 							+rekap_suber_dana
-						+'</div>';				
+						+'</div>';
 					jQuery('.page-title').append(btn);
 					jQuery('#get_renja_lokal').on('click', function(){
 						get_renja_lokal();
@@ -1088,9 +1165,8 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#proses-extension').on('click', function(){
 						singkron_subgiat_modal();
 					});
-					jQuery('#rekap_sumber_dana').on('click', function(){					
-						rekap_sumber_dana_sub_kegiatan_rinci();
-					});
+
+					// rekap sumber dana di halaman daftar sub kegiatan per skpd
 					jQuery('#rekap_sumber_dana').on('click', function(){						
 						rekap_sumber_dana_sub_kegiatan();
 					});		
