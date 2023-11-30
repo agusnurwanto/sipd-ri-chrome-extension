@@ -70,7 +70,6 @@
 	],
 	"host_permissions": ["<all_urls>"],
 	"permissions": [
-		"webRequestBlocking",
 		"webRequest",
 		"activeTab",
 		"storage",

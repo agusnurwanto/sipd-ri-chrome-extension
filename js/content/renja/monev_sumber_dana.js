@@ -1,66 +1,3 @@
-function getSumberDanaBelanja(substeks_all, kode_get_rinci_subtitle){
-	return new Promise(function(resolve, reject){
-		var data_array = [];
-		for(var i in substeks_all){
-			data_array.push({
-				kelompok: i,
-				data: substeks_all[i]
-			});
-		}
-		var last = data_array.length-1;
-		data_array.reduce(function(sequence, nextData){
-            return sequence.then(function(current_data){
-        		return new Promise(function(resolve_reduce, reject_reduce){
-        			if(
-						current_data.kelompok == ''
-						|| current_data.kelompok == '_'
-						|| current_data.kelompok == null
-						|| !current_data.kelompok
-					){
-						substeks_all[current_data.kelompok].sumber_dana = {
-							"id_subtitle":null,
-							"subtitle_teks":"",
-							"is_paket":1,
-							"id_dana":null,
-							"kode_dana":null,
-							"nama_dana":null
-						};
-						resolve_reduce(nextData);
-					}else{
-						var formDataCustom = new FormData();
-						formDataCustom.append('_token', tokek);
-						formDataCustom.append('v1bnA1m', v1bnA1m);
-						formDataCustom.append('DsK121m', Curut("id_subtitle=0&subs_teks="+encodeURIComponent(current_data.kelompok)));
-						relayAjax({
-							url: kode_get_rinci_subtitle+'&subs_teks='+current_data.kelompok,
-							type: 'post',
-					        data: formDataCustom,
-					        processData: false,
-					        contentType: false,
-							success: function(data){
-								var subs_teks = this.url.split('&subs_teks=')[1];
-								substeks_all[current_data.kelompok].sumber_dana = data;
-								resolve_reduce(nextData);
-							}
-						});
-					}
-        		})
-                .catch(function(e){
-                    console.log(e);
-                    return Promise.resolve(nextData);
-                });
-            })
-            .catch(function(e){
-                console.log(e);
-                return Promise.resolve(nextData);
-            });
-        }, Promise.resolve(data_array[last]))
-        .then(function(data_last){
-        	resolve(substeks_all);
-        });
-	});
-}
-
 function rekap_sumber_dana_sub_kegiatan(opsi_rekap={}){
     jQuery('#wrap-loading').show();
     if(opsi_rekap.id_sub_skpd){
@@ -105,6 +42,7 @@ function rekap_sumber_dana_sub_kegiatan(opsi_rekap={}){
 						var html_sumbedana = '';
 						var opsi = {
 							tidak_kirim_ke_lokal : true,
+							hanya_sumber_dana : true,
 							id_daerah: current_data.id_daerah,
 							tahun: current_data.tahun,
 							id_unit: current_data.id_unit,
