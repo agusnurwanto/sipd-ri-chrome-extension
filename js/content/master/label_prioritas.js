@@ -259,6 +259,12 @@ function singkron_label_giat(){
 				if(data_temp.length >= 1){
 					data_all.push(data_temp);
 				}
+
+				if(data_all.length == 0){
+					hide_loading();
+					alert('Data Master Label Giat kosong!');
+				}
+
 				data_all.map(function(b, i){
 					data_label.label = b;
 					var data = {
