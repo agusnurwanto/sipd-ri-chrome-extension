@@ -1411,3 +1411,437 @@ function update_dana_sub_bl(opsi, current_data) {
 		});
 	});
 }
+
+
+
+
+// hapus sumber dana di sub kegiatan
+function hapus_sumber_dana(opsi){
+	pesan_loading('Hapus sumber dana '+opsi.kode_dana+' '+opsi.nama_dana+'!');
+	return new Promise(function(resolve, reject){
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/dana_sub_bl/delete',						
+			type: 'POST',	      				
+			data: {
+				id_dana_sub_bl: opsi.id_dana_sub_bl,
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,
+				id_unit: opsi.id_unit,
+				id_dana: opsi.id_dana,
+				id_daerah_log: _token.daerah_id,
+				id_user_log: _token.user_id,
+				id_sub_bl: opsi.id_sub_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			},
+			error: function(e){
+				console.log(e);
+				return resolve({});
+			}
+		});
+	});
+}
+
+// validasi sub kegiatan
+function validasi_pagu(opsi){
+	pesan_loading('Validasi pagu sub kegiatan '+opsi.nama_skpd+'!');
+	return new Promise(function(resolve, reject){
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/sub_bl/validasi_semua_pagu',						
+			type: 'POST',	      				
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id,
+				id_unit: opsi.id_skpd,
+				id_user: _token.user_id
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			},
+			error: function(e){
+				console.log(e);
+				return resolve({});
+			}
+		});
+	});
+}
+
+
+
+// simpan indikator program, jika ada 2 indikator maka di simpan 2x
+function simpan_capaian_bl(opsi, offset=0){    
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('simpan_capaian_bl', opsi[offset]);
+		relayAjax({
+			url: config.sipd_url+'api/renja/capaian_bl/add',                               
+			type: 'POST',	      				
+			data: {				
+				indikator_program_list: opsi[offset].indikator_program_list,
+				tahun: opsi[offset].tahun,
+				id_daerah: opsi[offset].id_daerah,
+				id_unit: opsi[offset].id_unit,
+				id_skpd: opsi[offset].id_skpd,
+				id_sub_skpd: opsi[offset].id_sub_skpd,
+				id_bl: 0,
+				id_program: opsi[offset].id_program,
+				id_giat: opsi[offset].id_giat,
+				tolak_ukur: opsi[offset].tolak_ukur,
+				target: opsi[offset].target,
+				satuan: opsi[offset].satuan,
+				target_teks: opsi[offset].target_teks,
+				kode_rpjm: opsi[offset].kode_rpjm,
+				id_daerah_log: opsi[offset].id_daerah_log,
+				id_user_log: opsi[offset].id_user_log
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			simpan_capaian_bl(opsi, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	}
+	    });
+    });
+}
+
+function update_capaian_bl(opsi, offset=0){    
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('update_capaian_bl', opsi[offset]);
+		relayAjax({
+			url: config.sipd_url+'api/renja/capaian_bl/update',                               
+			type: 'POST',	      				
+			data: {				
+				indikator_program_list: opsi[offset].indikator_program_list,
+				tahun: opsi[offset].tahun,
+				id_daerah: opsi[offset].id_daerah,
+				id_unit: opsi[offset].id_unit,
+				id_skpd: opsi[offset].id_skpd,
+				id_sub_skpd: opsi[offset].id_sub_skpd,
+				id_bl: 0,
+				id_program: opsi[offset].id_program,
+				id_giat: opsi[offset].id_giat,
+				tolak_ukur: opsi[offset].tolak_ukur,
+				target: opsi[offset].target,
+				satuan: opsi[offset].satuan,
+				target_teks: opsi[offset].target_teks,
+				kode_rpjm: opsi[offset].kode_rpjm,
+				id_daerah_log: opsi[offset].id_daerah_log,
+				id_user_log: opsi[offset].id_user_log,
+				id_capaian_bl: opsi[offset].id_capaian_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			update_capaian_bl(opsi, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	}
+	    });
+    });
+}
+
+// simpan indikator output kegiatan, jika ada 2 indikator maka di simpan 2x
+function simpan_output_giat(opsi, offset=0){    
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('simpan_output_giat', opsi[offset]);
+		relayAjax({
+			url: config.sipd_url+'api/renja/output_giat/add',                               
+			type: 'POST',	      				
+			data: {				
+				indikator_kegiatan_list: opsi[offset].indikator_kegiatan_list,
+				tahun: opsi[offset].tahun,
+				id_daerah: opsi[offset].id_daerah,
+				id_unit: opsi[offset].id_unit,
+				id_skpd: opsi[offset].id_skpd,
+				id_sub_skpd: opsi[offset].id_sub_skpd,
+				id_bl: 0,
+				id_program: opsi[offset].id_program,
+				id_giat: opsi[offset].id_giat,
+				tolak_ukur: opsi[offset].tolak_ukur,
+				target: opsi[offset].target,
+				satuan: opsi[offset].satuan,
+				target_teks: opsi[offset].target_teks,
+				kode_rpjm: opsi[offset].kode_rpjm,
+				kode_renstra: opsi[offset].kode_renstra,
+				id_daerah_log: opsi[offset].id_daerah_log,
+				id_user_log: opsi[offset].id_user_log
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			simpan_output_giat(opsi, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	}
+	    });
+    });
+}
+
+function update_output_giat(opsi, offset=0){
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('update_output_giat', opsi[offset]);
+		relayAjax({
+			url: config.sipd_url+'api/renja/output_giat/update',
+			type: 'POST',
+			data: {
+				indikator_kegiatan_list: opsi[offset].indikator_kegiatan_list,
+				tahun: opsi[offset].tahun,
+				id_daerah: opsi[offset].id_daerah,
+				id_unit: opsi[offset].id_unit,
+				id_skpd: opsi[offset].id_skpd,
+				id_sub_skpd: opsi[offset].id_sub_skpd,
+				id_bl: 0,
+				id_program: opsi[offset].id_program,
+				id_giat: opsi[offset].id_giat,
+				tolak_ukur: opsi[offset].tolak_ukur,
+				target: opsi[offset].target,
+				satuan: opsi[offset].satuan,
+				target_teks: opsi[offset].target_teks,
+				kode_rpjm: opsi[offset].kode_rpjm,
+				kode_renstra: opsi[offset].kode_renstra,
+				id_daerah_log: opsi[offset].id_daerah_log,
+				id_user_log: opsi[offset].id_user_log,
+				id_output_giat: opsi[offset].id_output_giat
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			update_output_giat(opsi, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	}
+	    });
+    });
+}
+
+// simpan kelompok sasaran, hanya 1
+function simpan_kelompok_sasaran(opsi){
+    return new Promise(function(resolve, reject){
+    	console.log('simpan_kelompok_sasaran', opsi);
+		relayAjax({
+			url: config.sipd_url+'api/renja/bl/simpandata',                               
+			type: 'POST',	      				
+			data: {				
+				tahun: opsi.tahun,
+				id_daerah: opsi.id_daerah,
+				id_unit: opsi.id_unit,
+				id_skpd: opsi.id_skpd,
+				id_sub_skpd: opsi.id_sub_skpd,
+				id_bl: opsi.id_bl,
+				id_urusan: opsi.id_urusan,
+				id_bidang_urusan: opsi.id_bidang_urusan,
+				id_program: opsi.id_program,
+				id_giat: opsi.id_giat,
+				sasaran: opsi.sasaran,
+				id_daerah_log: opsi.id_daerah_log,
+				id_user_log: opsi.id_user_log
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		return resolve(ret);
+	      	}
+	    });
+    });
+}
+
+// simpan indikator hasil giat
+function simpan_hasil(opsi, id_bl, offset=0){
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('simpan_hasil', opsi[offset]);
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/hasil_bl/add',                               
+			type: 'POST',	      				
+			data: {				
+				tahun: opsi[0].tahun,
+				id_daerah: opsi[0].id_daerah,
+				id_unit: opsi[0].id_unit,
+				id_skpd: opsi[0].id_skpd,
+				id_sub_skpd: opsi[0].id_sub_skpd,
+				id_bl: id_bl,
+				id_urusan: opsi[0].id_urusan,
+				id_bidang_urusan: opsi[0].id_bidang_urusan,
+				id_program: opsi[0].id_program,
+				id_giat: opsi[0].id_giat,
+				tolak_ukur: opsi[0].tolak_ukur,
+				target: opsi[0].target,
+				satuan: opsi[0].satuan,
+				target_teks: opsi[0].target_teks,
+				created_user: opsi[0].created_user,
+				id_daerah_log: opsi[0].id_daerah_log,
+				id_user_log: opsi[0].id_user_log
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		return resolve(ret); // langsung direturn karena hanya bisa satu indikator hasil
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			simpan_hasil(opsi, id_bl, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	},
+	      	error: function(ret){
+	      		console.log('error', ret);
+	      		return resolve();
+	      	}
+	    });
+    });
+}
+
+// update indikator hasil giat
+function update_hasil(opsi, id_bl, offset=0){
+    return new Promise(function(resolve, reject){
+    	if(opsi.length == 0){
+    		return resolve();
+    	}
+    	console.log('update_hasil', opsi[offset]);
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/hasil_bl/update',                               
+			type: 'POST',	      				
+			data: {				
+				tahun: opsi[0].tahun,
+				id_daerah: opsi[0].id_daerah,
+				id_unit: opsi[0].id_unit,
+				id_skpd: opsi[0].id_skpd,
+				id_sub_skpd: opsi[0].id_sub_skpd,
+				id_bl: id_bl,
+				id_urusan: opsi[0].id_urusan,
+				id_bidang_urusan: opsi[0].id_bidang_urusan,
+				id_program: opsi[0].id_program,
+				id_giat: opsi[0].id_giat,
+				tolak_ukur: opsi[0].tolak_ukur,
+				target: opsi[0].target,
+				satuan: opsi[0].satuan,
+				target_teks: opsi[0].target_teks,
+				created_user: opsi[0].created_user,
+				id_daerah_log: opsi[0].id_daerah_log,
+				id_user_log: opsi[0].id_user_log,
+				id_hasil_bl: opsi[0].id_hasil_bl
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		return resolve(ret); // langsung direturn karena hanya bisa satu indikator hasil
+	      		offset += 1;
+	      		if(opsi.length > offset){
+	      			update_hasil(opsi, id_bl, offset)
+	      			.then(function(ret){
+	      				return resolve(ret);
+	      			})
+	      		}else{
+	      			return resolve(ret);
+	      		}
+	      	},
+	      	error: function(ret){
+	      		console.log('error', ret);
+	      		return resolve();
+	      	}
+	    });
+    });
+}
+
+// simpan label pusat, hanya 1
+function simpan_label_pusat(opsi){
+    return new Promise(function(resolve, reject){
+    	console.log('simpan_label_pusat', opsi);
+		jQuery.ajax({
+			url: config.sipd_url+'api/renja/label_bl/simpandata',                               
+			type: 'POST',	      				
+			data: {				
+				tahun: opsi.tahun,
+				id_daerah: opsi.id_daerah,
+				id_unit: opsi.id_unit,
+				id_skpd: opsi.id_skpd,
+				id_sub_skpd: opsi.id_sub_skpd,
+				id_bl: opsi.id_bl,
+				id_urusan: opsi.id_urusan,
+				id_bidang_urusan: opsi.id_bidang_urusan,
+				id_program: opsi.id_program,
+				id_giat: opsi.id_giat,
+				id_sub_giat: opsi.id_sub_giat,
+				id_label_pusat: opsi.id_label_pusat,
+				id_label_bl: opsi.id_label_bl,
+				id_daerah_log: opsi.id_daerah_log,
+				id_user_log: opsi.id_user_log
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+	      	success: function(ret){
+	      		return resolve(ret);
+	      	},
+	      	error: function(ret){
+	      		console.log('error', ret);
+	      		return resolve();
+	      	}
+	    });
+    });
+}
