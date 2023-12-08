@@ -507,7 +507,21 @@ function cekUrl(current_url, nomor=1){
 						singkron_user_skpd_lokal(level, model, idunit);
 					});
 				}
-			}	
+			}
+			// Data Dashboard Analisis SIPD
+			else if(current_url.indexOf('/dashboard-sipd') != -1)
+			{
+				console.log('halaman dashboard Analisis sipd');
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_dashboard_ke_lokal">Singkron Dashboard ke Lokal</button>';
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_dashboard_ke_lokal').on('click', function(){
+					singkron_dashboard_ke_lokal();
+				});
+			}
 			// Data Master SKPD
 			else if(current_url.indexOf('/master/skpd') != -1)
 			{

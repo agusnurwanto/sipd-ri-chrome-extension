@@ -33,6 +33,7 @@
 				"js/content/rpjmd/rpjmd.js",
 				"js/content/renstra/renstra.js",
 				"js/content/master/pengaturan_sipd.js",
+				"js/content/master/dashboard_sipd.js",
 				"js/content/master/skpd.js",
 				"js/content/master/user.js",
 				"js/content/master/sub_giat.js",
