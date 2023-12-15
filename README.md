@@ -18,6 +18,7 @@ Semoga bermanfaat
 - Export RKA seluruh perangkat daerah
 - Export program kegiatan ke database lokal
 - Export data SPM ke database lokal
+- Export data mapping subgiat SPM ke database lokal
 - Export data kamus usulan ASMAS
 - Export data kamus usulan POKIR
 - Export data usulan ASMAS
