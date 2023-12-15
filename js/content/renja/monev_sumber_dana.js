@@ -68,7 +68,7 @@ function rekap_sumber_dana_sub_kegiatan(opsi_rekap={}){
 						singkron_rka_ke_lokal(opsi, function(data_rka){
 							var substeks_all = {};
 							data_rka.rka_all.map(function(rka, i){
-								var substeks = jQuery('<textarea>'+rka.subs_bl_teks.substeks+'</textarea>').val();
+								var substeks = jQuery('<textarea>'+rka.subs_bl_teks.substeks+'</textarea>').val()+rka.subs_bl_teks.sumber_dana.id_dana;
 								if(!substeks_all[substeks]){
 									rka.subs_bl_teks.pagu = 0;
 									substeks_all[substeks] = rka.subs_bl_teks;

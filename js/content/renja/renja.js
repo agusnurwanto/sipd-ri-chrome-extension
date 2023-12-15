@@ -1051,19 +1051,22 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						if(d.id_kab_kota != 0){
 							id_kab_kota = d.id_kab_kota;
 						}
-						get_view_daerah(id_kab_kota).then(function(daerah){
-							data_rka.dataLokout[i].daerahteks = daerah.data[0].nama_daerah;
-							if(d.id_camat != 0){
-								get_view_kecamatan(d.id_camat).then(function(kecamatan){
-									data_rka.dataLokout[i].camatteks = kecamatan.data[0].camat_teks;
-									if(d.id_lurah != 0){
-										get_view_desa_kel(d.id_lurah).then(function(kelurahan){
-											data_rka.dataLokout[i].lurahteks = kelurahan.data[0].lurah_teks;
-										});
-									}
-								});
-							}																
-						});
+
+						if(!opsi.hanya_sumber_dana){
+							get_view_daerah(id_kab_kota).then(function(daerah){
+								data_rka.dataLokout[i].daerahteks = daerah.data[0].nama_daerah;
+								if(d.id_camat != 0){
+									get_view_kecamatan(d.id_camat).then(function(kecamatan){
+										data_rka.dataLokout[i].camatteks = kecamatan.data[0].camat_teks;
+										if(d.id_lurah != 0){
+											get_view_desa_kel(d.id_lurah).then(function(kelurahan){
+												data_rka.dataLokout[i].lurahteks = kelurahan.data[0].lurah_teks;
+											});
+										}
+									});
+								}																
+							});
+						}
 					});
 
 					capaian_bl_res.data.map(function(d, i){
@@ -1196,43 +1199,45 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						data_rka.dataBl[i].target_3 = d.target_3;
 						data_rka.dataBl[i].target_4 = d.target_4;
 						data_rka.dataBl[i].target_5 = d.target_5;
-						label_bl(d.id_sub_bl).then(function(labelbl){
-							data_rka.dataBl[i].id_label_bl = '';
-							data_rka.dataBl[i].id_label_kokab = '';
-							data_rka.dataBl[i].id_label_prov = '';
-							data_rka.dataBl[i].id_label_pusat = '';
-							data_rka.dataBl[i].label_kokab = '';
-							data_rka.dataBl[i].label_prov = '';
-							data_rka.dataBl[i].label_pusat = '';
+						data_rka.dataBl[i].id_label_bl = '';
+						data_rka.dataBl[i].id_label_kokab = '';
+						data_rka.dataBl[i].id_label_prov = '';
+						data_rka.dataBl[i].id_label_pusat = '';
+						data_rka.dataBl[i].label_kokab = '';
+						data_rka.dataBl[i].label_prov = '';
+						data_rka.dataBl[i].label_pusat = '';
 							
-							if(labelbl.data && labelbl.data.length >= 1){
-								data_rka.dataBl[i].id_label_bl = labelbl.data[0].id_label_bl; //baru
-								data_rka.dataBl[i].id_label_kokab = labelbl.data[0].id_label_kokab;
-								if(labelbl.data[0].id_label_kokab != 0){
-									get_label_kokab(labelbl.data[0].id_label_kokab).then(function(label_kokab){
-										if(label_kokab.length >= 1){
-											data_rka.dataBl[i].label_kokab = label_kokab.data[0].nama_label;
-										}
-									});		
+						if(!opsi.hanya_sumber_dana){
+							label_bl(d.id_sub_bl).then(function(labelbl){
+								if(labelbl.data && labelbl.data.length >= 1){
+									data_rka.dataBl[i].id_label_bl = labelbl.data[0].id_label_bl; //baru
+									data_rka.dataBl[i].id_label_kokab = labelbl.data[0].id_label_kokab;
+									if(labelbl.data[0].id_label_kokab != 0){
+										get_label_kokab(labelbl.data[0].id_label_kokab).then(function(label_kokab){
+											if(label_kokab.length >= 1){
+												data_rka.dataBl[i].label_kokab = label_kokab.data[0].nama_label;
+											}
+										});		
+									}
+									data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
+									if(labelbl.data[0].id_label_prov != 0){
+										get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
+											if(label_prov.length >= 1){
+												data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
+											}
+										});		
+									}
+									data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
+									if(labelbl.data[0].id_label_pusat != 0){
+										get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){
+											if(label_pusat.length >= 1){
+												data_rka.dataBl[i].label_pusat = label_pusat.data[0].nama_label;
+											}
+										});		
+									}
 								}
-								data_rka.dataBl[i].id_label_prov = labelbl.data[0].id_label_prov;
-								if(labelbl.data[0].id_label_prov != 0){
-									get_label_prov(labelbl.data[0].id_label_prov).then(function(label_prov){
-										if(label_prov.length >= 1){
-											data_rka.dataBl[i].label_prov = label_prov.data[0].nama_label;
-										}
-									});		
-								}
-								data_rka.dataBl[i].id_label_pusat = labelbl.data[0].id_label_pusat;
-								if(labelbl.data[0].id_label_pusat != 0){
-									get_label_pusat(labelbl.data[0].id_label_pusat).then(function(label_pusat){
-										if(label_pusat.length >= 1){
-											data_rka.dataBl[i].label_pusat = label_pusat.data[0].nama_label;
-										}
-									});		
-								}
-							}
-						});														
+							});
+						}
 					});
 					
 					if(
@@ -1300,6 +1305,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						pesan_loading('Rincian kosong di SIPD!');
 						return true;
 					}
+
+					// get semua rincian berdasarkan idsubbl
 					get_rinci_sub_bl(opsi.id_skpd, idsubbl)
 					.then(function(data){
 						var _leng = 500;
@@ -1388,7 +1395,10 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										return sequence2.then(function(_rka){
 											return new Promise(function(resolve_reduce2, reject_reduce2){
 												new Promise(function(resolve3, reject3){
-													detail_rincian_sub_bl(_rka).then(function(detail){																											
+
+													// get informasi detail rincian
+													detail_rincian_sub_bl(_rka)
+													.then(function(detail){																											
 														if(detail.message == "Data tidak ditemukan"){
 															return resolve3();
 														}else{
@@ -1468,11 +1478,15 @@ function singkron_rka_ke_lokal(opsi, callback) {
 												            _rka.kua_pak = detail.kua_pak;
 												            _rka.id_dana = detail.id_dana;
 												            _rka.id_jadwal = detail.id_jadwal;
-												            if(detail.is_lokus_akun == 0){
+												            if(
+												            	detail.is_lokus_akun == 0
+												            	|| opsi.hanya_sumber_dana
+												            ){
 																return resolve3();
 												            }else{
 																// return resolve3();
-												            	detail_penerima_bantuan(_rka).then(function(penerima){
+												            	detail_penerima_bantuan(_rka)
+												            	.then(function(penerima){
 												            		if(
 												            			penerima.data.length == 0
 												            			|| penerima.message == "Data tidak ditemukan"
@@ -1493,7 +1507,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 														            		return resolve3();
 														            	}else{
 														            		if(penerima.id_camat){
-														            			detail_kecamatan(penerima).then(function(kecamatan){
+														            			detail_kecamatan(penerima)
+														            			.then(function(kecamatan){
 														            				kecamatan = kecamatan.data[0];
 														            				_rka.id_camat = kecamatan.id_camat;
 																		            _rka.id_prop = kecamatan.id_prop;
@@ -1505,7 +1520,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 														            			});
 														            		}
 														            		if(penerima.id_lurah){
-														            			detail_kelurahan(penerima).then(function(kelurahan){
+														            			detail_kelurahan(penerima)
+														            			.then(function(kelurahan){
 														            				kelurahan = kelurahan.data[0];
 														            				_rka.id_lurah = kelurahan.id_lurah;
 																		            _rka.kode_lurah = kelurahan.kode_lurah;
@@ -1516,7 +1532,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 														            			});
 														            		}
 
-														            		detail_daerah({ id_daerah: penerima.id_kokab }).then(function(daerah){
+														            		detail_daerah({ id_daerah: penerima.id_kokab })
+														            		.then(function(daerah){
 														            			daerah = daerah.data[0];
 																	            _rka.kode_prop = daerah.kode_prop;
 																	            _rka.kode_kab = daerah.kode_kab;
@@ -1548,7 +1565,10 @@ function singkron_rka_ke_lokal(opsi, callback) {
 												})
 												.then(function(){
 													return new Promise(function(resolve3, reject3){
-														if(_rka.id_ket_sub_bl!=0){
+														if(
+															_rka.id_ket_sub_bl!=0
+															&& !opsi.hanya_sumber_dana
+														){
 															get_ket_sub_bl(_rka.id_ket_sub_bl, _rka.nama_ket_sub_bl)
 															.then(function(ket_sub_bl){
 																if(ket_sub_bl.data.length > 0){
@@ -3173,6 +3193,7 @@ function sasaran_giat(opsi){
 // get rincian 
 function detail_rincian_sub_bl(opsi){
 	return new Promise(function(resolve, reject){
+		pesan_loading('Get detail rincian komponen "'+opsi.nama_komponen+'" '+opsi.spek_komponen);
 		relayAjax({
 			url: config.sipd_url+'api/renja/rinci_sub_bl/view/'+opsi.id_rinci_sub_bl,						
 			type: 'POST',	      				
@@ -3216,7 +3237,7 @@ function detail_penerima_bantuan(opsi){
 // get detail daerah
 function detail_daerah(opsi){
 	return new Promise(function(resolve, reject){
-		if(typeof global_detail_daerah){
+		if(typeof global_detail_daerah == 'undefined'){
 			window.global_detail_daerah = {};
 		}
 		if(!global_detail_daerah[opsi.id_daerah]){
@@ -3241,7 +3262,7 @@ function detail_daerah(opsi){
 // get detail kecamatan
 function detail_kecamatan(opsi){
 	return new Promise(function(resolve, reject){
-		if(typeof global_detail_kecamatan){
+		if(typeof global_detail_kecamatan == 'undefined'){
 			window.global_detail_kecamatan = {};
 		}
 		if(!global_detail_kecamatan[opsi.tahun+'-'+opsi.id_camat]){
@@ -3266,7 +3287,7 @@ function detail_kecamatan(opsi){
 // get detail kelurahan
 function detail_kelurahan(opsi){
 	return new Promise(function(resolve, reject){
-		if(typeof global_detail_kelurahan){
+		if(typeof global_detail_kelurahan == 'undefined'){
 			window.global_detail_kelurahan = {};
 		}
 		if(!global_detail_kelurahan[opsi.tahun+'-'+opsi.id_lurah]){
