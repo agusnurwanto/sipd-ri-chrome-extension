@@ -603,7 +603,7 @@ function cekUrl(current_url, nomor=1){
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_spm">Singkron SPM ke DB Lokal</button>'											
-						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_subgiat_spm">Singkron subgiat SPM ke DB Lokal</button>'											
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_subgiat_spm">Singkron subgiat SPM ke DB Lokal</button>'											
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_label_spm').on('click', function(){
@@ -614,14 +614,14 @@ function cekUrl(current_url, nomor=1){
 				});
 			}
 			// Master Label SPM
-			else if(current_url.indexOf('/master/sub_giat/spm') != -1)
+			else if(current_url.indexOf('/master/sub_giat/spm') != 0)
 			{
 				console.log('halaman Master SPM');
 				jQuery('.aksi-extension').remove();
 				var btn = ''
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_spm">Singkron ke DB Lokal</button>'											
-						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_subgiat_spm">Singkron mapping subgiat spm ke DB Lokal</button>'											
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_subgiat_spm">Singkron mapping subgiat spm ke DB Lokal</button>'											
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_label_spm').on('click', function(){

@@ -107,7 +107,7 @@ function singkron_subgiat_spm(){
 				var _length = 250;
 				var data_all = [];
 				var data_temp = [];
-				data.data.data.map(function(label, i){
+				data.data.map(function(label, i){
 					var data_label_temp = {};
 					data_label_temp.id_spm_giat = label.id_spm_giat;
                     data_label_temp.id_spm = label.id_spm;
