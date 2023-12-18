@@ -604,6 +604,8 @@ function cekUrl(current_url, nomor=1){
 					+'<div class="aksi-extension">'						
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_spm">Singkron SPM ke DB Lokal</button>'											
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_subgiat_spm">Singkron subgiat SPM ke DB Lokal</button>'											
+						// +'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_miskin">Singkron Kemiskinan</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_subgiat_miskin">Singkron subgiat Kemiskinan</button>'											
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#singkron_label_spm').on('click', function(){
@@ -611,6 +613,12 @@ function cekUrl(current_url, nomor=1){
 				});
 				jQuery('#singkron_subgiat_spm').on('click', function(){
 					singkron_subgiat_spm();
+				});
+				jQuery('#singkron_label_miskin').on('click', function(){
+					singkron_label_miskin();
+				});
+				jQuery('#singkron_subgiat_miskin').on('click', function(){
+					singkron_subgiat_miskin();
 				});
 			}
 			// Master Label SPM
