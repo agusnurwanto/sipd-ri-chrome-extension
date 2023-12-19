@@ -622,7 +622,7 @@ function cekUrl(current_url, nomor=1){
 				});
 			}
 			// Master Label SPM
-			else if(current_url.indexOf('/master/sub_giat/spm') != -1))
+			else if(current_url.indexOf('/master/sub_giat/spm') != -1)
 			{
 				console.log('halaman Master SPM');
 				jQuery('.aksi-extension').remove();
