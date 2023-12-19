@@ -1,7 +1,0 @@
-const config = {
-	sipd_url : "https://sipd-ri.kemendagri.go.id/", // alamat aplikasi siks
-	url_server_lokal : "https://xxxxx.com/wp-admin/admin-ajax.php", // url server lokal
-	api_key : "xxxxxxxx", // api key server lokal
-	id_daerah : xx, // id daerah
-	private : false
-};
