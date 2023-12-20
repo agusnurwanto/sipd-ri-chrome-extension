@@ -370,6 +370,7 @@ function getToken(){
 	    	}
 		}
 	}
+	run_script('run', 'window._token = '+JSON.stringify(_token));
 	console.log('_token', _token);
 }
 

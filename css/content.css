@@ -171,3 +171,6 @@ thead{
 .table.table-striped>thead>tr>th {
     padding: 15px 8px !important;
 }
+.form-group {
+    padding: 10px;
+}

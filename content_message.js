@@ -17,10 +17,14 @@ window.addEventListener('message', function(event) {
 	var opsi = event.data.data;
 	console.log('run_script', event.data);
 	switch(command) {
+		case 'run':
+			eval(opsi);
+			break;
 		case 'cek_extension':
 			if(opsi == 'image'){
 				cek_extension();
 			}
+			break;
     	case 'show_modal':
     		if(!opsi){
 	    		window.options_datatable = {

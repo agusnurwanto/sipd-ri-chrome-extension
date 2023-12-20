@@ -949,19 +949,49 @@ function cekUrl(current_url, nomor=1){
 					+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning btn-outline" id="open_modal_skpd">'
 						+'<i class="menu-download m-r-5"></i> <span>Singkron RKA ke DB lokal</span>'
 					+'</button>';
-				// idunit=_token.unit;				
+				// idunit=_token.unit;
 				if(
 					current_url.indexOf('/perencanaan/renja/cascading/rincian/sub-kegiatan') != -1
 					|| current_url.indexOf('/penganggaran/anggaran/cascading/rincian/sub-kegiatan') != -1
 				){
 					console.log('halaman Rincian belanja SKPD');
+					var rekap_suber_dana = ''
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-success btn-outline" id="rekap_sumber_dana_hal_rinci">'
+							+'<i class="menu-eye m-r-5"></i> <span>Lihat Rekap Sumber Dana</span>'
+						+'</button>';
+					var btn = ''
+						+'<div class="aksi-extension">'
+							+singkron_rka
+							+rekap_suber_dana
+						+'</div>';				
+					jQuery('.page-title').append(btn);
+
+					// hapus script sebelumnya jika ada
+					jQuery('.rka_inject').remove();
+					jQuery('head script').map(function(i, b){
+						var url = jQuery(b).attr('src');
+						if(
+							url.indexOf('/js/content/rka/rka_inject.js') != -1
+							|| url.indexOf('/js/jszip.js') != -1
+							|| url.indexOf('/js/xlsx.js') != -1
+						){
+							jQuery(b).remove();
+						}
+					});
+
+					// harus di inject agar bekerja
+					run_script('run', 'window.ext_url = "'+chrome.runtime.getURL('')+'"');
+					injectScript( chrome.runtime.getURL('/js/content/rka_inject.js'), 'head', 'js');
+					injectScript( chrome.runtime.getURL('/js/jszip.js'), 'head', 'js');
+					injectScript( chrome.runtime.getURL('/js/xlsx.js'), 'head', 'js');
+
 					var modal = ''
 						+'<div class="modal fade modal-extension" id="modal-extension-rekap-sumber-dana-sub-keg" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
 							+'<div class="modal-dialog" style="min-width: 1500px;" role="document">'
 								+'<div class="modal-content">'
 									+'<div class="modal-header bgpanel-theme">'
-									+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h4>'
-									+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+										+'<h3 class="fw-bolder m-0">Sinkronisasi Sub Kegiatan Renja Unit SKPD</h3>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
 									+'</div>'
 									+'<div class="modal-body">'
 										+'<div class="no_datatable">'
@@ -1010,16 +1040,6 @@ function cekUrl(current_url, nomor=1){
 							+'</div>'
 						+'</div>';
 					jQuery('body').append(modal);
-					var rekap_suber_dana = ''
-						+'<button style="margin-left: 20px;" class="btn btn-sm btn-success btn-outline" id="rekap_sumber_dana_hal_rinci">'
-							+'<i class="menu-eye m-r-5"></i> <span>Lihat Rekap Sumber Dana</span>'
-						+'</button>';
-					var btn = ''
-						+'<div class="aksi-extension">'
-							+singkron_rka
-							+rekap_suber_dana
-						+'</div>';				
-					jQuery('.page-title').append(btn);
 					jQuery('#open_modal_skpd').on('click', function(){
 						if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
 							var id_sub_bl = current_url.split('/').pop();
