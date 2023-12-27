@@ -105,8 +105,8 @@ jQuery('#jenis_data').on('change', function(){
 	jQuery('.excel-opsional select').html('');
 	jQuery('#label-excel').attr('href', '#');
 	jQuery('#label-excel').text('');
-	if(jenis != ''){
-		jQuery('#label-excel').text('DOWNLOAD DI SINI');
+	if(jenis == ''){
+		return;
 	}
     var cek = false;
     if(
@@ -129,6 +129,7 @@ jQuery('#jenis_data').on('change', function(){
         cek = true;
     }
     if(cek){
+		jQuery('#label-excel').text('DOWNLOAD DI SINI');
     	var id_sub_keg = location.href.split('/').pop();
     	jQuery('#id_sub_bl_excel').val(id_sub_keg);
 

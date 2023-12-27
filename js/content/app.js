@@ -981,7 +981,7 @@ function cekUrl(current_url, nomor=1){
 
 					// harus di inject agar bekerja
 					run_script('run', 'window.ext_url = "'+chrome.runtime.getURL('')+'"');
-					injectScript( chrome.runtime.getURL('/js/content/rka_inject.js'), 'head', 'js');
+					injectScript( chrome.runtime.getURL('/js/content/rka/rka_inject.js'), 'head', 'js');
 					injectScript( chrome.runtime.getURL('/js/jszip.js'), 'head', 'js');
 					injectScript( chrome.runtime.getURL('/js/xlsx.js'), 'head', 'js');
 

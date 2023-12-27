@@ -1,0 +1,6 @@
+const config = {
+	sipd_url : "https://sipd-ri.kemendagri.go.id/", // url SIPD-RI
+	url_server_lokal : "https://xxxxxxxx.com/wp-admin/admin-ajax.php", // url server wordpress wp-sipd
+	api_key : "xxxxxxxxxxxxxxxxxxxx", // informasi pengaktifan lisensi key ada di https://wpsipd.qodrbee.com/
+	id_daerah : 0 // id daerah
+};
