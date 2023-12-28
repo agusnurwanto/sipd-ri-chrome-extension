@@ -1025,17 +1025,16 @@ function insertRKA(){
     										        };
 
     										        console.log('opsi_rincian', opsi_rincian, 'opsi_penerima_bantuan', opsi_penerima_bantuan);
-													return alert('Masih dalam pengembangan!');
 
                                                     // tambah data rincian
                                                     relayAjaxApiKey({
-                                                        url: config.sipd_url+'api/renja/penerima_bantuan/add',
+                                                        url: config.sipd_url+'api/renja/rinci_sub_bl/add',
                                                         type: "post",
                                                         data: formData(opsi_rincian),
     										          	success: function(ret){
 
     										          		// get detail rincian untuk mendapatkan id_rinci_sub_bl
-    										          		view_rincian_by_id_unik(ret.data.id_unik)
+    										          		view_rincian_by_id_unik(ret.data)
     										          		.then(function(detail_rka){
 
         										          		// tambah data penerima bantuan
@@ -1117,6 +1116,26 @@ function insertRKA(){
     }
 }
 
+function detail_penerima_bantuan(opsi){
+	return new Promise(function(resolve, reject){
+		relayAjax({
+			url: config.sipd_url+'api/renja/penerima_bantuan/view_by_id_rinci_sub_bl/'+opsi.id_rinci_sub_bl,						
+			type: 'POST',	      				
+			data: {
+				tahun: _token.tahun,
+				id_daerah: _token.daerah_id
+			},
+			beforeSend: function (xhr) {			    
+				xhr.setRequestHeader("X-API-KEY", x_api_key2());
+				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+			},
+			success: function(res){
+				return resolve(res);
+			}
+		});
+	});
+}
+
 function cek_rincian_exist(excel, bankeu=false, opsi){
     return new Promise(function(resolve, reduce){
     	// get rincian berdasar id sub bl
@@ -1132,8 +1151,21 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
 						console.log('cek_rincian_exist current_data', current_data);
 						detail_rincian_sub_bl(current_data)
 						.then(function(rinci){
-							newData.push(rinci.data[0]);
-							resolve_reduce(nextData);
+							if(
+								rinci.data[0]
+								&& rinci.data[0].is_lokus_akun == '1'
+							){
+								// get penerima bantuan
+								detail_penerima_bantuan(current_data)
+								.then(function(penerima_bantuan){
+									rinci.data[0].penerima_bantuan = penerima_bantuan.data[0];
+									newData.push(rinci.data[0]);
+									resolve_reduce(nextData);
+								});
+							}else{
+								newData.push(rinci.data[0]);
+								resolve_reduce(nextData);
+							}
 						});
 					})
 					.catch(function(e){
@@ -1150,7 +1182,9 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
                 var data_exist = {};
 				newData.map(function(b, i){
                     var nama = b.nama_standar_harga;
-					if(b.lokus_akun_teks != ''){
+                    if(bankeu){
+                    	nama = b.penerima_bantuan.id_lurah;
+                    }else if(b.lokus_akun_teks != ''){
 						nama = b.lokus_akun_teks;
 					}
 
@@ -1545,23 +1579,37 @@ function setKeterangan(raw){
 
       		// cek jika keterangan belum ada di SIPD maka perlu buat baru
       		if(typeof _id_keterangan == 'undefined'){
-                
-                var customFormData = new FormData();
-                customFormData.append('_token', tokek);
-                customFormData.append('v1bnA1m', v1bnA1m);
-                customFormData.append('DsK121m', C3rYDq('keterangan_add='+raw.keterangan));
-				relayAjax({
-		          	url: lru12,
+				relayAjaxApiKey({
+		          	url: config.sipd_url+'api/renja/ket_sub_bl/add',
 		          	type: "POST",
-                    data: customFormData,
-                    processData: false,
-                    contentType: false,
+                    data: formData(opsi),
 		          	success: function(data){
-		          		jQuery("select[name=keterangan]").append('<option value ="'+data['id_ket_sub_bl']+'">'+data['ket_bl_teks']+'</option>');
-              			jQuery("select[name=keterangan]").val(data['id_ket_sub_bl']).trigger("change");
-		          		jQuery("#keterangan-excel").append('<option value ="'+data['id_ket_sub_bl']+'">'+data['ket_bl_teks']+'</option>');
-              			jQuery("#keterangan-excel").val(data['id_ket_sub_bl']).trigger("change");
-						return resolve(data['id_ket_sub_bl']);
+
+		          		// get keterangan dan set ke pilihan keterangan
+		          		relayAjaxApiKey({
+							url: config.sipd_url+'api/renja/ket_sub_bl/find',
+							type: 'post',
+							data: formData({
+								length: 10000,
+								tahun: _token.tahun,
+								id_daerah: _token.daerah_id,
+								id_unit: global_detail_sub.id_sub_skpd,
+								id_sub_giat: global_detail_sub.id_sub_giat,
+								kondisi_rincian: true
+							}),
+							success: function(ret){
+								global_ket_rka[id_sub_keg] = ret.data;
+								var html = '<option value="">Pilih Keterangan</option>';
+								global_ket_rka[id_sub_keg].map(function(b, i){
+									html += '<option value="'+b.id_ket_sub_bl+'">'+b.ket_bl_teks+'</option>';
+								});
+								jQuery('#keterangan-excel').html(html);
+						    	jQuery('#keterangan-excel').select2({
+						    		dropdownParent: jQuery('#mod-import-excel .modal-content')
+						    	});
+							}
+						});
+						return setKeterangan(raw);
 		          	}
 		        });
 			}else{
