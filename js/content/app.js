@@ -209,10 +209,14 @@ function cekUrl(current_url, nomor=1){
 				var btn = ''
 					+'<div class="aksi-extension">'
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="get_rpd_lokal">Singkronisasi Data RPD dari WP-SIPD</button>'
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="backup_rpd">Singkron ke DB Lokal</button>'
 					+'</div>';
 				jQuery('.page-title').append(btn);
 				jQuery('#get_rpd_lokal').on('click', function(){
 					get_rpd_lokal();
+				});
+				jQuery('#backup_rpd').on('click', function(){
+					backup_rpd();					
 				});
 			}
 			// Data RPJMD
