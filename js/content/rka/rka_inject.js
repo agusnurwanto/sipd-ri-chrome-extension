@@ -1,3 +1,9 @@
+window.global_is_anggaran = 0;
+var current_url = window.location.href;
+if(current_url.indexOf('/penganggaran/anggaran/') != -1){
+	window.global_is_anggaran = 1;
+}
+
 var import_excel = ''
 	+'<button style="margin-left: 20px;" class="fcbtn btn btn-sm btn-success btn-outline" id="import_excel">'
 		+'<i class="menu-upload m-r-5"></i> <span>Import Excel</span>'
@@ -328,14 +334,16 @@ jQuery('#jenis_data').on('change', function(){
 			      	return opsi;
 			  	},
 			  	processResults: function (ret) {
-			  		var newData = [];
+			  		var newData = [{
+			  			id: '',
+			  			text: 'Pilih Rekening'
+			  		}];
 			  		ret.data.map(function(b, i){
 			  			newData.push({
 			  				id: b.id_akun,
 			  				text: b.kode_akun+' '+b.nama_akun
 			  			});
 					});
-			  		console.log(newData, ret);
 			  		return {
 				        results: newData
 			      	};
@@ -585,7 +593,6 @@ function sub_bl_view(id_sub_bl){
 
 // proses simpan excel
 jQuery('#simpan-excel').on('click', function(){
-	jQuery('#wrap-loading').show();
 	if(confirm('Apakah anda yakin untuk menyimpan data!')){
 		insertRKA();
 	}
@@ -631,14 +638,13 @@ function insertRKA(){
 		return alert('Satuan tidak boleh kosong!');
 	}
 	var satuantext = jQuery('#satuan-excel option:selected').text();
-	return alert('Masih dalam pengembangan!');
+	jQuery('#wrap-loading').show();
 
     var all_status = [];
     var opsi_cek_rka = {
     	id_sub_skpd: id_sub_skpd,
     	id_sub_bl: id_sub_bl
     };
-	jQuery('.tambah-detil').click();
     if(
     	type_data == 'BOS'
         || type_data == 'HIBAH-BRG'
@@ -650,6 +656,7 @@ function insertRKA(){
         cek_rincian_exist(excel, false, opsi_cek_rka)
         .then(function(new_excel){
             console.log('new_excel', new_excel);
+			return alert('Masih dalam pengembangan!');
             // return;
             var data_all = [];
             var data_sementara = [];
@@ -866,6 +873,10 @@ function insertRKA(){
     ){
     	get_prov_login()
         .then(function(data_prov){
+        	var new_data_prov = {};
+        	data_prov.map(function(b, i){
+        		new_data_prov[b.id_daerah] = b;
+        	})
             cek_rincian_exist(excel, true, opsi_cek_rka)
             .then(function(new_excel){
                 console.log('new_excel', new_excel);
@@ -890,206 +901,199 @@ function insertRKA(){
                         return new Promise(function(resolve_reduce, reject_reduce){
                     		var sendData = current_data.map(function(raw, i){
                     			return new Promise(function(resolve, reject){
-                    	      		var id_prov = jQuery('<select>'+data_prov+'</select>').find('option').filter(function(){
-                    	      			return jQuery(this).val() == raw.prov;
-                    	      		}).val();
-                    				// console.log('id_prov', id_prov, data_prov, raw.prov);
-                    	      		if(typeof id_prov == 'undefined'){
+                    	      		if(!new_data_prov[raw.prov]){
                     	      			raw.error = 'Provinsi tidak ditemukan';
-                    	      			resolve(raw);
-                    	      		}else{
-                    					raw.id_prov = raw.prov;
-                    					getIdKab(raw.id_prov).then(function(id_kab){
-                    			      		if(typeof id_kab == 'undefined'){
-                    			      			raw.error = 'Kabupaten / Kota tidak ditemukan';
-                    			      			resolve(raw);
-                    			      		}else{
-                    							raw.id_kab = id_kab;
-                    							getIdKec(raw.id_kab).then(function(id_kec){
-                    					      		if(typeof id_kec == 'undefined'){
-                    					      			raw.error = 'Kecamatan tidak ditemukan';
-                    					      			resolve(raw);
-                    					      		}else{
-                    							      	raw.id_kec = id_kec;
-                    					      			getIdKel(raw.id_kab, raw.id_kec).then(function(id_kel){
-                    							      		if(typeof id_kel == 'undefined'){
-                    							      			raw.error = 'Desa / Kelurahan tidak ditemukan';
-                    							      			resolve(raw);
-                    							      		}else{
-                    							      			raw.id_kel = id_kel;
-                    							      			raw.kodesbl = jQuery('input[name="kodesbl"]').val();
-                    							      			setKeterangan(raw).then(function(id_ket){
-                    								      			raw.detil_rincian = {
-                    								      				jenis_belanja: jenis_belanja,
-                    								      				id_rek_akun: id_rek_akun,
-                    								      				id_pengelompokan: id_pengelompokan,
-                    								      				id_keterangan: id_ket
-                    								      			};
-                    								      			var skrim = ''
-                    								      				+'kodesbl='+raw.kodesbl
-                    								      				+'&idbelanjarinci='+raw.idbelanjarinci
-                    								      				+'&idakunrinci='+raw.idakunrinci
-                    								      				+'&jenisbl='+jenis_belanja
-                    									      			+'&akun='+encodeURIComponent(id_rek_akun)
-                    									      			+'&subtitle='+id_pengelompokan
-                    									      			+'&uraian_penerima='
-                    									      			+'&id_penerima='
-                    									      			+'&prop='+raw.id_prov
-                    									      			+'&kab_kota='+raw.id_kab
-                    									      			+'&kecamatan='+raw.id_kec
-                    									      			+'&kelurahan='+raw.id_kel
-                    									      			+'&komponenkel='
-                    									      			+'&komponen='
-                    									      			+'&idkomponen='
-                    									      			+'&spek='
-                    									      			+'&satuan='+encodeURIComponent(satuantext)
-                    									      			+'&hargasatuan='+(+raw.total.replace(/,/g, ''))
-                    									      			+'&keterangan='+id_ket
-                    									      			+'&volum1='+vol
-                    									      			+'&satuan1='+satuan
-                    									      			+'&volum2='
-                    									      			+'&satuan2='
-                    									      			+'&volum3='
-                    									      			+'&satuan3='
-                    									      			+'&volum4='
-                    									      			+'&satuan4=';
-                    										        raw.skrim = skrim;
+                    	      			return resolve(raw);
+                    	      		}
+                					raw.id_prov = raw.prov;
+                					getIdKab(raw).then(function(id_kab){
+                			      		if(typeof id_kab == 'undefined'){
+                			      			raw.error = 'Kabupaten / Kota tidak ditemukan';
+                			      			return resolve(raw);
+                			      		}
+            							raw.id_kab = id_kab;
+            							getIdKec(raw).then(function(id_kec){
+            					      		if(typeof id_kec == 'undefined'){
+            					      			raw.error = 'Kecamatan tidak ditemukan';
+            					      			return resolve(raw);
+            					      		}
+        							      	raw.id_kec = id_kec;
+        					      			getIdKel(raw).then(function(id_kel){
+        							      		if(typeof id_kel == 'undefined'){
+        							      			raw.error = 'Desa / Kelurahan tidak ditemukan';
+        							      			return resolve(raw);
+        							      		};
+												return alert('Masih dalam pengembangan!');
+    							      			raw.id_kel = id_kel;
+    							      			raw.kodesbl = jQuery('input[name="kodesbl"]').val();
+    							      			setKeterangan(raw).then(function(id_ket){
+    								      			raw.detil_rincian = {
+    								      				jenis_belanja: jenis_belanja,
+    								      				id_rek_akun: id_rek_akun,
+    								      				id_pengelompokan: id_pengelompokan,
+    								      				id_keterangan: id_ket
+    								      			};
+    								      			var skrim = ''
+    								      				+'kodesbl='+raw.kodesbl
+    								      				+'&idbelanjarinci='+raw.idbelanjarinci
+    								      				+'&idakunrinci='+raw.idakunrinci
+    								      				+'&jenisbl='+jenis_belanja
+    									      			+'&akun='+encodeURIComponent(id_rek_akun)
+    									      			+'&subtitle='+id_pengelompokan
+    									      			+'&uraian_penerima='
+    									      			+'&id_penerima='
+    									      			+'&prop='+raw.id_prov
+    									      			+'&kab_kota='+raw.id_kab
+    									      			+'&kecamatan='+raw.id_kec
+    									      			+'&kelurahan='+raw.id_kel
+    									      			+'&komponenkel='
+    									      			+'&komponen='
+    									      			+'&idkomponen='
+    									      			+'&spek='
+    									      			+'&satuan='+encodeURIComponent(satuantext)
+    									      			+'&hargasatuan='+(+raw.total.replace(/,/g, ''))
+    									      			+'&keterangan='+id_ket
+    									      			+'&volum1='+vol
+    									      			+'&satuan1='+satuan
+    									      			+'&volum2='
+    									      			+'&satuan2='
+    									      			+'&volum3='
+    									      			+'&satuan3='
+    									      			+'&volum4='
+    									      			+'&satuan4=';
+    										        raw.skrim = skrim;
 
-                    										        var opsi_rincian = {
-                    										        	id_subs_sub_bl: '226028',
-																		id_ket_sub_bl: 277751,
-																		id_akun: 19519,
-																		id_standar_harga: 0,
-																		id_standar_nfs: 0,
-																		pajak: 0,
-																		volume: 1,
-																		harga_satuan: 1000000,
-																		koefisien: '1 Tahun',
-																		total_harga: 1000000,
-																		jenis_bl: 'BANKEU-KHUSUS',
-																		id_dana: 334,
-																		vol_1: 1,
-																		sat_1: 'Tahun',
-																		vol_2: 0,
-																		sat_2: '',
-																		vol_3: 0,
-																		sat_3: '',
-																		vol_4: 0,
-																		sat_4: '',
-																		rkpd_murni: 0,
-																		rkpd_pak: 0,
-																		kode_akun: '5.4.02.05.02.0003',
-																		nama_akun: 'Belanja Bantuan Keuangan Khusus Kabupaten/Kota kepada Desa',
-																		nama_standar_harga: '',
-																		kode_standar_harga: '',
-																		is_lokus_akun: 1,
-																		lokus_akun_teks: 'Babadan Lor',
-																		id_daerah_log: 89,
-																		id_user_log: 23566,
-																		created_user: 23566,
-																		id_daerah: 89,
-																		tahun: 2024,
-																		id_unit: 3282,
-																		id_bl: 0,
-																		id_sub_bl: 84288,
-																		id_jadwal_murni: 0,
-																		id_skpd: 3282,
-																		id_sub_skpd: 3282,
-																		id_program: 1164,
-																		id_giat: 8653,
-																		id_sub_giat: 19938,
-																		rkpd_murni: 0,
-																		rkpd_pak: 0,
-																		nama_daerah: 'Kab. Madiun',
-																		nama_unit: 'Badan Pengelolaan Keuangan dan Aset Daerah',
-																		nama_skpd: 'Badan Pengelolaan Keuangan dan Aset Daerah',
-																		nama_sub_skpd: 'Badan Pengelolaan Keuangan dan Aset Daerah',
-																		nama_program: 'PROGRAM PENGELOLAAN KEUANGAN DAERAH',
-																		nama_giat: 'Penunjang Urusan Kewenangan Pengelolaan Keuangan Daerah',
-																		nama_sub_giat: 'Analisis Perencanaan dan Penyaluran Bantuan Keuangan',
-																		nama_standar_nfs: '',
-																		nama_jadwal_murni: '',
-																		nama_blt: '',
-																		nama_usulan: '',
-																		nama_jenis_usul: ''
-                    										        };
+    										        var opsi_rincian = {
+    										        	id_subs_sub_bl: '226028',
+														id_ket_sub_bl: 277751,
+														id_akun: 19519,
+														id_standar_harga: 0,
+														id_standar_nfs: 0,
+														pajak: 0,
+														volume: 1,
+														harga_satuan: 1000000,
+														koefisien: '1 Tahun',
+														total_harga: 1000000,
+														jenis_bl: 'BANKEU-KHUSUS',
+														id_dana: 334,
+														vol_1: 1,
+														sat_1: 'Tahun',
+														vol_2: 0,
+														sat_2: '',
+														vol_3: 0,
+														sat_3: '',
+														vol_4: 0,
+														sat_4: '',
+														rkpd_murni: 0,
+														rkpd_pak: 0,
+														kode_akun: '5.4.02.05.02.0003',
+														nama_akun: 'Belanja Bantuan Keuangan Khusus Kabupaten/Kota kepada Desa',
+														nama_standar_harga: '',
+														kode_standar_harga: '',
+														is_lokus_akun: 1,
+														lokus_akun_teks: 'Babadan Lor',
+														id_daerah_log: 89,
+														id_user_log: 23566,
+														created_user: 23566,
+														id_daerah: 89,
+														tahun: 2024,
+														id_unit: 3282,
+														id_bl: 0,
+														id_sub_bl: 84288,
+														id_jadwal_murni: 0,
+														id_skpd: 3282,
+														id_sub_skpd: 3282,
+														id_program: 1164,
+														id_giat: 8653,
+														id_sub_giat: 19938,
+														rkpd_murni: 0,
+														rkpd_pak: 0,
+														nama_daerah: 'Kab. Madiun',
+														nama_unit: 'Badan Pengelolaan Keuangan dan Aset Daerah',
+														nama_skpd: 'Badan Pengelolaan Keuangan dan Aset Daerah',
+														nama_sub_skpd: 'Badan Pengelolaan Keuangan dan Aset Daerah',
+														nama_program: 'PROGRAM PENGELOLAAN KEUANGAN DAERAH',
+														nama_giat: 'Penunjang Urusan Kewenangan Pengelolaan Keuangan Daerah',
+														nama_sub_giat: 'Analisis Perencanaan dan Penyaluran Bantuan Keuangan',
+														nama_standar_nfs: '',
+														nama_jadwal_murni: '',
+														nama_blt: '',
+														nama_usulan: '',
+														nama_jenis_usul: ''
+    										        };
 
-                                                                    // tambah data rincian
-                                                                    relayAjaxApiKey({
-                                                                        url: config.sipd_url+'api/renja/penerima_bantuan/add',
-                                                                        type: "post",
-                                                                        data: formData(opsi_rincian),
-                    										          	success: function(ret){
+                                                    // tambah data rincian
+                                                    relayAjaxApiKey({
+                                                        url: config.sipd_url+'api/renja/penerima_bantuan/add',
+                                                        type: "post",
+                                                        data: formData(opsi_rincian),
+    										          	success: function(ret){
 
-                    										          		// get detail rincian untuk mendapatkan id_rinci_sub_bl
-                    										          		view_rincian_by_id_unik(ret.data)
-                    										          		.then(function(detail_rka){
+    										          		// get detail rincian untuk mendapatkan id_rinci_sub_bl
+    										          		view_rincian_by_id_unik(ret.data)
+    										          		.then(function(detail_rka){
 
-			                    										        var opsi_penerima_bantuan = {
-			                    										        	tahun: _token.tahun,
-																					id_daerah: _token.daerah_id,
-																					id_unit: raw.id_sub_skpd,
-																					jenis_bantuan: type_data.toLowerCase(),
-																					id_bl: 0,
-																					id_sub_bl: raw.id_sub_bl,
-																					id_rinci_sub_bl: detail_rka.id_rinci_sub_bl,
-																					id_akun: id_rek_akun,
-																					lokus_akun: raw.nama_kel,
-																					id_profil: 0,
-																					total_harga: (+raw.total.replace(/,/g, '')),
-																					id_prop: raw.id_prov,
-																					id_kokab: raw.id_kab,
-																					id_camat: raw.id_kec,
-																					id_lurah: raw.id_kel,
-																					id_skpd: raw.id_skpd,
-																					id_sub_skpd: raw.id_sub_skpd,
-																					id_program: raw.id_program,
-																					id_giat: raw.id_giat,
-																					id_sub_giat: raw.id_sub_giat,
-																					id_daerah_log: _token.daerah_id,
-																					id_user_log: _token.user_id
-			                    										        };
+                										        var opsi_penerima_bantuan = {
+                										        	tahun: _token.tahun,
+																	id_daerah: _token.daerah_id,
+																	id_unit: raw.id_sub_skpd,
+																	jenis_bantuan: type_data.toLowerCase(),
+																	id_bl: 0,
+																	id_sub_bl: raw.id_sub_bl,
+																	id_rinci_sub_bl: detail_rka.id_rinci_sub_bl,
+																	id_akun: id_rek_akun,
+																	lokus_akun: raw.nama_kel,
+																	id_profil: 0,
+																	total_harga: (+raw.total.replace(/,/g, '')),
+																	id_prop: raw.id_prov,
+																	id_kokab: raw.id_kab,
+																	id_camat: raw.id_kec,
+																	id_lurah: raw.id_kel,
+																	id_skpd: raw.id_skpd,
+																	id_sub_skpd: raw.id_sub_skpd,
+																	id_program: raw.id_program,
+																	id_giat: raw.id_giat,
+																	id_sub_giat: raw.id_sub_giat,
+																	id_daerah_log: _token.daerah_id,
+																	id_user_log: _token.user_id
+                										        };
 
-	                    										          		// tambah data penerima bantuan
-			                                                                    relayAjaxApiKey({
-			                                                                        url: config.sipd_url+'api/renja/penerima_bantuan/add',
-			                                                                        type: "post",
-			                                                                        data: formData(opsi_penerima_bantuan),
-			                    										          	success: function(data_kel){
-	                    								      							resolve(raw);
-	                    								      						},
-			                    										          	error: function(jqXHR, textStatus, error){
-			                    										      			raw.error = 'Error ajax simpan rincian';
-			                    										      			resolve(raw);
-			                    										          	}
-		                    										          	});
-                    										          		});
-                    										          	},
-                    										          	error: function(jqXHR, textStatus, error){
-                    										      			raw.error = 'Error ajax simpan rincian';
-                    										      			resolve(raw);
-                    										          	}
-                    										       	});
-                    							      			})
-                    							      		}
-                    								    })
-                    								    .catch(function(e){
-                    										raw.error = 'Error ajax kelurahan';
-                    				      					resolve(raw);
-                    								    });
-                    						      	}
-                    					        })
-                    						    .catch(function(e){
-                    								raw.error = 'Error ajax kecamatan';
-                    		      					resolve(raw);
-                    						    });
-                    				      	}
-                    			        })
-                    				    .catch(function(e){
-                    						raw.error = 'Error ajax kabupaten';
-                          					resolve(raw);
-                    				    });
-                    		      	}
+        										          		// tambah data penerima bantuan
+                                                                relayAjaxApiKey({
+                                                                    url: config.sipd_url+'api/renja/penerima_bantuan/add',
+                                                                    type: "post",
+                                                                    data: formData(opsi_penerima_bantuan),
+                										          	success: function(data_kel){
+        								      							resolve(raw);
+        								      						},
+                										          	error: function(jqXHR, textStatus, error){
+                										      			raw.error = 'Error ajax simpan rincian';
+                										      			resolve(raw);
+                										          	}
+            										          	});
+    										          		});
+    										          	},
+    										          	error: function(jqXHR, textStatus, error){
+    										      			raw.error = 'Error ajax simpan rincian';
+    										      			resolve(raw);
+    										          	}
+    										       	});
+    							      			});
+        								    })
+        								    .catch(function(e){
+        										raw.error = 'Error ajax kelurahan';
+        				      					resolve(raw);
+        								    });
+            					        })
+            						    .catch(function(e){
+            								raw.error = 'Error ajax kecamatan';
+            		      					resolve(raw);
+            						    });
+                			        })
+                				    .catch(function(e){
+                						raw.error = 'Error ajax kabupaten';
+                      					resolve(raw);
+                				    });
                     			})
                     		    .catch(function(e){
                     		        console.log(e);
@@ -1142,10 +1146,11 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
 					return new Promise(function(resolve_reduce, reject_reduce){
 
 						// get detail rincian berdasarkan id_rinci_sub_bl
+						console.log('cek_rincian_exist current_data', current_data);
 						detail_rincian_sub_bl(current_data)
 						.then(function(rinci){
 							newData.push(rinci.data[0]);
-							resolve_reduce();
+							resolve_reduce(nextData);
 						});
 					})
 					.catch(function(e){
@@ -1163,11 +1168,11 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
 				newData.map(function(b, i){
                     var nama = b.nama_standar_harga;
 					if(b.lokus_akun_teks != ''){
-						nama = lokus_akun_teks;
+						nama = b.lokus_akun_teks;
 					}
 
                     // keyword yang tepat masih dalam pencarian
-                    var keyword = jQuery("<div/>").html(nama).text().toLowerCase().trim()+b.total_harga.trim();
+                    var keyword = jQuery("<div/>").html(nama).text().toLowerCase().trim()+b.total_harga;
                     if(!data_exist[keyword]){
                         data_exist[keyword] = {
                             'sipd': [],
@@ -1214,7 +1219,7 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
                         double.push(data_exist[i]);
                     }
                 }
-                console.log('data sipd tapi tidak ada di excel', double);
+                console.log('data sipd ada, tapi tidak ada di excel', double);
                 resolve(data_import);
 			});
     	});
@@ -1247,7 +1252,16 @@ function get_rinci_sub_bl(idunit, id_sub_bl){
 // get rincian 
 function detail_rincian_sub_bl(opsi){
 	return new Promise(function(resolve, reject){
-		pesan_loading('Get detail rincian komponen "'+opsi.nama_komponen+'" '+opsi.spek_komponen);
+		var nama_komponen = opsi.nama_standar_harga;
+		if(
+			nama_komponen == ''
+			|| nama_komponen == null
+		){
+			nama_komponen = '"'+opsi.penerima_bantuan+'"';
+		}else{
+			nama_komponen = '"'+opsi.nama_standar_harga+'" '+opsi.spek;
+		}
+		pesan_loading('Get detail rincian komponen '+nama_komponen);
 		relayAjax({
 			url: config.sipd_url+'api/renja/rinci_sub_bl/view/'+opsi.id_rinci_sub_bl,						
 			type: 'POST',	      				
@@ -1310,7 +1324,7 @@ function get_prov_login(){
 		        processData: false,
 		        contentType: false,
 				success: function(ret){
-					prov_login_global = ret.data;
+					window.prov_login_global = ret.data;
 					resolve(prov_login_global);
 				}
 			});
@@ -1320,96 +1334,124 @@ function get_prov_login(){
 	});
 }
 
-function getIdKab(id_prov){
+function getIdKab(raw){
 	return new Promise(function(resolve, reduce){
-		if(typeof kab_login_global == 'undefined'){
-			kab_login_global = {};
-		}
-		if(typeof kab_login_global[id_prov] == 'undefined'){
-			relayAjax({
-				url: config.sipd_url+'api/master/kabkot/findlist',
-				type: 'post',
-				beforeSend: function (xhr) {
-				    xhr.setRequestHeader("x-api-key", x_api_key());
-					xhr.setRequestHeader("x-access-token", _token.token);
-				},
-				data: {
-					'search[value]': '',
-					id_daerah: id_prov
-				},
-				success: function(ret){
-					kab_login_global[id_prov] = ret.data;
-					resolve(kab_login_global[id_prov]);
-				}
+		new Promise(function(resolve2, reduce2){
+			if(typeof kab_login_global == 'undefined'){
+				window.kab_login_global = {};
+			}
+			if(typeof kab_login_global[raw.id_prov] == 'undefined'){
+				relayAjax({
+					url: config.sipd_url+'api/master/kabkot/findlist',
+					type: 'post',
+					beforeSend: function (xhr) {
+					    xhr.setRequestHeader("x-api-key", x_api_key());
+						xhr.setRequestHeader("x-access-token", _token.token);
+					},
+					data: {
+						'search[value]': '',
+						id_daerah: raw.id_prov
+					},
+					success: function(ret){
+						kab_login_global[raw.id_prov] = ret.data;
+						resolve2(kab_login_global[raw.id_prov]);
+					}
+				});
+			}else{
+				resolve2(kab_login_global[raw.id_prov]);
+			}
+		})
+		.then(function(data_kab){
+			var new_data_kab = {};
+			data_kab.map(function(b, i){
+				new_data_kab[b.id_daerah] = b;
 			});
-		}else{
-			resolve(kab_login_global[id_prov]);
-		}
+			return resolve(new_data_kab[raw.kab]);
+		});
 	});
 }
 
-function getIdKec(id_kab){
+function getIdKec(raw){
 	return new Promise(function(resolve, reduce){
-		if(typeof kec_global == 'undefined'){
-			kec_global = {};
-		}
-		if(typeof kec_global[id_kab] == 'undefined'){
-			relayAjax({
-				url: config.sipd_url+'api/master/kecamatan/search_by_kotkab',
-				type: 'post',
-				beforeSend: function (xhr) {
-				    xhr.setRequestHeader("x-api-key", x_api_key());
-					xhr.setRequestHeader("x-access-token", _token.token);
-				},
-				data: {
-					'search[value]': '',
-					tahun: _token.tahun,
-					id_kabkota: id_kab
-				},
-				success: function(ret){
-					kec_global[id_kab] = ret.data;
-					resolve(kec_global[id_kab]);
-				}
+		new Promise(function(resolve2, reduce2){
+			if(typeof kec_global == 'undefined'){
+				window.kec_global = {};
+			}
+			if(typeof kec_global[raw.kab] == 'undefined'){
+				relayAjax({
+					url: config.sipd_url+'api/master/kecamatan/search_by_kotkab',
+					type: 'post',
+					beforeSend: function (xhr) {
+					    xhr.setRequestHeader("x-api-key", x_api_key());
+						xhr.setRequestHeader("x-access-token", _token.token);
+					},
+					data: {
+						'search[value]': '',
+						tahun: _token.tahun,
+						id_kabkota: raw.kab
+					},
+					success: function(ret){
+						kec_global[raw.kab] = ret.data;
+						resolve2(kec_global[raw.kab]);
+					}
+				});
+			}else{
+				resolve2(kec_global[raw.kab]);
+			}
+		})
+		.then(function(data_kec){
+			var new_data_kec = {};
+			data_kec.map(function(b, i){
+				new_data_kec[b.id_camat] = b;
 			});
-		}else{
-			resolve(kec_global[id_kab]);
-		}
+			return resolve(new_data_kec[raw.kec]);
+		});
 	});
 }
 
-function getIdKel(id_kab, id_kec){
+function getIdKel(raw){
 	return new Promise(function(resolve, reduce){
-		if(typeof kel_global == 'undefined'){
-			kel_global = {};
-		}
-		var key = id_kab+'-'+id_kec;
-		if(typeof kel_global[key] == 'undefined'){
-			relayAjax({
-				url: config.sipd_url+'api/master/kelurahan/findByKabkotaAndCamat',
-				type: 'post',
-				beforeSend: function (xhr) {
-				    xhr.setRequestHeader("x-api-key", x_api_key());
-					xhr.setRequestHeader("x-access-token", _token.token);
-				},
-				data: {
-					'search[value]': '',
-					tahun: _token.tahun,
-					id_kabkota: id_kab,
-					id_camat: id_kec
-				},
-				success: function(ret){
-					kel_global[key] = ret.data;
-					resolve(kel_global[key]);
-				}
+		new Promise(function(resolve2, reduce2){
+			if(typeof kel_global == 'undefined'){
+				window.kel_global = {};
+			}
+			var key = raw.kab+'-'+raw.kec;
+			if(typeof kel_global[key] == 'undefined'){
+				relayAjax({
+					url: config.sipd_url+'api/master/kelurahan/findByKabkotaAndCamat',
+					type: 'post',
+					beforeSend: function (xhr) {
+					    xhr.setRequestHeader("x-api-key", x_api_key());
+						xhr.setRequestHeader("x-access-token", _token.token);
+					},
+					data: {
+						'search[value]': '',
+						tahun: _token.tahun,
+						id_kabkota: raw.kab,
+						id_camat: raw.kec
+					},
+					success: function(ret){
+						kel_global[key] = ret.data;
+						resolve2(kel_global[key]);
+					}
+				});
+			}else{
+				resolve2(kel_global[key]);
+			}
+		})
+		.then(function(data_kel){
+			var new_data_kel = {};
+			data_kel.map(function(b, i){
+				new_data_kel[b.id_lurah] = b;
 			});
-		}else{
-			resolve(kel_global[key]);
-		}
+			return resolve(new_data_kel[raw.desa]);
+		});
 	});
 }
 
 function get_rekening_by_jenis_belanja(jenis, text){
 	var key = jenis+text;
+	var html = '<option value="">Pilih Rekening</option>';
 	if(typeof global_rek_by_jenis_belanja[key] == 'undefined'){
 		show_loading();
 		pesan_loading('Get data Rekening by jenis belanja', true);
@@ -1471,7 +1513,6 @@ function get_rekening_by_jenis_belanja(jenis, text){
 			data: formData(opsi),
 			success: function(ret){
 				global_rek_by_jenis_belanja[key] = ret.data;
-				var html = '';
 				global_rek_by_jenis_belanja[key].map(function(b, i){
 					html += '<option value="'+b.id_akun+'">'+b.kode_akun+' '+b.nama_akun+'</option>';
 				});
@@ -1480,10 +1521,31 @@ function get_rekening_by_jenis_belanja(jenis, text){
 			}
 		});
 	}else{
-		var html = '';
 		global_rek_by_jenis_belanja[key].map(function(b, i){
 			html += '<option value="'+b.id_akun+'">'+b.kode_akun+' '+b.nama_akun+'</option>';
 		})
 		jQuery('#rek-excel').html(html);
 	}
+}
+
+function after_insert(all_status, type_data){
+    jQuery('#wrap-loading').hide();
+    var _error = [];
+    all_status.map(function(row, n){
+        if(row.error){
+            if(type_data == 'dana-bos'){
+                _error.push('"'+row.nama+'" error: ('+row.error+')');
+            }else{
+                _error.push('"'+row.desa+'" error: ('+row.error+')');
+            }
+        }
+    });
+    var catatan = '';
+    if(_error.length > 0){
+        catatan = ' Catatan: '+_error.join(', ');
+    }
+    alert('Berhasil simpan data!'+catatan);
+    if(confirm('Untuk melihat perubahan, refresh halaman ini?')){
+    	window.location.href = '';
+    }
 }
