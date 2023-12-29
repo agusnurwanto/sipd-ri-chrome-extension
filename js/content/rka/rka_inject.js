@@ -862,6 +862,7 @@ function insertRKA(){
 										        };
 
 										        console.log('opsi_rincian', opsi_rincian, 'opsi_penerima_bantuan', opsi_penerima_bantuan);
+									        	pesan_loading('Simpan rincian '+opsi_penerima_bantuan.lokus_akun+' total='+opsi_penerima_bantuan.total_harga);
 
                                                 // tambah data rincian
                                                 relayAjaxApiKey({
@@ -962,7 +963,11 @@ function insertRKA(){
                 if(data_sementara.length > 0){
                     data_all.push(data_sementara);
                 }
-                data_all.unshift(data_all.pop());
+
+                // membalik urutan teratas menjadi terbawah
+                if(data_all.length >= 1){
+                	data_all.unshift(data_all.pop());
+                }
 
                 var last = data_all.length-1;
                 data_all.reduce(function(sequence, nextData){
@@ -1087,6 +1092,7 @@ function insertRKA(){
     										        };
 
     										        console.log('opsi_rincian', opsi_rincian, 'opsi_penerima_bantuan', opsi_penerima_bantuan);
+										        	pesan_loading('Simpan rincian '+opsi_penerima_bantuan.lokus_akun+' total='+opsi_penerima_bantuan.total_harga);
 
                                                     // tambah data rincian
                                                     relayAjaxApiKey({
@@ -1261,6 +1267,10 @@ function all_penerima_bantuan(opsi){
 
 function cek_rincian_exist(excel, bankeu=false, opsi){
     return new Promise(function(resolve, reduce){
+        var akun_selected = jQuery('#rek-excel option:selected').text().split(' ');
+		var kode_akun = akun_selected.shift();
+		var id_pengelompokan = jQuery('#paket-excel').val();
+
     	// get rincian berdasar id sub bl
     	get_rinci_sub_bl(opsi.id_sub_skpd, opsi.id_sub_bl)
     	.then(function(data){
@@ -1269,27 +1279,34 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
     		data.data.reduce(function(sequence, nextData){
 				return sequence.then(function(current_data){
 					return new Promise(function(resolve_reduce, reject_reduce){
-
-						// get detail rincian berdasarkan id_rinci_sub_bl
-						console.log('cek_rincian_exist current_data', current_data);
-						detail_rincian_sub_bl(current_data)
-						.then(function(rinci){
-							if(
-								rinci.data[0]
-								&& rinci.data[0].is_lokus_akun == '1'
-							){
-								// get penerima bantuan
-								detail_penerima_bantuan(current_data)
-								.then(function(penerima_bantuan){
-									rinci.data[0].penerima_bantuan = penerima_bantuan.data[0];
+						// cek jika kode akun dan id kelompok sama, maka baru dianggap data exist
+						if(
+							current_data.kode_akun == kode_akun
+							&& current_data.id_subs_sub_bl == id_pengelompokan
+						){
+							// get detail rincian berdasarkan id_rinci_sub_bl
+							console.log('cek_rincian_exist current_data', current_data);
+							detail_rincian_sub_bl(current_data)
+							.then(function(rinci){
+								if(
+									rinci.data[0]
+									&& rinci.data[0].is_lokus_akun == '1'
+								){
+									// get penerima bantuan
+									detail_penerima_bantuan(current_data)
+									.then(function(penerima_bantuan){
+										rinci.data[0].penerima_bantuan = penerima_bantuan.data[0];
+										newData.push(rinci.data[0]);
+										resolve_reduce(nextData);
+									});
+								}else{
 									newData.push(rinci.data[0]);
 									resolve_reduce(nextData);
-								});
-							}else{
-								newData.push(rinci.data[0]);
-								resolve_reduce(nextData);
-							}
-						});
+								}
+							});
+						}else{
+							resolve_reduce(nextData);
+						}
 					})
 					.catch(function(e){
 						console.log(e);
@@ -1312,7 +1329,7 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
 					}
 
                     // keyword yang tepat masih dalam pencarian
-                    var keyword = jQuery("<div/>").html(nama).text().toLowerCase().trim()+b.total_harga;
+                    var keyword = jQuery("<div/>").html(nama).text().toLowerCase().trim()+b.total_harga+b.kode_akun+b.id_subs_sub_bl;
                     if(!data_exist[keyword]){
                         data_exist[keyword] = {
                             'sipd': [],
@@ -1326,8 +1343,8 @@ function cek_rincian_exist(excel, bankeu=false, opsi){
                     if(bankeu){
                         b.nama = b.desa;
                     }
-                    var keyword = b.nama.replace(/'/g, "''").toLowerCase().trim()+b.total.replace(/,/g, '').trim();
-                    var keyword2 = (b.nama.replace(/'/g, "''").toLowerCase()+' '+b.alamat.replace(/'/g, "''").toLowerCase()).trim()+b.total.replace(/,/g, '').trim();
+                    var keyword = b.nama.replace(/'/g, "''").toLowerCase().trim()+b.total.replace(/,/g, '').trim()+kode_akun+id_pengelompokan;
+                    var keyword2 = (b.nama.replace(/'/g, "''").toLowerCase()+' '+b.alamat.replace(/'/g, "''").toLowerCase()).trim()+b.total.replace(/,/g, '').trim()+kode_akun+id_pengelompokan;
                     if(
                         !data_exist[keyword]
                         && !data_exist[keyword2]
