@@ -529,3 +529,32 @@ function makeid(t) {
         o += 1;
     return e;
 }
+
+function cek_tombol_tambah_rka(n=0){
+	if(n == 20){ return; };
+	setTimeout(function(){
+		n++;
+		if(jQuery('.card-toolbar .btn-primary.ng-star-inserted').length >=1 ){
+			// hapus script sebelumnya jika ada
+			jQuery('.rka_inject').remove();
+			jQuery('head script').map(function(i, b){
+				var url = jQuery(b).attr('src');
+				if(
+					url.indexOf('/js/content/rka/rka_inject.js') != -1
+					|| url.indexOf('/js/jszip.js') != -1
+					|| url.indexOf('/js/xlsx.js') != -1
+				){
+					jQuery(b).remove();
+				}
+			});
+
+			// harus di inject agar bekerja
+			run_script('run', 'window.ext_url = "'+chrome.runtime.getURL('')+'"');
+			injectScript( chrome.runtime.getURL('/js/content/rka/rka_inject.js'), 'head', 'js');
+			injectScript( chrome.runtime.getURL('/js/jszip.js'), 'head', 'js');
+			injectScript( chrome.runtime.getURL('/js/xlsx.js'), 'head', 'js');
+		}else{
+			cek_tombol_tambah_rka(n);
+		}
+	}, 1000);
+}
