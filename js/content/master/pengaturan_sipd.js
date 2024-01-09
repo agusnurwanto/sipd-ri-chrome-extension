@@ -70,3 +70,64 @@ function singkron_pengaturan_sipd_lokal(){
 		});
 	}
 }
+
+function singkron_pengaturan_tapd_lokal(){
+    if(confirm('Apakah anda yakin melakukan ini? data lama akan diupdate dengan data terbaru.')){
+        show_loading();
+        relayAjax({
+            url: config.sipd_url+'api/master/setup_tapd/list',
+            type: 'POST',
+            data: {
+                tahun: _token.tahun,
+                id_daerah: _token.daerah_id,
+                deleted_data: true,
+                'order[0][column]': '-1',
+                'order[0][dir]': 'asc',
+                'search[value]': '',
+                length: 10,
+                start: 0
+            },          
+            beforeSend: function (xhr) {                
+                xhr.setRequestHeader("X-API-KEY", x_api_key());
+                xhr.setRequestHeader("x-access-token", _token.token);
+            },
+            success: function(ret){      
+                pesan_loading('Simpan data Pengaturan TAPD ke DB Lokal!');
+                var tapd = [];
+                ret.data.data.map(function(b, i){
+                    b.created_at = (new Date(b.created_at)).toJSON().replace('T', ' ').split('.')[0];
+                    b.nip = b.nip_tapd;
+                    b.nama = b.nama_tapd;
+                    b.jabatan = b.jabatan_tapd;
+                    b.updated_at = b.created_at;
+                    b.id_skpd = '';
+                    tapd.push(b)
+                })
+                var data = {
+                    message:{
+                        type: "get-url",
+                        content: {
+                            url: config.url_server_lokal,
+                            type: 'post',
+                            data: { 
+                                action: 'singkron_pendahuluan',
+                                type: 'ri',
+                                tahun_anggaran: _token.tahun,
+                                api_key: config.api_key,
+                                data: {
+                                    data_sekda: [],
+                                    tim_tapd: tapd
+                                }
+                            },
+                            return: true
+                        }
+                    }
+                };
+                chrome.runtime.sendMessage(data, function(response) {
+                    console.log('responeMessage', response);
+                });                                                               
+                
+            }
+        });
+    }
+}

@@ -293,6 +293,20 @@ function cekUrl(current_url, nomor=1){
 					// }
 				});
 			}
+			// Data master TAPD
+			else if(current_url.indexOf('/master/setup_tapd') != -1)
+			{
+				console.log('halaman master TAPD');
+				jQuery('.aksi-extension').remove();
+				var btn = ''
+					+'<div class="aksi-extension">'						
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_pengaturan_tapd_lokal">Singkron TAPD ke DB Lokal</button>'					
+					+'</div>';
+				jQuery('.page-title').append(btn);
+				jQuery('#singkron_pengaturan_tapd_lokal').on('click', function(){
+					singkron_pengaturan_tapd_lokal();
+				});
+			}
 			// Data pengaturan SIPD
 			else if(current_url.indexOf('/pengaturan/sipd') != -1)
 			{
@@ -1372,7 +1386,7 @@ function cekUrl(current_url, nomor=1){
 			var password = jQuery('input[name="password"]');
 			if(
 				password.length >= 1
-				&& jQuery('#login-ext').length <= 1
+				&& jQuery('#login-ext').length < 1
 			){
 				password.after(lihat_pass);
 				cek_reload = false;
