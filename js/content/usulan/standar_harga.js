@@ -1192,6 +1192,66 @@ function get_ssh_unik(){
 	});
 }
 
+function find_kelompok_standar_harga(tipe, kelompok){
+	return new Promise(function(resolve, reject){
+		if(typeof global_all_kelompok == 'undefined'){
+			global_all_kelompok = {};
+		}
+		var key = tipe+'-'+kelompok;
+		if(!global_all_kelompok[key]){
+			pesan_loading("Get master Rekening");
+			relayAjax({
+				url: config.sipd_url+'api/master/kel_standar_harga/find',
+				type: 'POST',
+				data: {
+					tahun: _token.tahun,
+					tipe: tipe,
+	                'search[value]': kelompok,
+				},
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},
+				success: function(res){
+					window.global_all_kelompok[key] = res.data;
+					return resolve(global_all_kelompok[key]);
+				}
+			});
+		}else{
+			resolve(global_all_kelompok[key]);
+		}
+	});
+}
+
+function find_satuan_standar_harga(satuan){
+	return new Promise(function(resolve, reject){
+		if(typeof global_all_satuan == 'undefined'){
+			global_all_satuan = {};
+		}
+		var key = satuan;
+		if(!global_all_satuan[key]){
+			pesan_loading("Get master Rekening");
+			relayAjax({
+				url: config.sipd_url+'api/master/satuan/find',
+				type: 'POST',
+				data: {
+	                'search[value]': satuan,
+				},
+				beforeSend: function (xhr) {			    
+					xhr.setRequestHeader("X-API-KEY", x_api_key());
+					xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+				},
+				success: function(res){
+					window.global_all_satuan[key] = res.data;
+					return resolve(global_all_satuan[key]);
+				}
+			});
+		}else{
+			resolve(global_all_satuan[key]);
+		}
+	});
+}
+
 function simpan_usulan_ssh(list_usulan_selected){
 	show_loading();
 	get_rekening_all()
@@ -1227,97 +1287,139 @@ function simpan_usulan_ssh(list_usulan_selected){
 
 	    					// cek jika standar harga belum ada di SIPD
 	    					if(!ssh_unik[id_duplikat]){
+	    						var type_data_ssh = false;
+	    						if ( current_data.kelompok == 1) {
+									type_data_ssh ='SSH';
+								}else if ( current_data.kelompok == 2) {
+									type_data_ssh ='HSPK';
+								}else if ( current_data.kelompok == 3) {
+									type_data_ssh ='ASB';
+								}else if ( current_data.kelompok == 4) {
+									type_data_ssh ='SBU';
+								}
+								if(type_data_ssh == false){
+									var pesan = 'Tipe kelompok usulan tidak ditemukan!';
+				    				return resolve2({
+							    		status: 'error',
+							    		code: 6,
+							    		pesan: pesan
+							    	});
+								}
+	    						find_kelompok_standar_harga(type_data_ssh, current_data.kode_kel_standar_harga)
+	    						.then(function(kelompok){
+		    						// cek apakah kelompok standar harga ada di SIPD
+			    					if(kelompok[0] && kelompok[0].id_kel_standar_harga){
+		    							find_satuan_standar_harga(current_data.satuan)
+		    							.then(function(satuan){
+		    								if(satuan[0] && satuan[0].id_satuan){
+		    									if(
+		    										!current_data.jenis_produk
+		    										|| current_data.jenis_produk == ''
+		    									){
+		    										current_data.jenis_produk = 0;
+		    									}
+					    						var param_ssh = {
+					    							tahun: _token.tahun,
+													id_daerah: _token.daerah_id,
+													id_kel_standar_harga: kelompok[0].id_kel_standar_harga,
+													kode_kel_standar_harga: current_data.kode_kel_standar_harga,
+													nama_standar_harga: current_data.nama_standar_harga,
+													spek: current_data.spek,
+													satuan: current_data.satuan,
+													id_satuan: satuan[0].id_satuan,
+													harga: current_data.harga,
+													is_pdn: current_data.jenis_produk,
+													nilai_tkdn: current_data.tkdn,
+													kelompok: current_data.kelompok,
+													tipe_standar_harga: type_data_ssh,
+													id_user_log: _token.user_id,
+													id_daerah_log: _token.daerah_id,
+													created_user: _token.user_id,
+													id_akun: ''
+					    						};
 
-	    						// cek apakah kelompok standar harga ada di SIPD
-		    					if(kelompok_id[current_data.kode_kel_standar_harga]){
-		    						var param_ssh = {
-		    							tahun: _token.tahun,
-										id_daerah: _token.daerah_id,
-										id_kel_standar_harga: kelompok_id[current_data.kode_kel_standar_harga],
-										kode_kel_standar_harga: current_data.kelompok,
-										nama_standar_harga: current_data.nama_standar_harga,
-										spek: current_data.spek,
-										satuan: current_data.satuan,
-										id_satuan: '',
-										harga: current_data.harga,
-										is_pdn: current_data.jenis_produk,
-										nilai_tkdn: current_data.tkdn,
-										kelompok: current_data.kelompok,
-										tipe_standar_harga: type_data_ssh,
-										id_user_log: _token.user_id,
-										id_daerah_log: _token.daerah_id,
-										created_user: _token.user_id,
-										id_akun: ''
-		    						};
+					    						current_data.akun.map(function(b, i){
+					    							if(
+					    								param_ssh['id_akun'] == '' 
+					    								&& akun_all[b.kode_akun]
+					    							){
+					    								param_ssh['id_akun'] = akun_all[b.kode_akun].id_akun;
+					    							}
+					    						});
 
-		    						current_data.akun.map(function(b, i){
-		    							if(
-		    								param_ssh['id_akun'] == '' 
-		    								&& akun_all[b.kode_akun]
-		    							){
-		    								param_ssh['id_akun'] = akun_all[b.kode_akun].id_akun;
-		    							}
-		    						});
+					    						// cek apakah akun ada di master sipd
+								    			if(param_ssh['id_akun'] == ''){
+								    				var pesan = 'Data akun tidak ditemukan di SIPD!';
+								    				console.log(pesan, current_data);
+								    				return resolve2({
+											    		status: 'error',
+											    		code: 4,
+											    		pesan: pesan
+											    	});
+								    			}
 
-		    						// cek apakah akun ada di master sipd
-					    			if(param_ssh['id_akun'] == ''){
-					    				var pesan = 'Data akun tidak ditemukan di SIPD!';
-					    				console.log(pesan, current_data);
-					    				return resolve2({
+								    			// perlu diset agar nanti tidak perlu disimpan lagi
+								    			current_data.simpan_id_akun = param_ssh['id_akun'];
+
+												console.log('SIMPAN SSH', current_data);
+									    		relayAjax({
+													url: config.sipd_url+'api/master/d_komponen/add',
+													type: 'post',
+													data: param_ssh,
+													beforeSend: function (xhr) {			    
+														xhr.setRequestHeader("X-API-KEY", x_api_key());
+														xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+													},
+													success: function(html){
+														get_all_ssh_sipd(type_data_ssh, current_data.nama_standar_harga)
+														.then(function(data_ssh){
+															if(current_data.akun.length >= 1){
+																var cek_id = false;
+																data_ssh.data.data.map(function(b, i){
+																	var id_sipd = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
+																	if(id_sipd == id_duplikat){
+																		cek_id = b.id_standar_harga;
+																	}
+																});
+																if(cek_id){
+																	return resolve2({
+															    		status: 'success',
+															    		code: 3,
+															    		pesan: 'Berhasil simpan SSH baru!',
+															    		id_standar_harga: cek_id
+															    	});
+																}else{
+																	var pesan = 'Id standar harga SIPD tidak ditemukan!';
+																	console.log(pesan, current_data, data_ssh);
+									    							return resolve2({
+															    		status: 'error',
+															    		code: 5,
+															    		pesan: pesan
+															    	});
+																}
+												    		}
+														});
+													}
+												});
+		    								}else{
+		    									var pesan = 'ID satuan usulan tidak ditemukan!';
+							    				return resolve2({
+										    		status: 'error',
+										    		code: 7,
+										    		pesan: pesan
+										    	});
+		    								}
+		    							})
+							    	}else{
+							    		var pesan = 'Kelompok SSH tidak ditemukan!';
+					    				resolve2({
 								    		status: 'error',
-								    		code: 4,
+								    		code: 2,
 								    		pesan: pesan
 								    	});
 					    			}
+	    						});
 
-									console.log('SIMPAN SSH', current_data);
-						    		relayAjax({
-										url: config.sipd_url+'api/master/d_komponen/add',
-										type: 'post',
-										data: param_ssh,
-										beforeSend: function (xhr) {			    
-											xhr.setRequestHeader("X-API-KEY", x_api_key());
-											xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-										},
-										success: function(html){
-											get_all_ssh_sipd(type_data_ssh, current_data.nama_standar_harga)
-											.then(function(data_ssh){
-												if(current_data.akun.length >= 1){
-													var cek_id = false;
-													data_ssh.data.data.map(function(b, i){
-														var id_sipd = b.kode_kel_standar_harga+''+b.nama_standar_harga+''+b.spek+''+b.satuan+''+b.harga;
-														if(id_sipd == id_duplikat){
-															cek_id = b.id_standar_harga;
-														}
-													});
-													if(cek_id){
-														return resolve2({
-												    		status: 'success',
-												    		code: 3,
-												    		pesan: 'Berhasil simpan SSH baru!',
-												    		id_standar_harga: cek_id
-												    	});
-													}else{
-														var pesan = 'Id standar harga SIPD tidak ditemukan!';
-														console.log(pesan, current_data, data_ssh);
-						    							return resolve2({
-												    		status: 'error',
-												    		code: 5,
-												    		pesan: pesan
-												    	});
-													}
-									    		}
-											});
-										}
-									})
-						    	}else{
-						    		var pesan = 'Kelompok SSH tidak ditemukan!';
-				    				resolve2({
-							    		status: 'error',
-							    		code: 2,
-							    		pesan: pesan
-							    	});
-				    			}
 						    }else{
 						    	resolve2({
 						    		status: 'success',
@@ -1341,6 +1443,12 @@ function simpan_usulan_ssh(list_usulan_selected){
 			    			promise_all = current_data.akun.map(function(b, i){
 			    				return new Promise(function(resolve2, reject2){
 			    					if(akun_all[b.kode_akun]){
+
+			    						// cek jika id akun sudah disimpan sebelumnya
+			    						if(current_data.simpan_id_akun == akun_all[b.kode_akun].id_akun){
+			    							return resolve2();
+			    						}
+
 					    				simpan_rekening(id_standar_harga, akun_all[b.kode_akun].id_akun)
 					    				.then(function(){
 					    					resolve2();

@@ -101,7 +101,7 @@ function singkron_pengaturan_tapd_lokal(){
                     b.jabatan = b.jabatan_tapd;
                     b.updated_at = b.created_at;
                     b.id_skpd = '';
-                    tapd.push(b)
+                    tapd.push(b);
                 })
                 var data = {
                     message:{
