@@ -1719,6 +1719,28 @@ function setKeterangan(raw){
 
       		// cek jika keterangan belum ada di SIPD maka perlu buat baru
       		if(typeof _id_keterangan == 'undefined'){
+      			var opsi = {
+      				'ket_bl_teks': raw.keterangan,
+					'id_bl': '0',
+					'id_sub_bl': global_detail_sub.id_sub_bl,
+					'tahun': global_detail_sub.tahun,
+					'id_daerah': global_detail_sub.id_daerah,
+					'id_unit': global_detail_sub.id_unit,
+					'id_skpd': global_detail_sub.id_skpd,
+					'id_sub_skpd': global_detail_sub.id_sub_skpd,
+					'id_program': global_detail_sub.id_program,
+					'id_giat': global_detail_sub.id_giat,
+					'id_sub_giat': global_detail_sub.id_sub_giat,
+					'nama_daerah': global_detail_sub.nama_daerah,
+					'nama_unit': global_detail_sub.nama_unit,
+					'nama_skpd': global_detail_sub.nama_skpd,
+					'nama_sub_skpd': global_detail_sub.nama_sub_skpd,
+					'nama_program': global_detail_sub.nama_program,
+					'nama_giat': global_detail_sub.nama_giat,
+					'nama_sub_giat': global_detail_sub.nama_sub_giat,
+					'id_daerah_log': global_detail_sub.id_daerah,
+					'id_user_log': _token.user_id
+      			};
 				relayAjaxApiKey({
 		          	url: config.sipd_url+'api/renja/ket_sub_bl/add',
 		          	type: "POST",
@@ -1738,18 +1760,18 @@ function setKeterangan(raw){
 								kondisi_rincian: true
 							}),
 							success: function(ret){
-								global_ket_rka[id_sub_keg] = ret.data;
+								global_ket_rka[global_detail_sub.id_sub_giat] = ret.data;
 								var html = '<option value="">Pilih Keterangan</option>';
-								global_ket_rka[id_sub_keg].map(function(b, i){
+								global_ket_rka[global_detail_sub.id_sub_giat].map(function(b, i){
 									html += '<option value="'+b.id_ket_sub_bl+'">'+b.ket_bl_teks+'</option>';
 								});
 								jQuery('#keterangan-excel').html(html);
 						    	jQuery('#keterangan-excel').select2({
 						    		dropdownParent: jQuery('#mod-import-excel .modal-content')
 						    	});
+								return setKeterangan(raw);
 							}
 						});
-						return setKeterangan(raw);
 		          	}
 		        });
 			}else{
