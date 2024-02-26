@@ -1356,6 +1356,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							}
 							_rka.volume_murni = rka.volume_murni;
 							_rka.rincian = rka.total_harga;
+							_rka.rincian_murni = rka.total_harga_murni;
 							_rka.pajak_murni = rka.pajak_murni;
 							_rka.totalpajak = rka.totalpajak;
 							_rka.updateddate = rka.updateddate;
