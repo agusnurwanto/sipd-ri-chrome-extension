@@ -63,12 +63,6 @@ function singkron_pembiayaan_lokal(tipe){
                                                     const cd = new Date(b.created_at);
                                                     var todayDate = new Date().toLocaleDateString("es-CL");
                                                     let todayTime = new Date().toLocaleString('id-ID', {hour: '2-digit', hour12: false, minute:'2-digit', second:'2-digit'});
-                                                    let ctgl = cd.getDate();
-                                                    let cbln = bulan[cd.getMonth()];
-                                                    let cthn = cd.getFullYear();
-                                                    let cjam = cd.getHours();
-                                                    let cmenit = cd.getMinutes();
-                                                    let cdetik = cd.getSeconds();
                                                     const rekArray = b.rekening.split(" ");
                                                     let kode_akun = rekArray[0];
                                                     let nama_akun = rekArray[1];
@@ -90,7 +84,7 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].program_koordinator = b.program_koordinator;
                                                     data_pembiayaan[i].rkpd_murni = b.rkpd_murni; //baru int
                                                     data_pembiayaan[i].rkpd_pak = b.rkpd_pak; //baru int
-                                                    //   data_pembiayaan[i].nilaimurni = b.nilaimurni; //?                                              
+                                                    data_pembiayaan[i].nilaimurni = b.murni;
                                                     //   data_pembiayaan[i].rekening = b.rekening; //?
                                                     data_pembiayaan[i].rekening = b.rekening;
                                                     data_pembiayaan[i].satuan = b.satuan; //baru var
@@ -216,12 +210,6 @@ function singkron_pembiayaan_lokal(tipe){
                                                     const cd = new Date(b.created_at);
                                                     var todayDate = new Date().toLocaleDateString("es-CL");
                                                     let todayTime = new Date().toLocaleString('id-ID', {hour: '2-digit', hour12: false, minute:'2-digit', second:'2-digit'});
-                                                    let ctgl = cd.getDate();
-                                                    let cbln = bulan[cd.getMonth()];
-                                                    let cthn = cd.getFullYear();
-                                                    let cjam = cd.getHours();
-                                                    let cmenit = cd.getMinutes();
-                                                    let cdetik = cd.getSeconds();
                                                     const rekArray = b.rekening.split(" ");
                                                     let kode_akun = rekArray[0];
                                                     let nama_akun = rekArray[1];
@@ -243,7 +231,7 @@ function singkron_pembiayaan_lokal(tipe){
                                                     data_pembiayaan[i].program_koordinator = b.program_koordinator;
                                                     data_pembiayaan[i].rkpd_murni = b.rkpd_murni; //baru int
                                                     data_pembiayaan[i].rkpd_pak = b.rkpd_pak; //baru int
-                                                    //   data_pembiayaan[i].nilaimurni = b.nilaimurni; //?                                              
+                                                    data_pembiayaan[i].nilaimurni = b.murni;
                                                     //   data_pembiayaan[i].rekening = b.rekening; //?
                                                     data_pembiayaan[i].rekening = b.rekening;
                                                     data_pembiayaan[i].satuan = b.satuan; //baru var
