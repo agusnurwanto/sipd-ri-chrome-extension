@@ -766,7 +766,7 @@ function insertRKA(){
 	                                                id_keterangan: id_ket
 	                                            };
 
-	                                            var harga_satuan = (+raw2.total.replace(/,/g, ''));
+	                                            var harga_satuan = +(raw2.total.replace(/,/g, ''));
 
 	                                            // cek jika volume dan harga satuan sudah diset di excel
 	                                            if(
@@ -774,9 +774,19 @@ function insertRKA(){
 	                                                && raw2.harga
 	                                            ){
 	                                                vol = +raw2.vol;
-	                                                harga_satuan = (+raw2.harga.replace(/,/g, ''));
+	                                                harga_satuan = +(raw2.harga.replace(/,/g, ''));
 	                                                raw2.total = (vol*harga_satuan)+'';
 	                                            }
+
+	                                            // total harga tidak boleh ada koma atau NaN
+	                                            if(typeof raw2.total == 'string'){
+	                                            	raw2.total = +(raw2.total.replace(/,/g, ''));
+	                                            }else if(isNaN(raw2.total)){
+	                                            	raw2.total = 0;
+	                                            	raw2.error = "Total harga tidak dalam bentuk angka, total="+raw2.total+". tidak bisa disimpan!";
+	                                            	return resolve(raw2);
+	                                            }
+
 	                                            var opsi_rincian = {
 										        	id_subs_sub_bl: id_pengelompokan,
 													id_ket_sub_bl: id_ket,
@@ -787,7 +797,7 @@ function insertRKA(){
 													volume: vol,
 													harga_satuan: harga_satuan,
 													koefisien: vol+' '+satuantext,
-													total_harga: +raw2.total.replace(/,/g, ''),
+													total_harga: raw2.total,
 													jenis_bl: type_data,
 													id_dana: sumber_dana,
 													vol_1: vol,
@@ -847,7 +857,7 @@ function insertRKA(){
 													id_akun: id_rek_akun,
 													lokus_akun: raw2.nama,
 													id_profil: raw2.id_profile,
-													total_harga: (+raw2.total.replace(/,/g, '')),
+													total_harga: raw2.total,
 													id_prop: 0,
 													id_kokab: 0,
 													id_camat: 0,
