@@ -110,7 +110,6 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 		}		
 		get_all_ssh_sipd(type_data_ssh)
 		.then(function(data){
-			pesan_loading('Simpan data '+type_data_ssh+' ke DB Lokal!');
 			var data_all = [];
 			var data_sementara = [];
 			data.data.data.map(function(b, i){
@@ -126,6 +125,7 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 				data_all.push(data_sementara);
 			}
 
+			pesan_loading('Simpan data '+type_data_ssh+' total='+data.data.data.length+' ke DB Lokal!');
 			var i = 0;
 			var last = data_all.length-1;
 			var page = 0;
@@ -143,16 +143,15 @@ function singkron_ssh_ke_lokal(type_data_ssh){
                                 })
                                 .then(function(det){     
                                 	val.detail_ssh = det.data;	                                    
-                                    
+									get_rekening_ssh({
+										id_standar_harga: val.id_standar_harga,
+										kode_standar_harga: val.kode_standar_harga,
+										kelompok: kelompok
+									}).then(function(ret){
+										val.rek_belanja = ret.data;
+										return resolve(val);
+									});
                                 });
-								get_rekening_ssh({
-									id_standar_harga: val.id_standar_harga,
-									kode_standar_harga: val.kode_standar_harga,
-									kelompok: kelompok
-								}).then(function(ret){
-									val.rek_belanja = ret.data;
-									return resolve(val);
-								});
 							})
 							.catch(function(e){
 								console.log(e);
@@ -170,7 +169,9 @@ function singkron_ssh_ke_lokal(type_data_ssh){
 							var c_persen = +jQuery('#persen-loading').attr('persen');
 							c_persen++;
 							jQuery('#persen-loading').attr('persen', c_persen);
-							jQuery('#persen-loading').html(((c_persen/data_all.length)*100).toFixed(2)+'%');
+							var persen = ((c_persen/data_all.length)*100).toFixed(2)+'%';
+							jQuery('#persen-loading').html(persen);
+							console.log('data_all (', c_persen, '/', data_all.length, ') x 100 = '+persen);
 							setTimeout(function(){
 								return resolve_redurce(nextData);
 							}, 1000);
