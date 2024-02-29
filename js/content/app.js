@@ -71,6 +71,7 @@ function cekUrl(current_url, nomor=1){
 
 	jQuery('.aksi-extension').remove();
 	jQuery('#modal-extension').remove();
+	jQuery('.modal-extension').remove();
 
 	setTimeout(function(){
 		var img_logo = jQuery('.d-flex.align-items-stretch.flex-shrink-0 img').eq(0);
