@@ -41,6 +41,10 @@ function _afterCekLisensi(res){
 	}
 }
 
+// perbaikan fungsi JSON parse ketika ada value yang NaN
+JSON.parse2 = JSON.parse;
+JSON.parse = function(data){ return JSON.parse2(data.replace(/NaN/g, 0)) }
+
 function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
   try {
     decimalCount = Math.abs(decimalCount);
