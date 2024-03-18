@@ -1373,7 +1373,39 @@ function cekUrl(current_url, nomor=1){
 					});
 				}
 			}
-			cek_reload = false;
+			// Edit perangkat daerah
+			else if(
+				current_url.indexOf('/new-skpd/edit/') != -1
+				|| current_url.indexOf('/new-sub-skpd/edit/') != -1
+			)
+			{
+				console.log('halaman edit SKPD');
+				if(jQuery('#status_kepala').length >= 1){
+					jQuery('.aksi-extension').remove();
+					var input_anggaran = jQuery('#pengaturan_akses').val();
+					var checked = 'checked';
+					if(input_anggaran == 'false'){
+						checked = '';
+					}
+					var btn = ''
+						+'<div class="aksi-extension row mb-6">'
+							+'<label class="col-lg-4 col-form-label fw-bold fs-6">Aksi Chrome Extension</label>'
+							+'<div class="col-lg-8 fv-row">'
+								+'<label><input type="checkbox" '+checked+' id="input_anggaran_ce" class="form-check-input"> Input Anggaran</label>'
+								+'<button onclick="return false;" style="margin-left: 20px;" class="btn btn-sm btn-warning" id="edit_skpd_ce">Edit by Chrome Extension</button>'
+							+'</div>'
+						+'</div>';
+					jQuery('#status_kepala').closest('div.row').after(btn);
+					jQuery('#edit_skpd_ce').on('click', function(){
+						edit_skpd_ce();
+					});
+				}else{
+					cek_reload = 'iya';
+				}
+			}
+			if(cek_reload != 'iya'){
+				cek_reload = false;
+			}
 		// jika halaman login
 		}else if(
 			current_url.indexOf('/landing-page') != -1

@@ -145,3 +145,67 @@ function get_detil_skpd(opsi){
         });
 	})
 }
+
+function edit_skpd_ce(){
+	var set_anggaran = 0;
+	if(jQuery('#input_anggaran_ce').is(':checked')){
+		set_anggaran = 1;
+	}
+	var nama_unit = jQuery('#skpd').val();
+	var kode_unit = jQuery('#kode_unit').val();
+	var nama_skpd = jQuery('#nama_skpd').val();
+	var nip_kepala = jQuery('#nip_kepala').val();
+	var nama_kepala = jQuery('#nama_kepala').val();
+	var pangkat_kepala = jQuery('#pangkat_kepala').val();
+	var status_kepala = jQuery('#status_kepala').val();
+	var url = window.location.href.split('/');
+	var id_daerah = url.pop();
+	var tahun_anggaran = url.pop();
+	var id_sub_skpd =  url.pop();
+	if(confirm('Apakah anda yakin melakukan ini? data lama dengan id_skpd='+id_sub_skpd+' akan diupdate dengan data terbaru.')){
+		show_loading();
+		get_detil_skpd({
+			idskpd: id_sub_skpd,
+			tahun: tahun_anggaran,
+			iddaerah: id_daerah
+		})
+		.then(function(detail_skpd){
+			if(detail_skpd.data && detail_skpd.data[0]){
+				var opsi_update = {
+					id_skpd: id_sub_skpd,
+					kode_unit: kode_unit,
+					nama_skpd: nama_skpd,
+					nip_kepala: nip_kepala,
+					nama_kepala: nama_kepala,
+					pangkat_kepala: pangkat_kepala,
+					status_kepala: status_kepala,
+					input_anggaran: set_anggaran,
+					id_user_log: id_daerah,
+					id_unit_skpd: detail_skpd.data[0].id_unit,
+					id_daerah: id_daerah,
+					tahun: tahun_anggaran,
+					kode_skpd_old: detail_skpd.data[0].kode_skpd,
+					nip_kepala_old: detail_skpd.data[0].nip_kepala,
+					id_daerah_log: id_daerah
+				};
+				console.log('opsi_update', opsi_update);
+				relayAjax({
+					url: config.sipd_url+'api/master/skpd/update_unit_skpd',
+					type: 'POST',
+					data: opsi_update,
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader("X-API-KEY", x_api_key());
+						xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
+					},
+		          	success: function(data){
+						alert('Sukses update SKPD denga id_skpd='+id_sub_skpd);
+						hide_loading();
+		          	}
+		        });
+			}else{
+				alert('SKPD dengan id='+id_sub_skpd+' tidak ditemukan!');
+				hide_loading();
+			}
+		});
+	}
+}
