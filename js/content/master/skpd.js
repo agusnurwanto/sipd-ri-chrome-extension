@@ -172,7 +172,7 @@ function edit_skpd_ce(){
 		.then(function(detail_skpd){
 			if(detail_skpd.data && detail_skpd.data[0]){
 				var opsi_update = {
-					id_skpd: id_sub_skpd,
+					id_skpd: detail_skpd.data[0].id_unit,
 					kode_unit: kode_unit,
 					nama_skpd: nama_skpd,
 					nip_kepala: nip_kepala,
@@ -181,7 +181,7 @@ function edit_skpd_ce(){
 					status_kepala: status_kepala,
 					input_anggaran: set_anggaran,
 					id_user_log: id_daerah,
-					id_unit_skpd: detail_skpd.data[0].id_unit,
+					id_unit_skpd: id_sub_skpd,
 					id_daerah: id_daerah,
 					tahun: tahun_anggaran,
 					kode_skpd_old: detail_skpd.data[0].kode_skpd,
