@@ -1374,10 +1374,7 @@ function cekUrl(current_url, nomor=1){
 				}
 			}
 			// Edit perangkat daerah
-			else if(
-				current_url.indexOf('/new-skpd/edit/') != -1
-				|| current_url.indexOf('/new-sub-skpd/edit/') != -1
-			)
+			else if(current_url.indexOf('/new-sub-skpd/edit/') != -1)
 			{
 				console.log('halaman edit SKPD');
 				if(jQuery('#status_kepala').length >= 1){
