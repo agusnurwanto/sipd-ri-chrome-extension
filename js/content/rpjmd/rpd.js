@@ -155,12 +155,9 @@ function backup_rpd(){
                             relayAjax({
                                 url: config.sipd_url+'api/rpjm/rpd_tujuan/list',
                                 type: 'POST',
-                                data: {            
-                                    id_daerah: _token.daerah_id,									
-                                    tahun: _token.tahun,					
-                                    // tahun_awal: rpd_aktif.data[0].tahun_awal,	
-                                    // tahun_akhir: rpd_aktif.data[0].tahun_akhir,						
-                                    // id_tahap: rpd_aktif.data[0].id_tahap,					
+                                data: {
+                                    id_daerah: _token.daerah_id,	
+                                    tahun: _token.tahun,
                                 },
                                 beforeSend: function (xhr) {			    
                                     xhr.setRequestHeader("X-API-KEY", x_api_key());
@@ -256,24 +253,24 @@ function backup_rpd(){
                                     //                     data_rpd.visi[i].tahun_awal = visi.tahun_awal; //baru
                                     //                     data_rpd.visi[i].tahun_akhir = visi.tahun_akhir; //baru                                                                                                       
                                     //                 });
-                                    //                 var data = {
-                                    //                     message: {
-                                    //                         type: "get-url",
-                                    //                         content: {
-                                    //                             url: config.url_server_lokal,
-                                    //                             type: 'post',
-                                    //                             data: data_rpd,
-                                    //                             return: true
-                                    //                         }
-                                    //                     }
-                                    //                 };
-                                    //                 chrome.runtime.sendMessage(data, function (response) {
-                                    //                     console.log('responeMessage', response);
-                                    //                 });
                                     //             }
                                     //         });
                                     //     }
                                     // });
+                                    var data = {
+                                        message: {
+                                            type: "get-url",
+                                            content: {
+                                                url: config.url_server_lokal,
+                                                type: 'post',
+                                                data: data_rpd,
+                                                return: true
+                                            }
+                                        }
+                                    };
+                                    chrome.runtime.sendMessage(data, function (response) {
+                                        console.log('responeMessage', response);
+                                    });
                                 }
                             });
                         }
