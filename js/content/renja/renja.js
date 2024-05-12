@@ -1271,41 +1271,6 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						return true;
 					}
 
-					// cek jika rincian 0 maka langsung return.
-					// dimatikan karena rincian yang dinollkan pada apbd-p tidak ikut ketarik
-					if(
-						data_rka.dataBl[0].pagu == 0
-						|| data_rka.dataBl[0].pagu == ''
-						|| !data_rka.dataBl[0].pagu
-					){
-						if(!opsi.tidak_kirim_ke_lokal){
-							data_rka.no_page = 1;
-							data_rka.rka = 0;
-							var data = {
-								message:{
-									type: "get-url",
-									content: {
-										url: config.url_server_lokal,
-										type: 'post',
-										data: data_rka,
-										return: false
-									}
-								}
-							};
-							if(!opsi || !opsi.no_return){
-								data.message.content.return = true;
-							}
-							chrome.runtime.sendMessage(data, function(response) {
-								// console.log('responeMessage', response);
-							});
-						}
-						if(callback){
-							callback(data_rka);
-						}
-						pesan_loading('Rincian kosong di SIPD!');
-						return true;
-					}
-
 					// get semua rincian berdasarkan idsubbl
 					get_rinci_sub_bl(opsi.id_skpd, idsubbl)
 					.then(function(data){
