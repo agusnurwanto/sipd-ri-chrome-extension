@@ -1286,16 +1286,19 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;
 							_rka.createddate = rka.createddate;
 							_rka.createdtime = rka.createdtime;
+							_rka.harga_satuan = rka.harga_satuan;
 							_rka.harga_satuan_murni = rka.harga_satuan_murni;
 							_rka.is_locked = rka.is_locked;
 							_rka.koefisien_murni = rka.koefisien_murni;
 							_rka.nama_akun = rka.nama_akun;
+				            _rka.kode_akun = rka.kode_akun;
 							if(
 								!rka.nama_standar_harga
 								|| rka.nama_standar_harga == ''
 							){
 								rka.nama_standar_harga = rka.nama_akun;
 							}
+							_rka.kode_standar_harga = rka.kode_standar_harga;
 							_rka.nama_komponen = rka.nama_standar_harga;
 							_rka.spek_komponen = rka.spek;
 							_rka.volum1 = rka.vol_1;
@@ -1319,8 +1322,14 @@ function singkron_rka_ke_lokal(opsi, callback) {
 									_rka.satuan = _rka.satuan.join(' ');
 								}
 							}
+				            _rka.id_sub_bl = rka.id_sub_bl;
+				            _rka.id_standar_harga = rka.id_standar_harga;
+				            _rka.id_akun = rka.id_akun;
+				            _rka.koefisien = rka.koefisien;
+				            _rka.koefisien = rka.koefisien;
 							_rka.volume_murni = rka.volume_murni;
 							_rka.rincian = rka.total_harga;
+							_rka.total_harga = rka.total_harga;
 							_rka.rincian_murni = rka.total_harga_murni;
 							_rka.pajak_murni = rka.pajak_murni;
 							_rka.totalpajak = rka.totalpajak;
@@ -1365,7 +1374,10 @@ function singkron_rka_ke_lokal(opsi, callback) {
 													// get informasi detail rincian
 													detail_rincian_sub_bl(_rka)
 													.then(function(detail){																											
-														if(detail.message == "Data tidak ditemukan"){
+														if(
+															detail.message == "Data tidak ditemukan"
+															|| detail.message == "Expecting value: line 1 column 1 (char 0)"
+														){
 															return resolve3();
 														}else{
 															detail = detail.data[0];

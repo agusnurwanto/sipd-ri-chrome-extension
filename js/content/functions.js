@@ -146,11 +146,20 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     	}
     	if(
     		jqXHR.status == '0' 
+    		|| (
+    			jqXHR.status == '404'
+    			&& res.message.toLowerCase() == 'data tidak ditemukan'
+    			&& retries > 10 // jika sudah dicoba terakhir maka diloloskan
+    		)
     		|| jqXHR.status == '502'
     		|| jqXHR.status == '503'
     		|| (
     			jqXHR.status == '500'
     			&& res.message != 'Request tidak diperbolehkan'
+    			&& (
+    				res.message == 'Expecting value: line 1 column 1 (char 0)' // kadang 404
+    				&& retries > 10 // jika sudah dicoba terakhir maka diloloskan
+    			)
     		)
     		|| (
     			jqXHR.status == '403'
