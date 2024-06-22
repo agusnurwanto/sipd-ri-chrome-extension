@@ -1411,14 +1411,14 @@ function cekUrl(current_url, nomor=1){
 			cek_reload = false;
 		}else if(current_url.indexOf('/auth/login') != -1){
 			var lihat_pass = ''
-				+'<label style="margin-top: 15px; margin-bottom: 15px;"><input type="checkbox" onclick="lihat_password(this)"> Lihat Password</label>'
-				+'<a class="btn btn-lg btn-warning w-100" onclick="login_sipd()" id="login-ext">Login Chrome Extension</a>';
+				// +'<label style="margin-top: 15px; margin-bottom: 15px;"><input type="checkbox" onclick="lihat_password(this)"> Lihat Password</label>'
+				+'<a class="btn btn-lg btn-warning w-100" onclick="login_sipd()" id="login-ext" style="margin-top: 20px; border-radius: 8px;">Login Chrome Extension</a>';
 			var password = jQuery('input[name="password"]');
 			if(
 				password.length >= 1
 				&& jQuery('#login-ext').length < 1
 			){
-				password.after(lihat_pass);
+				password.parent().append(lihat_pass);
 				cek_reload = false;
 				jQuery('#prov-autocomplete').after('<span style="color: red; font-weight: bold" id="id_prov"></span>')
 				jQuery('#prov-autocomplete').on('change paste keyup', function(){

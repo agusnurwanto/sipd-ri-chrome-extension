@@ -1468,6 +1468,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 												            		if(
 												            			penerima.data.length == 0
 												            			|| penerima.message == "Data tidak ditemukan"
+												            			|| detail.message == "Expecting value: line 1 column 1 (char 0)"
 												            		){
 																		return resolve3();
 																	}else{
