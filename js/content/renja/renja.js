@@ -1286,6 +1286,7 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_rka.id_rinci_sub_bl = rka.id_rinci_sub_bl;
 							_rka.createddate = rka.createddate;
 							_rka.createdtime = rka.createdtime;
+							_rka.id_daerah = _token.id_daerah;
 							_rka.harga_satuan = rka.harga_satuan;
 							_rka.harga_satuan_murni = rka.harga_satuan_murni;
 							_rka.is_locked = rka.is_locked;
@@ -1370,6 +1371,10 @@ function singkron_rka_ke_lokal(opsi, callback) {
 										return sequence2.then(function(_rka){
 											return new Promise(function(resolve_reduce2, reject_reduce2){
 												new Promise(function(resolve3, reject3){
+
+													if(config.no_detail_rincian){
+														return resolve3();
+													}
 
 													// get informasi detail rincian
 													detail_rincian_sub_bl(_rka)

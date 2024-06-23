@@ -135,7 +135,7 @@ function singkron_pembiayaan_lokal(tipe){
                                         },
                                         error: function(e) {
                                             console.log(e);
-                                            return resolve({});
+                                            return resolve_reduce(nextData);
                                         }
                                     });
                                 }
@@ -283,7 +283,7 @@ function singkron_pembiayaan_lokal(tipe){
                                         },
                                         error: function(e) {
                                             console.log(e);
-                                            return resolve({});
+                                            return resolve_reduce(nextData);
                                         }
                                     });
                                 }

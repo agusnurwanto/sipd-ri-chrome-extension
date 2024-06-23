@@ -119,7 +119,7 @@ function singkron_pendapatan_lokal(){
                                         },
                                         error: function(e) {
                                             console.log(e);
-                                            return resolve({});
+                                            return resolve_reduce(nextData);
                                         }
                                     })
                                 
@@ -257,7 +257,7 @@ function singkron_pendapatan_lokal(){
                                         },
                                         error: function(e) {
                                             console.log(e);
-                                            return resolve({});
+                                            return resolve_reduce(nextData);;
                                         }
                                     })
                                 
