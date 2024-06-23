@@ -155,11 +155,13 @@ function relayAjax(options, retries=20, delay=5000, timeout=1800000){
     		|| jqXHR.status == '503'
     		|| (
     			jqXHR.status == '500'
-    			&& res.message != 'Request tidak diperbolehkan'
     			&& (
-    				res.message == 'Expecting value: line 1 column 1 (char 0)' // kadang 404
-    				&& retries > 17 // jika sudah dicoba terakhir maka diloloskan
-    			)
+    				res.message != 'Request tidak diperbolehkan'
+    			 	|| (
+	    				res.message == 'Expecting value: line 1 column 1 (char 0)' // kadang 404
+	    				&& retries > 17 // jika sudah dicoba terakhir maka diloloskan
+	    			)
+	    		)
     		)
     		|| (
     			jqXHR.status == '403'
