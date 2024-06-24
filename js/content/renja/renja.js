@@ -2048,7 +2048,8 @@ function subs_sub_bl(id_sub_bl){
 			data: {            
 					id_daerah: _token.daerah_id,				
 					tahun: _token.tahun,
-					id_sub_bl: id_sub_bl
+					id_sub_bl: id_sub_bl,
+					is_anggaran: global_is_anggaran
 				},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2069,7 +2070,8 @@ function ket_sub_bl(id_sub_bl){
 			data: {            
 					id_daerah: _token.daerah_id,				
 					tahun: _token.tahun,
-					id_sub_bl: id_sub_bl
+					id_sub_bl: id_sub_bl,
+					is_anggaran: global_is_anggaran
 				},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -3184,7 +3186,8 @@ function detail_rincian_sub_bl(opsi){
 			data: {
 				tahun: _token.tahun,
 				id_daerah: _token.daerah_id,
-				id_sub_bl: opsi.id_sub_bl
+				id_sub_bl: opsi.id_sub_bl,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -3205,7 +3208,8 @@ function detail_penerima_bantuan(opsi){
 			type: 'POST',	      				
 			data: {
 				tahun: _token.tahun,
-				id_daerah: _token.daerah_id
+				id_daerah: _token.daerah_id,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
