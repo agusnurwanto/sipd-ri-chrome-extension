@@ -174,3 +174,6 @@ thead{
 .form-group {
     padding: 10px;
 }
+.text-right {
+    text-align: right;
+}

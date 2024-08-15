@@ -1861,7 +1861,8 @@ function total_usul_bantuan(idskpd){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				id_skpd: idskpd
+				id_skpd: idskpd,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -1882,7 +1883,8 @@ function total_usul_pokir(idskpd){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				id_skpd: idskpd
+				id_skpd: idskpd,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -1985,7 +1987,8 @@ function rinci_sub_bl(idskpd){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				id_skpd: idskpd
+				id_skpd: idskpd,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2006,7 +2009,8 @@ function tag_bl(id_sub_bl){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				id_sub_bl: id_sub_bl
+				id_sub_bl: id_sub_bl,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2027,7 +2031,8 @@ function label_bl(id_sub_bl){
 			data: {
 				id_daerah: _token.daerah_id,
 				tahun: _token.tahun,
-				id_sub_bl: id_sub_bl
+				id_sub_bl: id_sub_bl,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2092,7 +2097,8 @@ function dana_sub_bl(id_sub_bl){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				id_sub_bl: id_sub_bl
+				id_sub_bl: id_sub_bl,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2113,7 +2119,8 @@ function detil_lokasi_bl(id_sub_bl){
 			data: {            
 				id_daerah: _token.daerah_id,				
 				tahun: _token.tahun,
-				id_sub_bl: id_sub_bl
+				id_sub_bl: id_sub_bl,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2139,6 +2146,7 @@ function capaian_bl(id_unit, id_skpd, id_sub_skpd, id_program, id_giat){
 					id_unit: id_unit,
 					id_skpd: id_skpd,
 					id_sub_skpd: id_sub_skpd,
+					is_anggaran: global_is_anggaran
 				},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -2160,7 +2168,8 @@ function output_bl(id_sub_bl){
 			data: {            
 					id_daerah: _token.daerah_id,				
 					tahun: _token.tahun,
-					id_sub_bl: id_sub_bl
+					id_sub_bl: id_sub_bl,
+					is_anggaran: global_is_anggaran
 				},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -3077,7 +3086,8 @@ function get_hasil(opsi){
 				id_giat: opsi.id_giat,
 				id_unit: opsi.id_unit,
 				id_skpd: opsi.id_skpd,
-				id_sub_skpd: opsi.id_sub_skpd
+				id_sub_skpd: opsi.id_sub_skpd,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -3133,7 +3143,8 @@ function output_giat(opsi){
 				id_giat: opsi.id_giat,
 				id_unit: opsi.id_unit,
 				id_skpd: opsi.id_skpd,
-				id_sub_skpd: opsi.id_sub_skpd
+				id_sub_skpd: opsi.id_sub_skpd,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -3160,6 +3171,7 @@ function sasaran_giat(opsi){
 				id_unit: opsi.id_unit,
 				id_skpd: opsi.id_skpd,
 				id_sub_skpd: opsi.id_sub_skpd,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
