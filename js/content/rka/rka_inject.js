@@ -1435,7 +1435,8 @@ function detail_rincian_sub_bl(opsi){
 			data: {
 				tahun: _token.tahun,
 				id_daerah: _token.daerah_id,
-				id_sub_bl: opsi.id_sub_bl
+				id_sub_bl: opsi.id_sub_bl,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -1456,7 +1457,8 @@ function view_rincian_by_id_unik(id_unik){
 			data: formData({
 				id_daerah: _token.daerah_id,
 				tahun: _token.tahun,
-				id_unik: id_unik
+				id_unik: id_unik,
+				is_anggaran: global_is_anggaran
 			}),
 			success: function(ret){
 				resolve(ret.data[0]);
