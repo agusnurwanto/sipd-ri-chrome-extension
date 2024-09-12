@@ -1793,6 +1793,22 @@ function list_belanja_by_tahun_daerah_unit(idskpd){
 				xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
 			},
 	      	success: function(subkeg){
+
+	      		// lakukan filter sub keg yang ada rinciannya saja jika ditemukan sub kegiatan double
+	      		var res = decrip(subkeg.data);
+	      		var all_sub_keg = {};
+	      		res.map(function(b, i){
+	      			var key = b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat);
+					if(!all_sub_keg[key] || all_sub_keg[key].rincian == 0){
+						all_sub_keg[key] = b;
+					}
+				});
+	      		var new_res = [];
+	      		for(var i in all_sub_keg){
+	      			new_res.push(all_sub_keg[i]);
+	      		}
+	      		subkeg.data = new_res;
+
 	      		return resolve(subkeg);
 	      	}
 	    });

@@ -345,6 +345,9 @@ function intervalSession_lama(no){
 }
 
 function decrip(t) {
+	if(typeof t == 'object'){
+		return t;
+	}
     let e = atob(t)
       , n = e.length - 1
       , s = "";
