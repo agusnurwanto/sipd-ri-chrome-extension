@@ -161,7 +161,8 @@ jQuery('#jenis_data').on('change', function(){
 						id_daerah: _token.daerah_id,
 						id_unit: detail_sub.id_sub_skpd,
 						id_sub_giat: detail_sub.id_sub_giat,
-						kondisi_rincian: true
+						kondisi_rincian: true,
+						is_anggaran: global_is_anggaran
 					}),
 					success: function(ret){
 						global_ket_rka[id_sub_keg] = ret.data;
@@ -203,7 +204,8 @@ jQuery('#jenis_data').on('change', function(){
 					id_daerah: _token.daerah_id,
 					id_unit: _token.unit_id,
 					id_sub_bl: id_sub_keg,
-					is_paket: 2
+					is_paket: 2,
+					is_anggaran: global_is_anggaran
 				}),
 				success: function(ret){
 					global_paket_rka[id_sub_keg] = ret.data;
@@ -242,7 +244,8 @@ jQuery('#jenis_data').on('change', function(){
 				data: formData({
 					tahun: _token.tahun,
 					id_daerah: _token.daerah_id,
-					id_sub_bl: id_sub_keg
+					id_sub_bl: id_sub_keg,
+					is_anggaran: global_is_anggaran
 				}),
 				success: function(ret){
 					global_sd_rka[id_sub_keg] = ret.data;
@@ -581,7 +584,8 @@ function sub_bl_view(id_sub_bl){
 			type: 'POST',	      				
 			data: {            
 				id_daerah: _token.daerah_id,				
-				tahun: _token.tahun
+				tahun: _token.tahun,
+				is_anggaran: global_is_anggaran
 			},
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -1242,7 +1246,8 @@ function detail_penerima_bantuan(opsi){
 			type: 'POST',	      				
 			data: formData({
 				tahun: _token.tahun,
-				id_daerah: _token.daerah_id
+				id_daerah: _token.daerah_id,
+				is_anggaran: global_is_anggaran
 			}),
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
@@ -1262,7 +1267,8 @@ function all_penerima_bantuan(opsi){
 			type: 'POST',	      				
 			data: formData({
 				tahun: _token.tahun,
-				id_daerah: _token.daerah_id
+				id_daerah: _token.daerah_id,
+				is_anggaran: global_is_anggaran
 			}),
 			beforeSend: function (xhr) {			    
 				xhr.setRequestHeader("X-API-KEY", x_api_key2());
