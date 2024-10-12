@@ -1092,7 +1092,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 						data_rka.dataDana[d.id_dana].iddana = d.id_dana;
 						data_rka.dataDana[d.id_dana].iddanasubbl = d.id_dana_sub_bl;
 						data_rka.dataDana[d.id_dana].pagudana = d.pagu_dana;
-						data_rka.dataDana[d.id_dana].id_sub_bl = d.id_sub_bl; //baru	
+						data_rka.dataDana[d.id_dana].id_sub_bl = d.id_sub_bl;
+						data_rka.dataDana[d.id_dana].is_locked = d.is_locked;
 					});
 
 					//output sub giat
@@ -1344,6 +1345,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 							_rka.id_lurah_penerima = 0;
 							_rka.id_penerima = 0;
 							_rka.idkomponen = 0;
+							_rka.akun_locked = rka.akun_locked;
+							_rka.ssh_locked = rka.ssh_locked;
 							_data.push(_rka);
 							if((i+1)%_leng == 0){
 								_data_all.push(_data);
@@ -1581,7 +1584,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 																			is_paket: subs_sub_bl.data[0].is_paket,
 																			kode_dana: null,
 																			id_subtitle: _rka.id_subs_sub_bl,
-																			subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
+																			subtitle_teks: subs_sub_bl.data[0].subs_bl_teks,
+																			is_locked: 0
 																		}
 																	};
 																	_rka.id_jenis_barjas = subs_sub_bl.data[0].id_jenis_barjas;
@@ -1595,7 +1599,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 																			is_paket: subs_sub_bl.data[0].is_paket,
 																			kode_dana: data_rka.dataDana[_rka.id_dana].kodedana,
 																			id_subtitle: _rka.id_subs_sub_bl,
-																			subtitle_teks: subs_sub_bl.data[0].subs_bl_teks
+																			subtitle_teks: subs_sub_bl.data[0].subs_bl_teks,
+																			is_locked: data_rka.dataDana[_rka.id_dana].is_locked
 																		};
 																	}
 																}
