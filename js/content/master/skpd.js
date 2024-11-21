@@ -181,22 +181,19 @@ function edit_skpd_ce(){
 					status_kepala: status_kepala,
 					input_anggaran: set_anggaran,
 					id_user_log: id_daerah,
+					id_daerah_log: id_daerah,
 					id_unit_skpd: id_sub_skpd,
 					id_daerah: id_daerah,
 					tahun: tahun_anggaran,
 					kode_skpd_old: detail_skpd.data[0].kode_skpd,
-					nip_kepala_old: detail_skpd.data[0].nip_kepala,
-					id_daerah_log: id_daerah
+					nip_kepala_old: detail_skpd.data[0].nip_kepala
 				};
 				console.log('opsi_update', opsi_update);
-				relayAjax({
+				relayAjaxApiKey({
 					url: config.sipd_url+'api/master/skpd/update_unit_skpd',
 					type: 'POST',
-					data: opsi_update,
-					beforeSend: function (xhr) {
-						xhr.setRequestHeader("X-API-KEY", x_api_key());
-						xhr.setRequestHeader("X-ACCESS-TOKEN", _token.token);  
-					},
+					dataType: 'json',
+					data: formData(opsi_update),
 		          	success: function(data){
 						alert('Sukses update SKPD denga id_skpd='+id_sub_skpd);
 						hide_loading();

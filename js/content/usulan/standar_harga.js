@@ -1244,7 +1244,23 @@ function find_satuan_standar_harga(satuan){
 				},
 				success: function(res){
 					window.global_all_satuan[key] = res.data;
-					return resolve(global_all_satuan[key]);
+					var ret = false;
+					global_all_satuan[key].map(function(b, i){
+						if(
+							false == ret 
+							&& b.nama_satuan.toLowerCase() == satuan.toLowerCase()
+						){
+							ret = satuan;
+						}
+					});
+					if(
+						false == ret
+						&& global_all_satuan[key][0]
+						&& global_all_satuan[key][0].id_satuan
+					){
+						ret = global_all_satuan[key][0];
+					}
+					return resolve(ret);
 				}
 			});
 		}else{
@@ -1312,7 +1328,7 @@ function simpan_usulan_ssh(list_usulan_selected){
 			    					if(kelompok[0] && kelompok[0].id_kel_standar_harga){
 		    							find_satuan_standar_harga(current_data.satuan)
 		    							.then(function(satuan){
-		    								if(satuan[0] && satuan[0].id_satuan){
+		    								if(satuan){
 		    									if(
 		    										!current_data.jenis_produk
 		    										|| current_data.jenis_produk == ''
@@ -1327,8 +1343,8 @@ function simpan_usulan_ssh(list_usulan_selected){
 													nama_standar_harga: current_data.nama_standar_harga,
 													spek: current_data.spek,
 													satuan: current_data.satuan,
-													id_satuan: satuan[0].id_satuan,
-													harga: current_data.harga,
+													id_satuan: satuan.id_satuan,
+													harga: (current_data.harga+'').split('.')[0],
 													is_pdn: current_data.jenis_produk,
 													nilai_tkdn: current_data.tkdn,
 													kelompok: current_data.kelompok,
