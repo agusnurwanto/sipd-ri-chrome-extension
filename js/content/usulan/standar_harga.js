@@ -1299,7 +1299,7 @@ function simpan_usulan_ssh(list_usulan_selected){
 		    				pesan_all.push(pesan+' nama_standar_harga = '+current_data.nama_standar_harga+', Spek = '+current_data.spek+', jenis_usulan = '+current_data.status_jenis_usulan);
 		    				return resolve_reduce(nextData);
 		    			}
-	    				var id_duplikat = current_data.kode_kel_standar_harga+''+current_data.nama_standar_harga+''+current_data.spek+''+current_data.satuan+''+current_data.harga;
+	    				var id_duplikat = current_data.kode_kel_standar_harga+''+current_data.nama_standar_harga+''+current_data.spek+''+current_data.satuan+''+(current_data.harga+'').split('.')[0];
 	    				new Promise(function(resolve2, reject2){
 
 	    					// cek jika standar harga belum ada di SIPD
