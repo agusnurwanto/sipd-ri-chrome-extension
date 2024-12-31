@@ -549,7 +549,7 @@ function makeid(t) {
 }
 
 function cek_tombol_tambah_rka(n=0){
-	if(n == 20){ return; };
+	if(n == 120){ return; };
 	setTimeout(function(){
 		n++;
 		if(jQuery('.card-toolbar .btn-primary.ng-star-inserted').length >=1 ){
@@ -572,7 +572,8 @@ function cek_tombol_tambah_rka(n=0){
 			injectScript( chrome.runtime.getURL('/js/jszip.js'), 'head', 'js');
 			injectScript( chrome.runtime.getURL('/js/xlsx.js'), 'head', 'js');
 		}else{
+			pesan_loading('Cek tombol tambah rincian ke '+n+'. Untuk menampilkan tombol import excel.');
 			cek_tombol_tambah_rka(n);
 		}
-	}, 1000);
+	}, 3000);
 }
