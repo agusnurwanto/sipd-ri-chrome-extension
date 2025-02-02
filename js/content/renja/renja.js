@@ -19,7 +19,8 @@ function list_skpd_sub_bl(offset=0){
 			},
 			success: function(units){
 				var data_all = { data: [] };
-				units.data = decrip(units.data);
+				// units.data = decrip(units.data);
+				units.data = units.data;
 				var last = units.data.length-1;
 				units.data.reduce(function(sequence, nextData){
 		            return sequence.then(function(current_data){
@@ -186,7 +187,8 @@ function open_modal_renja(res, run_proses = false){
 		list_belanja_by_tahun_daerah_unit(idunitskpd)
 		.then(function(sub_keg_exist){
 			window.rka_sipd = {};
-			sub_keg_exist.data = decrip(sub_keg_exist.data);
+			// sub_keg_exist.data = decrip(sub_keg_exist.data);
+			sub_keg_exist.data = sub_keg_exist.data;
 			sub_keg_exist.data.map(function(b, i){
 				rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
 			});
@@ -265,7 +267,8 @@ function proses_hapus_modal_renja(res) {
 	}
 	list_belanja_by_tahun_daerah_unit(idunitskpd)
 	.then(function(sub_keg_exist){
-		sub_keg_exist.data = decrip(sub_keg_exist.data);
+		// sub_keg_exist.data = decrip(sub_keg_exist.data);
+		sub_keg_exist.data = sub_keg_exist.data;
 		window.rka_sipd = {};
 		sub_keg_exist.data.map(function(b, i){
 			rka_sipd[b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat)] = b;
@@ -494,7 +497,8 @@ function open_modal_subgiat(idunit){
 	show_loading();
 	list_belanja_by_tahun_daerah_unit(id_unit)
 	.then(function(subkeg){
-		subkeg.data = decrip(subkeg.data);
+		// subkeg.data = decrip(subkeg.data);
+		subkeg.data = subkeg.data;
 		console.log('list_belanja_by_tahun_daerah_unit', subkeg.data);
 		
 		// ubah status sub_keg_bl jadi tidak aktif semua agar jika ada sub keg yang dihapus, sipd lokal bisa ikut terupdate
@@ -708,7 +712,8 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 						var nilairincian = 0;
 						var rinci_giat = 0;
 						var nilaipagu = 0;
-						sub_keg_exist.data = decrip(sub_keg_exist.data);
+						// sub_keg_exist.data = decrip(sub_keg_exist.data);
+						sub_keg_exist.data = sub_keg_exist.data;
 						sub_keg_exist.data.map(function(b, i){
 							nilaipagu += b.pagu;
 							nilairincian += b.rincian;
@@ -785,7 +790,8 @@ function singkron_rka_ke_lokal_all(opsi_unit, callback) {
 			new Promise(function(resolve_reduce_nonactive, reject_reduce_nonactive){
 				promise_nonactive[id_unit] = resolve_reduce_nonactive;
 				var subkeg_aktif = [];
-				subkeg.data = decrip(subkeg.data);
+				// subkeg.data = decrip(subkeg.data);
+				subkeg.data = subkeg.data;
 				subkeg.data.map(function(b, i){
 					// console.log('map',b);
 					if(
@@ -1800,7 +1806,8 @@ function list_belanja_by_tahun_daerah_unit(idskpd){
 	      	success: function(subkeg){
 
 	      		// lakukan filter sub keg yang ada rinciannya saja jika ditemukan sub kegiatan double
-	      		var res = decrip(subkeg.data);
+	      		// var res = decrip(subkeg.data);
+				var res = subkeg.data;
 	      		var all_sub_keg = {};
 	      		res.map(function(b, i){
 	      			var key = b.kode_sub_skpd+' '+b.kode_sub_giat+' '+removeNewlines(b.nama_sub_giat);
