@@ -64,69 +64,76 @@ function singkron_user_dewan_lokal(level){
 
 									var idusers = detil.data.id_user;
 									var idprofil = detil.data.id_profil;										
-									get_view_profil(idusers, idprofil).then(function(profil){										
-										data_dewan.data.akta_kumham = profil.data[0].akta_kumham; //baru teks
-										data_dewan.data.alamatteks = profil.data[0].alamat_teks;
-										data_dewan.data.dapil = profil.data[0].dapil;
-										data_dewan.data.emailteks = profil.data[0].email_teks;
-										data_dewan.data.fraksi = profil.data[0].fraksi_dewan;
-										data_dewan.data.iddaerahpengusul = profil.data[0].id_daerah;
-										data_dewan.data.id_jenis_profil = profil.data[0].id_jenis_profil; // baru int
-										data_dewan.data.idkabkota = profil.data[0].id_kab_kota;									
-										data_dewan.data.idcamat = profil.data[0].id_kecamatan;									
-										data_dewan.data.idlurah = profil.data[0].id_kelurahan;
-										data_dewan.data.idlokasidesa = profil.data[0].id_kelurahan;
-										data_dewan.data.idlurahpengusul = profil.data[0].id_kelurahan;
-										data_dewan.data.ijin_op = profil.data[0].ijin_op; //baru teks										
-										data_dewan.data.is_profil_ok = profil.data[0].is_profil_ok; //baru int
-										data_dewan.data.is_vertikal = profil.data[0].is_vertikal; //baru int									
-										data_dewan.data.map_lat_lokasi = profil.data[0].map_lat_lokasi; //baru teks
-										data_dewan.data.map_lng_lokasi = profil.data[0].map_lng_lokasi; //baru teks
-										data_dewan.data.namapengusul = profil.data[0].nama_teks;
-										data_dewan.data.nik = profil.data[0].nik;
-										data_dewan.data.no_sertifikat = profil.data[0].no_sertifikat; //baru teks
-										data_dewan.data.notelp = profil.data[0].no_telp;
-										data_dewan.data.npwp = profil.data[0].npwp;
-										data_dewan.data.path_foto = profil.data[0].path_foto; //baru teks
-										data_dewan.data.surat_dom = profil.data[0].surat_dom; //baru teks
+									get_view_profil(idusers, idprofil).then(function(profil){
+										if(profil.data.length === 0 )
+										{
+											resolve_reduce(nextData);
+										}
+										else
+										{
+											data_dewan.data.akta_kumham = profil.data[0].akta_kumham; //baru teks
+											data_dewan.data.alamatteks = profil.data[0].alamat_teks;
+											data_dewan.data.dapil = profil.data[0].dapil;
+											data_dewan.data.emailteks = profil.data[0].email_teks;
+											data_dewan.data.fraksi = profil.data[0].fraksi_dewan;
+											data_dewan.data.iddaerahpengusul = profil.data[0].id_daerah;
+											data_dewan.data.id_jenis_profil = profil.data[0].id_jenis_profil; // baru int
+											data_dewan.data.idkabkota = profil.data[0].id_kab_kota;									
+											data_dewan.data.idcamat = profil.data[0].id_kecamatan;									
+											data_dewan.data.idlurah = profil.data[0].id_kelurahan;
+											data_dewan.data.idlokasidesa = profil.data[0].id_kelurahan;
+											data_dewan.data.idlurahpengusul = profil.data[0].id_kelurahan;
+											data_dewan.data.ijin_op = profil.data[0].ijin_op; //baru teks										
+											data_dewan.data.is_profil_ok = profil.data[0].is_profil_ok; //baru int
+											data_dewan.data.is_vertikal = profil.data[0].is_vertikal; //baru int									
+											data_dewan.data.map_lat_lokasi = profil.data[0].map_lat_lokasi; //baru teks
+											data_dewan.data.map_lng_lokasi = profil.data[0].map_lng_lokasi; //baru teks
+											data_dewan.data.namapengusul = profil.data[0].nama_teks;
+											data_dewan.data.nik = profil.data[0].nik;
+											data_dewan.data.no_sertifikat = profil.data[0].no_sertifikat; //baru teks
+											data_dewan.data.notelp = profil.data[0].no_telp;
+											data_dewan.data.npwp = profil.data[0].npwp;
+											data_dewan.data.path_foto = profil.data[0].path_foto; //baru teks
+											data_dewan.data.surat_dom = profil.data[0].surat_dom; //baru teks
 
-										var iddaerah = profil.data[0].id_kab_kota;
-										var idkecamatan = profil.data[0].id_kecamatan;
-										var idkelurahan = profil.data[0].id_kelurahan;
-										get_view_daerah(iddaerah).then(function(daerah){
-											data_dewan.data.daerahpengusul = daerah.data[0].nama_daerah;										
-											get_view_kecamatan(idkecamatan).then(function(kecamatan){
-												data_dewan.data.camatteks = kecamatan.data[0].camat_teks;
-												data_dewan.data.kode_camat = kecamatan.data[0].kode_camat; //baru teks
-												// data_dewan.data.kode_ddn = kecamatan.data[0].kode_ddn; //baru teks
-												// data_dewan.data.kode_ddn_2 = kecamatan.data[0].kode_ddn_2; //baru teks
-												
-												get_view_desa_kel(idkelurahan).then(function(kelurahan){
-													data_dewan.data.lokasidesateks = kelurahan.data[0].lurah_teks;
-													data_dewan.data.lurahteks = kelurahan.data[0].lurah_teks;
-													data_dewan.data.kode_lurah = kelurahan.data[0].kode_lurah; //baru teks
-													data_dewan.data.kode_ddn = kelurahan.data[0].kode_ddn; //baru teks
-													data_dewan.data.kode_ddn_2 = kelurahan.data[0].kode_ddn_2; //baru teks
-													data_dewan.data.is_desa = kelurahan.data[0].is_desa; //baru int
+											var iddaerah = profil.data[0].id_kab_kota;
+											var idkecamatan = profil.data[0].id_kecamatan;
+											var idkelurahan = profil.data[0].id_kelurahan;
+											get_view_daerah(iddaerah).then(function(daerah){
+												data_dewan.data.daerahpengusul = daerah.data[0].nama_daerah;										
+												get_view_kecamatan(idkecamatan).then(function(kecamatan){
+													data_dewan.data.camatteks = kecamatan.data[0].camat_teks;
+													data_dewan.data.kode_camat = kecamatan.data[0].kode_camat; //baru teks
+													// data_dewan.data.kode_ddn = kecamatan.data[0].kode_ddn; //baru teks
+													// data_dewan.data.kode_ddn_2 = kecamatan.data[0].kode_ddn_2; //baru teks
+													
+													get_view_desa_kel(idkelurahan).then(function(kelurahan){
+														data_dewan.data.lokasidesateks = kelurahan.data[0].lurah_teks;
+														data_dewan.data.lurahteks = kelurahan.data[0].lurah_teks;
+														data_dewan.data.kode_lurah = kelurahan.data[0].kode_lurah; //baru teks
+														data_dewan.data.kode_ddn = kelurahan.data[0].kode_ddn; //baru teks
+														data_dewan.data.kode_ddn_2 = kelurahan.data[0].kode_ddn_2; //baru teks
+														data_dewan.data.is_desa = kelurahan.data[0].is_desa; //baru int
 
-														var data = {
-															message:{
-																type: "get-url",
-																content: {
-																	url: config.url_server_lokal,
-																	type: 'post',
-																	data: data_dewan,
-																	return: false
+															var data = {
+																message:{
+																	type: "get-url",
+																	content: {
+																		url: config.url_server_lokal,
+																		type: 'post',
+																		data: data_dewan,
+																		return: false
+																	}
 																}
-															}
-														};
-														chrome.runtime.sendMessage(data, function(response) {
-															console.log('responeMessage', response);
-															resolve_reduce(nextData);
-														});
+															};
+															chrome.runtime.sendMessage(data, function(response) {
+																console.log('responeMessage', response);
+																resolve_reduce(nextData);
+															});
+													});
 												});
 											});
-										});
+										}										
 									})
 								})
 							}
