@@ -1124,8 +1124,8 @@ function singkron_rka_ke_lokal(opsi, callback) {
 					}else{
 						tag_bl_res.data.map(function(d, i){
 							data_rka.dataTag[i] = {};
-							data_rka.dataTag[i].idlabelgiat = d.idlabelgiat;
-							data_rka.dataTag[i].namalabel = d.nama_bl;
+							data_rka.dataTag[i].idlabelgiat = d.id_label_giat;
+							data_rka.dataTag[i].namalabel = d.nama_label_giat;
 							data_rka.dataTag[i].idtagbl = d.id_tag_bl;
 						});
 					}
