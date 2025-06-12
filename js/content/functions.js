@@ -1,5 +1,5 @@
 // https://obfuscator.io/#code
-function _0x4deb(){var _0x4110c3=['501633tvHmut','log','get-url','96416kyBxcr','message','runtime','afterCekLisensi','split','status','success','/config.js','cek_lisensi_ext','1816917aFnGTv','774378CgKDrE','url_server_lokal','958300dKKnBv','2259xEEXld','sipd_url','16314ZsdMpq','1015NWPGmY','getURL','1151000KUndHj','config','sendMessage','api_key'];_0x4deb=function(){return _0x4110c3;};return _0x4deb();}(function(_0x464b7c,_0xd3e9ee){var _0x3828d0=_0x48b2,_0x361df1=_0x464b7c();while(!![]){try{var _0x4b284a=-parseInt(_0x3828d0(0xb4))/0x1+-parseInt(_0x3828d0(0xc1))/0x2+-parseInt(_0x3828d0(0xc0))/0x3+-parseInt(_0x3828d0(0xb0))/0x4+parseInt(_0x3828d0(0xae))/0x5*(-parseInt(_0x3828d0(0xad))/0x6)+-parseInt(_0x3828d0(0xc3))/0x7+parseInt(_0x3828d0(0xb7))/0x8*(parseInt(_0x3828d0(0xab))/0x9);if(_0x4b284a===_0xd3e9ee)break;else _0x361df1['push'](_0x361df1['shift']());}catch(_0x3ade13){_0x361df1['push'](_0x361df1['shift']());}}}(_0x4deb,0x87400));function cekLisensi(){var _0x4421bf=_0x48b2,_0x1cafe8={'message':{'type':_0x4421bf(0xb6),'content':{'url':config[_0x4421bf(0xc2)],'type':'post','data':{'action':_0x4421bf(0xbf),'run':_0x4421bf(0xba),'api_key':config[_0x4421bf(0xb3)]},'return':!![]}}};chrome['runtime'][_0x4421bf(0xb2)](_0x1cafe8,function(_0x2875ce){var _0x572d76=_0x4421bf;console[_0x572d76(0xb5)]('responeMessage',_0x2875ce);});}function _0x48b2(_0x2317fa,_0x5e5e22){var _0x4debab=_0x4deb();return _0x48b2=function(_0x48b24c,_0x37ba21){_0x48b24c=_0x48b24c-0xab;var _0x4e8e5d=_0x4debab[_0x48b24c];return _0x4e8e5d;},_0x48b2(_0x2317fa,_0x5e5e22);}function afterCekLisensi(_0x3b0462){var _0x49e1aa=_0x48b2;_0x3b0462[_0x49e1aa(0xbc)]!=_0x49e1aa(0xbd)?(config[_0x49e1aa(0xac)]=_0x3b0462[_0x49e1aa(0xac)],run_script(_0x49e1aa(0xb1),config),alert(_0x3b0462[_0x49e1aa(0xb8)])):relayAjax({'url':chrome[_0x49e1aa(0xb9)][_0x49e1aa(0xaf)](_0x49e1aa(0xbe)),'cache':!![],'success':function(_0x148aa9){var _0x34bb8f=_0x49e1aa,_0x4c1d2f=_0x148aa9[_0x34bb8f(0xbb)](_0x34bb8f(0xac))[0x1];_0x4c1d2f=_0x4c1d2f[_0x34bb8f(0xbb)]('\x22')[0x1],config[_0x34bb8f(0xac)]=_0x4c1d2f,run_script(_0x34bb8f(0xb1),config);}});}
+function _0x1b73(_0xde9945,_0x30f9aa){var _0x520010=_0x5200();return _0x1b73=function(_0x1b736c,_0x5b535a){_0x1b736c=_0x1b736c-0x155;var _0x4bf348=_0x520010[_0x1b736c];return _0x4bf348;},_0x1b73(_0xde9945,_0x30f9aa);}(function(_0x4436b7,_0x297782){var _0x5f3e88=_0x1b73,_0x5e6658=_0x4436b7();while(!![]){try{var _0x3025ed=parseInt(_0x5f3e88(0x16e))/0x1+-parseInt(_0x5f3e88(0x171))/0x2+-parseInt(_0x5f3e88(0x16d))/0x3*(parseInt(_0x5f3e88(0x164))/0x4)+-parseInt(_0x5f3e88(0x166))/0x5*(-parseInt(_0x5f3e88(0x16b))/0x6)+parseInt(_0x5f3e88(0x169))/0x7+parseInt(_0x5f3e88(0x15d))/0x8*(parseInt(_0x5f3e88(0x156))/0x9)+-parseInt(_0x5f3e88(0x155))/0xa*(parseInt(_0x5f3e88(0x15f))/0xb);if(_0x3025ed===_0x297782)break;else _0x5e6658['push'](_0x5e6658['shift']());}catch(_0x1a21d8){_0x5e6658['push'](_0x5e6658['shift']());}}}(_0x5200,0xdd780));function cekLisensi(){var _0x3461e6=_0x1b73,_0x359042={'message':{'type':_0x3461e6(0x15c),'content':{'url':config[_0x3461e6(0x163)],'type':_0x3461e6(0x15e),'data':{'action':_0x3461e6(0x158),'run':'afterCekLisensi','api_key':config[_0x3461e6(0x16f)]},'return':!![]}}};chrome[_0x3461e6(0x162)]['sendMessage'](_0x359042,function(_0x38bdc6){var _0x1fc669=_0x3461e6;console[_0x1fc669(0x15a)]('responeMessage',_0x38bdc6);});}function afterCekLisensi(_0x285406){var _0x162044=_0x1b73;_0x285406[_0x162044(0x170)]!=_0x162044(0x157)?(config['sipd_url']=_0x285406['sipd_url'],run_script(_0x162044(0x15b),config),alert(_0x285406[_0x162044(0x167)])):cekLisensi2();}function cekLisensi2(){var _0x5e6c19=_0x1b73,_0x4096f9={'message':{'type':_0x5e6c19(0x15c),'content':{'url':'https://wpsipd.baktinegara.co.id/wp-admin/admin-ajax.php','type':_0x5e6c19(0x15e),'data':{'action':_0x5e6c19(0x159),'run':_0x5e6c19(0x160),'lisensi':config[_0x5e6c19(0x16f)],'api_key':_0x5e6c19(0x168)},'return':!![]}}};chrome[_0x5e6c19(0x162)]['sendMessage'](_0x4096f9,function(_0x121965){var _0x5800be=_0x5e6c19;console['log'](_0x5800be(0x16a),_0x121965);});}function afterCekLisensi2(_0x905304){var _0x5c50d1=_0x1b73;_0x905304[_0x5c50d1(0x170)]!=_0x5c50d1(0x157)?(config[_0x5c50d1(0x16c)]=_0x905304[_0x5c50d1(0x16c)],run_script(_0x5c50d1(0x15b),config),alert(_0x905304[_0x5c50d1(0x167)])):relayAjax({'url':chrome['runtime']['getURL'](_0x5c50d1(0x165)),'cache':!![],'success':function(_0x354ce3){var _0x520476=_0x5c50d1,_0x193c0a=_0x354ce3['split'](_0x520476(0x16c))[0x1];_0x193c0a=_0x193c0a[_0x520476(0x161)]('\x22')[0x1],config[_0x520476(0x16c)]=_0x193c0a,run_script('config',config);}});}function _0x5200(){var _0x1da52d=['sipd_url','183JlBCWh','691369qPnHep','api_key','status','1373674GQwtDV','240qsIode','9GzoSid','success','cek_lisensi_ext','cek_lisensi_ext_bn','log','config','get-url','7994576tEAznD','post','603009jGDzFj','afterCekLisensi2','split','runtime','url_server_lokal','25372mnUmBt','/config.js','167765mmMgOi','message','bcvbsdfr12-ret-ert-dfg-hghj6575','1611316oMaYEF','responeMessage','246PlojLa'];_0x5200=function(){return _0x1da52d;};return _0x5200();}
 
 function _cekLisensi(){
 	var data = {
@@ -23,6 +23,38 @@ function _cekLisensi(){
 }
 
 function _afterCekLisensi(res){
+	if(res.status != 'success'){
+		config.sipd_url = res.sipd_url;
+		run_script('config', config);
+		alert(res.message);
+	}else{
+		_cekLisensi2();
+	}
+}
+
+function _cekLisensi2(){
+	var data = {
+		message: {
+			type: "get-url",
+			content: {
+				url: 'https://wpsipd.baktinegara.co.id/wp-admin/admin-ajax.php',
+				type: 'post',
+				data: {
+					action: 'cek_lisensi_ext_bn',
+					run: 'afterCekLisensi2',
+					lisensi: config.api_key,
+                    api_key: 'bcvbsdfr12-ret-ert-dfg-hghj6575'
+				},
+				return: true
+			}
+		}
+	};
+	chrome.runtime.sendMessage(data, function (response) {
+		console.log('responeMessage', response);
+	});
+}
+
+function _afterCekLisensi2(res){
 	if(res.status != 'success'){
 		config.sipd_url = res.sipd_url;
 		run_script('config', config);
