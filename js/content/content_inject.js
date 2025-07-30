@@ -71,3 +71,12 @@ function logout(){
     localStorage.removeItem("sipd-konfigurasi-unit-set");
 	window.location.href = config.sipd_url;
 }
+
+function hapus_cookies(){
+    document.cookie.split(';').forEach(function(c) {
+	  	document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/');
+	});
+	localStorage.clear();
+	sessionStorage.clear();
+	window.location.href = config.sipd_url;
+}

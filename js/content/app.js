@@ -87,6 +87,7 @@ function cekUrl(current_url, nomor=1){
 				+'<div id="aksi-admin" class="menu-item me-lg-1">'
 					+'<a class="btn btn-success btn-sm" onclick="ganti_tahun();" style="margin-left: 2px;">Ganti Tahun</a>'
 					+'<a class="btn btn-danger btn-sm" onclick="logout();" style="margin-left: 5px;">Keluar</a>'
+					+'<a class="btn btn-danger btn-sm" onclick="hapus_cookies();" style="margin-left: 5px;" title="Untuk mereset data browser ketika beberapa fitur SIPD tidak berfungsi">Hapus All Cookies</a>'
 				+'</div>'
 			if(jQuery('#aksi-admin').length == 0){
 				title_admin.closest('.menu-item').after(aksi_admin);
@@ -1401,6 +1402,24 @@ function cekUrl(current_url, nomor=1){
 					jQuery('#status_kepala').closest('div.row').after(btn);
 					jQuery('#edit_skpd_ce').on('click', function(){
 						edit_skpd_ce();
+					});
+				}else{
+					cek_reload = 'iya';
+				}
+			}
+			// Halaman APBD Penjabaran untuk backup APBD per jadwal
+			else if(current_url.indexOf('/laporan/apbd_penjabaran') != -1)
+			{
+				console.log('halaman laporan/apbd_penjabaran');
+				if(jQuery('.card.mb-6 .card-body').length >= 1){
+					jQuery('.aksi-extension').remove();
+					var btn = ''
+						+'<div class="aksi-extension">'						
+							+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_apbd_per_jadwal">Singkron APBD Per Jadwal</button>'
+						+'</div>';
+					jQuery('.page-title').append(btn);
+					jQuery('#singkron_apbd_per_jadwal').on('click', function(){
+						singkron_apbd_per_jadwal();
 					});
 				}else{
 					cek_reload = 'iya';
