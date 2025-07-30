@@ -1415,11 +1415,46 @@ function cekUrl(current_url, nomor=1){
 					jQuery('.aksi-extension').remove();
 					var btn = ''
 						+'<div class="aksi-extension">'						
-							+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_apbd_per_jadwal">Singkron APBD Per Jadwal</button>'
+							+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_apbd_per_jadwal">Singkron APBD Per Jadwal</button>'
 						+'</div>';
 					jQuery('.page-title').append(btn);
 					jQuery('#singkron_apbd_per_jadwal').on('click', function(){
-						singkron_apbd_per_jadwal();
+						get_apbd_per_jadwal();
+					});
+
+					var modal = ''
+						+'<div class="modal fade modal-extension" id="modal-extension" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true" style="z-index: 99999; background: #0000003d;">'
+							+'<div class="modal-dialog" style="max-width: 900px;" role="document">'
+								+'<div class="modal-content">'
+									+'<div class="modal-header bgpanel-theme">'
+										+'<h3 class="fw-bolder m-0">Sinkronisasi APBD Per Jadwal</h4>'
+										+'<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>'
+									+'</div>'
+									+'<div class="modal-body">'
+										+'<table class="table table-bordered table-hover" id="table-extension">'
+											+'<thead>'
+												+'<tr>'
+													+'<th class="text-center" style="font-weight: bold; max-width: 40px;"><input type="checkbox" id="modal_cek_all"></th>'
+													+'<th class="text-center" style="font-weight: bold;">ID Jadwal</th>'
+													+'<th class="text-center" style="font-weight: bold;">Tahapan</th>'
+													+'<th class="text-center" style="font-weight: bold;">Nama Jadwal</th>'
+													+'<th class="text-center" style="font-weight: bold;">Mulai - Selesai</th>'
+												+'</tr>'
+											+'</thead>'
+											+'<tbody></tbody>'
+										+'</table>'
+									+'</div>'
+									+'<div class="modal-footer">'
+										+'<button type="button" class="btn btn-sm btn-primary" id="proses-extension">Backup Data ke DB Lokal</button>'
+										+'<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Tutup</button>'							
+									+'</div>'
+								+'</div>'
+							+'</div>'
+						+'</div>';	
+					jQuery('body').append(modal);
+
+					jQuery('#proses-extension').on('click', function(){
+						singkron_apbd_per_jadwal_modal();
 					});
 				}else{
 					cek_reload = 'iya';
