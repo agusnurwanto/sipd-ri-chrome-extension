@@ -178,11 +178,10 @@ function send_apbd_per_jadwal_lokal(jadwal, all_data, callback){
 				if(typeof window.global_all_apbd == 'undefined'){
 					window.global_all_apbd = {};
 				}
-				window.global_all_apbd = {
+				window.global_all_apbd[jadwal.id_jadwal] = {
 					resolve_reduce: resolve_reduce,
 					nextData: nextData
 				}
-				// return resolve_reduce(nextData);
     		})
             .catch(function(e){
                 console.log(e);

@@ -89,7 +89,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 		}else if(res.action == 'singkron_apbd_per_jadwal'){
 			_alert = false;
 			cek_hide_loading = false;
-			global_all_apbd.resolve_reduce(nextData);
+			global_all_apbd[res.id_jadwal].resolve_reduce(nextData);
 		}else if(res.action == 'get_renja'){
 			_alert = false;
 			cek_hide_loading = false;

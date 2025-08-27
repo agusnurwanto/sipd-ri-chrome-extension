@@ -44,31 +44,15 @@ function singkron_data_giat_lokal() {
 									var tahun = subgiat.tahun;
 
 									data_prog_keg.subgiat[i] = {};
-									data_prog_keg.subgiat[i].aceh = subgiat.aceh; //baru
-									data_prog_keg.subgiat[i].bali = subgiat.bali; //baru
-									data_prog_keg.subgiat[i].papua = subgiat.papua; //baru
-									data_prog_keg.subgiat[i].papua_barat = subgiat.papua_barat; //baru
-									data_prog_keg.subgiat[i].yogyakarta = subgiat.yogyakarta; //baru
-									data_prog_keg.subgiat[i].jakarta = subgiat.jakarta; //baru
 									data_prog_keg.subgiat[i].id_bidang_urusan = subgiat.id_bidang_urusan;
-									data_prog_keg.subgiat[i].id_daerah = subgiat.id_daerah; //baru
-									data_prog_keg.subgiat[i].id_daerah_khusus = subgiat.id_daerah_khusus; //baru
-									data_prog_keg.subgiat[i].id_program = subgiat.id_program;
 									data_prog_keg.subgiat[i].id_giat = subgiat.id_giat;
+									data_prog_keg.subgiat[i].id_program = subgiat.id_program;
 									data_prog_keg.subgiat[i].id_sub_giat = subgiat.id_sub_giat;
 									data_prog_keg.subgiat[i].id_urusan = subgiat.id_urusan;
-									data_prog_keg.subgiat[i].indikator = subgiat.indikator; //baru
-									data_prog_keg.subgiat[i].satuan = subgiat.satuan; //baru
-									data_prog_keg.subgiat[i].is_locked = subgiat.is_locked;
-									data_prog_keg.subgiat[i].is_setda = subgiat.is_setda; //baru
-									data_prog_keg.subgiat[i].is_setwan = subgiat.is_setwan; //baru
 									data_prog_keg.subgiat[i].kode_sub_giat = subgiat.kode_sub_giat;
-									data_prog_keg.subgiat[i].kunci_tahun = subgiat.kunci_tahun; //baru
-									data_prog_keg.subgiat[i].mulai_tahun = subgiat.mulai_tahun; //baru
-									data_prog_keg.subgiat[i].nama_sub_giat = subgiat.nama_sub_giat;
-									data_prog_keg.subgiat[i].set_kab_kota = subgiat.set_kab_kota; //baru
-									data_prog_keg.subgiat[i].set_prov = subgiat.set_prov; //baru 
-									data_prog_keg.subgiat[i].status = subgiat.status;
+									data_prog_keg.subgiat[i].nama_sub_giat = subgiat.nama_sub_giat
+									data_prog_keg.subgiat[i].tahun = subgiat.tahun
+
 									get_giat(idgiat, tahun).then(function(g){
 										if(
 											g.data.length >= 1
@@ -77,6 +61,22 @@ function singkron_data_giat_lokal() {
 										){
 											data_prog_keg.subgiat[i].kode_giat = g.data[0].kode_giat;
 											data_prog_keg.subgiat[i].nama_giat = g.data[0].nama_giat;
+
+											data_prog_keg.subgiat[i].aceh = g.data[0].aceh; //baru
+											data_prog_keg.subgiat[i].bali = g.data[0].bali; //baru
+											data_prog_keg.subgiat[i].papua = g.data[0].papua; //baru
+											data_prog_keg.subgiat[i].papua_barat = g.data[0].papua_barat; //baru
+											data_prog_keg.subgiat[i].yogyakarta = g.data[0].yogyakarta; //baru
+											data_prog_keg.subgiat[i].jakarta = g.data[0].jakarta; //baru
+											data_prog_keg.subgiat[i].id_daerah = g.data[0].id_daerah; //baru
+											data_prog_keg.subgiat[i].id_daerah_khusus = g.data[0].id_daerah_khusus; //baru
+											data_prog_keg.subgiat[i].is_locked = g.data[0].is_locked;
+											data_prog_keg.subgiat[i].is_setda = g.data[0].is_setda; //baru
+											data_prog_keg.subgiat[i].is_setwan = g.data[0].is_setwan; //baru
+											data_prog_keg.subgiat[i].kunci_tahun = g.data[0].kunci_tahun; //baru
+											data_prog_keg.subgiat[i].mulai_tahun = g.data[0].mulai_tahun; //baru
+											data_prog_keg.subgiat[i].set_kab_kota = g.data[0].set_kab_kota; //baru
+											data_prog_keg.subgiat[i].set_prov = g.data[0].set_prov; //baru
 										}else{
 											console.log('Kegiatan tidak ditemukan!', subgiat);
 											resolve(nextData2);
