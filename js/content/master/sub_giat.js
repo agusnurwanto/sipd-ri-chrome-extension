@@ -50,8 +50,10 @@ function singkron_data_giat_lokal() {
 									data_prog_keg.subgiat[i].id_sub_giat = subgiat.id_sub_giat;
 									data_prog_keg.subgiat[i].id_urusan = subgiat.id_urusan;
 									data_prog_keg.subgiat[i].kode_sub_giat = subgiat.kode_sub_giat;
-									data_prog_keg.subgiat[i].nama_sub_giat = subgiat.nama_sub_giat
-									data_prog_keg.subgiat[i].tahun = subgiat.tahun
+									data_prog_keg.subgiat[i].nama_sub_giat = subgiat.nama_sub_giat;
+									data_prog_keg.subgiat[i].tahun = subgiat.tahun;
+									data_prog_keg.subgiat[i].indikator = subgiat.indikator;
+									data_prog_keg.subgiat[i].satuan = subgiat.satuan;
 
 									get_giat(idgiat, tahun).then(function(g){
 										if(
