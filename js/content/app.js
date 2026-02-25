@@ -625,9 +625,13 @@ function cekUrl(current_url, nomor=1){
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_spm">Singkron SPM ke DB Lokal</button>'											
 						+'<button style="margin-left: 20px;" class="btn btn-sm btn-warning" id="singkron_subgiat_spm">Singkron subgiat SPM ke DB Lokal</button>'											
 						// +'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_label_miskin">Singkron Kemiskinan</button>'
-						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_subgiat_miskin">Singkron subgiat Kemiskinan</button>'											
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-danger" id="singkron_subgiat_miskin">Singkron subgiat Kemiskinan</button>'									
+						+'<button style="margin-left: 20px;" class="btn btn-sm btn-success" id="singkron_skpd_ke_lokal">Singkron ke DB Lokal</button>'		
 					+'</div>';
 				jQuery('.page-title').append(btn);
+				jQuery('#singkron_skpd_ke_lokal').on('click', function(){
+					singkron_skpd_ke_lokal();
+				});
 				jQuery('#singkron_label_spm').on('click', function(){
 					singkron_label_spm();
 				});
