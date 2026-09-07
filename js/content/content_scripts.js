@@ -44,6 +44,9 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 		if(res.action == 'get_rpjpd'){
 			_alert = false;
 			open_modal_rpjpd(res.data);
+		} else if (res.action == 'open_window') {
+			window.open(request.url, '_blank');
+			cek_hide_loading = false;
 		}else if(res.action == 'singkron_rka'){
 			if(!continue_singkron_rka[res.kode_sbl].alert){
 				_alert = false;

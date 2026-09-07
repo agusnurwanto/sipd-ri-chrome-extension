@@ -62,23 +62,49 @@ function timeoutAjax(ms, promise) {
     })
 }
 
-function relayAjax(options, retries=20, delay=10000, timeout=9000000){
-    timeoutAjax(timeout, postData(options.url, options.data))
-    .then(data => {
-        options.success(data);
-    })
-    .catch((error) => {
-        console.log('pesan error', error);
-        options.error();
-        if (retries > 0) {
-            console.log('Koneksi error. Coba lagi '+retries);
-            setTimeout(function(){ 
-                relayAjax(options, --retries, delay, timeout);
-            },delay);
-        } else {
-            console.log('Capek. Sudah dicoba berkali-kali error terus. Maaf, berhenti mencoba.');
+function relayAjax(options, retries = 20, delay = 10000, timeout = 9000000) {
+    timeoutAjax(timeout, postData(options.url, options.data, options.type))
+        .then(data => {
+            options.success(data);
+        })
+        .catch((error) => {
+            console.log('pesan error', error);
+            const errMsg = error && error.message ? error.message : String(error);
+            if (errMsg.indexOf('is not valid JSON') != -1) {
+                safeAlert({ message: 'error JSON di background JS = ' + errMsg, url: options.url, tab: options.tab });
+            }
+            if (retries > 0) {
+                console.log('Koneksi error. Coba lagi ' + retries);
+                setTimeout(function () {
+                    relayAjax(options, --retries, delay, timeout);
+                }, delay);
+            } else {
+                safeAlert({ message: 'Capek. Sudah dicoba berkali-kali error terus. Maaf, berhenti mencoba.', tab: options.tab });
+            }
+        });
+}
+
+function safeAlert(options) {
+    if (typeof alert !== 'undefined') {
+        alert(options.message);
+        if (options.url) {
+            window.open(options.url, '_blank');
         }
-    });
+    } else {
+        console.error('Alert in background script:', options);
+        var data_asli = {
+            type: 'response-fecth-url',
+            tab: options.tab,
+            data: {
+                message: options.message
+            }
+        };
+        if (options.url) {
+            data_asli.url = options.url;
+            data_asli.data.action = 'open_window';
+        }
+        sendMessageTabActive(data_asli);
+    }
 }
 
 const signal_all = {};
